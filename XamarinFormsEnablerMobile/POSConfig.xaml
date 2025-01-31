@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.POSConfig"
+             BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+
+
+            <StackLayout x:Name="POSConfigView"
+                         Orientation="Vertical"
+                         VerticalOptions="FillAndExpand"
+                         HorizontalOptions="FillAndExpand"
+                         Padding="10"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         AbsoluteLayout.LayoutFlags="All">
+                <Label Text="POS Config"
+                       VerticalOptions="Start"
+                       HorizontalOptions="CenterAndExpand"
+                       FontSize="Title" />
+                <StackLayout Orientation="Horizontal"
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand">
+                    <StackLayout Orientation="Vertical"
+                                 VerticalOptions="FillAndExpand"
+                                 HorizontalOptions="FillAndExpand">
+                        <Button Text="Cumulative Sales"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="GetAccumulatingSales" />
+                        <Button Text="CashDraw Report"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="GetCloseCashDraw" />
+                        <Button Text="Void Refund Report"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="GoToVoidRefundReport" />
+                        <Button Text="Setup Printer"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="GoToPrinterSetup" />
+                    </StackLayout>
+                    <StackLayout Orientation="Vertical"
+                                 VerticalOptions="FillAndExpand"
+                                 HorizontalOptions="FillAndExpand">
+                        <Button Text="E-Journal"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="ReprintReceipt" />
+                        <Button Text="Refund"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="RefundButtonOnClicked" />
+                        <Button Text="Reprint CashDraw"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="ReprintCashdrawReport" />
+                        <Button Text="Settings"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="OpenSetting" />
+                    </StackLayout>
+                </StackLayout>
+                <Button Text="Close"
+                        CornerRadius="10"
+                        VerticalOptions="End"
+                        HorizontalOptions="FillAndExpand"
+                        Clicked="BackToMainPage" />
+            </StackLayout>
+
+
+            <StackLayout x:Name="loginDialog"
+                         IsVisible="false"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand"
+                         AbsoluteLayout.LayoutFlags="All"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1">
+                <Frame HorizontalOptions="FillAndExpand"
+                       VerticalOptions="CenterAndExpand"
+                       Margin="50,0,50,0"
+                       Padding="10"
+                       CornerRadius="10"
+                       BackgroundColor="AliceBlue">
+
+                    <StackLayout Orientation="Vertical">
+
+                        <Label Text="Login admin"
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Bold"
+                               FontSize="24"
+                               Margin="0,0,0,10" />
+                        <Frame Padding="5"
+                               CornerRadius="10"
+                               BorderColor="Black"
+                               Margin="0,0,0,10"
+                               HorizontalOptions="FillAndExpand">
+
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="User ID" />
+                                <Entry Margin="10,0,10,0"
+                                       x:Name="userID"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Padding="5"
+                               CornerRadius="10"
+                               BorderColor="Black"
+                               Margin="0,0,0,10"
+                               HorizontalOptions="FillAndExpand">
+
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="User Password" />
+                                <Entry Margin="10,0,10,0"
+                                       x:Name="userPass"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand">
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+                            <Button Text="Login"
+                                    CornerRadius="10"
+                                    Clicked="ConfirmAdmin"/>
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+                            <Button Text="Cancel"
+                                    CornerRadius="10" Clicked="CancelLogin"/>
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+
+                        </StackLayout>
+
+
+                    </StackLayout>
+
+                </Frame>
+            </StackLayout>
+
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

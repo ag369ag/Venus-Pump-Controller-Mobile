@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0120: Simplify LINQ expression
+dotnet_diagnostic.IDE0120.severity = none

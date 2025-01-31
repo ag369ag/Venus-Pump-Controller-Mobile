@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.RefundTransaction">
+    <ContentPage.Content>
+        <Frame Padding="20" BackgroundColor="AliceBlue">
+            <StackLayout>
+
+                <Frame CornerRadius="10" BackgroundColor="SeaGreen">
+                    <DatePicker HorizontalOptions="FillAndExpand" TextColor="AliceBlue" DateSelected="GetDateSelected" >
+                        <DatePicker.Style>
+                            <Style TargetType="DatePicker">
+                                <Setter Property="BackgroundColor" Value="SeaGreen"/>
+                            </Style>
+                        </DatePicker.Style>
+                    </DatePicker>
+                </Frame>
+                <Frame VerticalOptions="FillAndExpand" 
+                       HorizontalOptions="FillAndExpand"
+                       BackgroundColor="SeaGreen"
+                       CornerRadius="10"
+                       Margin="0,5,0,5">
+                    <Frame CornerRadius="10" BackgroundColor="Transparent" Padding="0">
+                        <ScrollView>
+                            <StackLayout x:Name="TransactionItems"/>
+
+
+                        </ScrollView>
+                    </Frame>
+                </Frame>
+                    
+                <Button Text="Back" CornerRadius="10" HorizontalOptions="FillAndExpand" VerticalOptions="End" Clicked="BackToPOSConfig" TextColor="Black"/>
+            </StackLayout>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.VoidRefundPage"
+             BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <StackLayout Padding="20" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <Label Text="Void and Refund Report" Padding="10" HorizontalTextAlignment="Center" FontSize="Large" FontAttributes="Bold"/>
+            <StackLayout VerticalOptions="CenterAndExpand">
+                <Frame CornerRadius="10" Padding="10" VerticalOptions="FillAndExpand">
+                    <StackLayout>
+                        <Label Text="Start Date:"/>
+                        <DatePicker DateSelected="SetStartDate" x:Name="StartDatePicker"/>
+                    </StackLayout>
+                </Frame>
+                <StackLayout HeightRequest="10"/>
+                <Frame CornerRadius="10" Padding="10">
+                    <StackLayout>
+                        <Label Text="End Date:"/>
+                        <DatePicker DateSelected="SetEndDate" x:Name="EndDatePicker"/>
+                    </StackLayout>
+                </Frame>
+                <StackLayout HeightRequest="10"/>
+                <Button Text="Summary report" CornerRadius="10" Clicked="GetSummaryReport"/>
+                <Button Text="Full report" CornerRadius="10" Clicked="GetFullReport"/>
+            </StackLayout>
+            <Button Text="Close" CornerRadius="10" Clicked="CloseVoidRefundReportPage"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.PumpDesign">
+    <ContentView.Content>
+        <StackLayout
+            Orientation="Horizontal"
+            Padding="5,0,5,0">
+            <Frame
+                HorizontalOptions="FillAndExpand"
+                x:Name="pumpfirst">
+                <StackLayout
+                    Orientation="Horizontal"
+                    HorizontalOptions="FillAndExpand">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Tapped="Callback1" />
+                    </StackLayout.GestureRecognizers>
+                    <Image
+                        x:Name="PumpImage1"
+                        Source="nozzle.png"
+                        WidthRequest="100"
+                        HeightRequest="100" />
+                    <StackLayout
+                        Orientation="Vertical"
+                        VerticalOptions="EndAndExpand"
+                        HorizontalOptions="FillAndExpand"
+                        BackgroundColor="AliceBlue">
+                        <Label
+                            x:Name="p1Name"
+                            FontAttributes="Bold"
+                            HorizontalOptions="CenterAndExpand" />
+                        <View
+                            x:Name="p1t3"
+                            HorizontalOptions="FillAndExpand"
+                            HeightRequest="20"
+                            BackgroundColor="AliceBlue" />
+                        <View
+                            x:Name="p1t2"
+                            HorizontalOptions="FillAndExpand"
+                            HeightRequest="20"
+                            BackgroundColor="AliceBlue" />
+                        <View
+                            x:Name="p1t1"
+                            HorizontalOptions="FillAndExpand"
+                            HeightRequest="20"
+                            BackgroundColor="AliceBlue" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+            <Frame
+                HorizontalOptions="FillAndExpand"
+                x:Name="pumpsecond">
+                <StackLayout
+                    Orientation="Horizontal"
+                    HorizontalOptions="FillAndExpand">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Tapped="Callback2" />
+                    </StackLayout.GestureRecognizers>
+                    <Image
+                        x:Name="PumpImage2"
+                        Source="deliverying.png"
+                        WidthRequest="100"
+                        HeightRequest="100" />
+                    <StackLayout
+                        Orientation="Vertical"
+                        VerticalOptions="EndAndExpand"
+                        HorizontalOptions="FillAndExpand"
+                        BackgroundColor="AliceBlue">
+                        <Label
+                            x:Name="p2Name"
+                            FontAttributes="Bold"
+                            HorizontalOptions="CenterAndExpand" />
+                        <View
+                            x:Name="p2t3"
+                            HorizontalOptions="FillAndExpand"
+                            HeightRequest="20"
+                            BackgroundColor="AliceBlue" />
+                        <View
+                            x:Name="p2t2"
+                            HorizontalOptions="FillAndExpand"
+                            HeightRequest="20"
+                            BackgroundColor="AliceBlue" />
+                        <View
+                            x:Name="p2t1"
+                            HorizontalOptions="FillAndExpand"
+                            HeightRequest="20"
+                            BackgroundColor="AliceBlue" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

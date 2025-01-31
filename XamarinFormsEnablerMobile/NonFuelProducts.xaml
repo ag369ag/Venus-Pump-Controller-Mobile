@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.NonFuelProducts"
+             BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <StackLayout Padding="10">
+            <StackLayout x:Name="NonFuelProductView"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Frame CornerRadius="10" Padding="7"  HorizontalOptions="FillAndExpand">
+                    <Entry x:Name="NonFuelSearchBar" TextChanged="OnSearchItem"/>
+                </Frame>
+                <ListView HasUnevenRows="True" x:Name="NonFuelItems" ItemTapped="OnNonFuelFocus" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Frame Padding="10" CornerRadius="10" Margin="1">
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                        <Label Text="{Binding itemDesc}" VerticalOptions="FillAndExpand" HorizontalOptions="StartAndExpand"/>
+                                        <Label Text="{Binding itemPrice}" VerticalOptions="FillAndExpand" HorizontalOptions="EndAndExpand"/>
+                                    </StackLayout>
+                                </Frame>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+            <Button Text="Add to transaction" Clicked="AddItemToTransaction" CornerRadius="10"/>
+            <Button Text="Fuel Products" Clicked="OpenFuelProductsView" CornerRadius="10"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

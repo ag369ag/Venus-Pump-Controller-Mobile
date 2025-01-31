@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jl">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/obj/Release/130/lp/83/jl/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/obj/Release/130/lp/83/jl/res.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

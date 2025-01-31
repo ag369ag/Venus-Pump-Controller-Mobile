@@ -1,0 +1,536 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.TransactionPayment"
+             BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <StackLayout Padding="10"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         AbsoluteLayout.LayoutFlags="All">
+                <!-- ====================================================Transactions =============================================================== -->
+                <StackLayout x:Name="Transactions">
+                    <Frame Padding="0"
+                           CornerRadius="10"
+                           x:Name="PumpStacks"
+                           BorderColor="Black"
+                           HeightRequest="300">
+                        <StackLayout BackgroundColor="DarkSlateGray"
+                                     HorizontalOptions="FillAndExpand">
+
+                            <!-- <Button Text="Test Button" Clicked="ContinueToPaymentOnClick" x:Name="SwichButton" CornerRadius="10"/> -->
+                            <StackLayout Orientation="Horizontal"
+                                         Padding="5"
+                                         HorizontalOptions="FillAndExpand">
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Item"
+                                           WidthRequest="80"
+                                           BackgroundColor="MediumSpringGreen"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Quantity"
+                                           WidthRequest="80"
+                                           BackgroundColor="LightBlue"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Unit Price"
+                                           WidthRequest="80"
+                                           BackgroundColor="Coral"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Total(Php)"
+                                           WidthRequest="80"
+                                           BackgroundColor="DarkGray"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                            </StackLayout>
+
+                            <!-- ======================================================TRANSACTION STACK========================================================= -->
+                            <ListView x:Name="ForPaymentList"
+                                      HasUnevenRows="True"
+                                      ItemsSource="{Binding main.td.GetTransactionItems}"
+                                      ItemTapped="ForPaymentListItemTapped">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <ViewCell>
+                                            <ViewCell.View>
+                                                <StackLayout Orientation="Horizontal"
+                                                             Padding="5"
+                                                             HorizontalOptions="FillAndExpand">
+                                                    <Frame Padding="0"
+                                                           CornerRadius="5"
+                                                           HorizontalOptions="FillAndExpand">
+                                                        <Label Text="{Binding ForPaymentType}"
+                                                               WidthRequest="80"
+                                                               BackgroundColor="MediumSpringGreen"
+                                                               HorizontalTextAlignment="Center"
+                                                               VerticalTextAlignment="Center"
+                                                               VerticalOptions="FillAndExpand"
+                                                               HorizontalOptions="FillAndExpand"
+                                                               MaxLines="2" />
+                                                    </Frame>
+                                                    <Frame Padding="0"
+                                                           CornerRadius="5"
+                                                           HorizontalOptions="FillAndExpand">
+                                                        <Label Text="{Binding ForPaymentFormattedVolume}"
+                                                               WidthRequest="80"
+                                                               BackgroundColor="LightBlue"
+                                                               HorizontalTextAlignment="Center"
+                                                               Padding="5"
+                                                               VerticalOptions="FillAndExpand"
+                                                               HorizontalOptions="FillAndExpand"
+                                                               VerticalTextAlignment="Center" />
+                                                    </Frame>
+                                                    <Frame Padding="0"
+                                                           CornerRadius="5"
+                                                           HorizontalOptions="FillAndExpand">
+                                                        <Label Text="{Binding ForPaymentFormattedUnitPrice}"
+                                                               WidthRequest="80"
+                                                               BackgroundColor="Coral"
+                                                               HorizontalTextAlignment="Center"
+                                                               Padding="5"
+                                                               VerticalOptions="FillAndExpand"
+                                                               HorizontalOptions="FillAndExpand"
+                                                               VerticalTextAlignment="Center" />
+                                                    </Frame>
+                                                    <Frame Padding="0"
+                                                           CornerRadius="5"
+                                                           HorizontalOptions="FillAndExpand">
+                                                        <Label Text="{Binding ForPaymentFormattedTotal}"
+                                                               WidthRequest="80"
+                                                               BackgroundColor="DarkGray"
+                                                               HorizontalTextAlignment="Center"
+                                                               Padding="5"
+                                                               VerticalOptions="FillAndExpand"
+                                                               HorizontalOptions="FillAndExpand"
+                                                               VerticalTextAlignment="Center" />
+                                                    </Frame>
+                                                </StackLayout>
+                                            </ViewCell.View>
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <StackLayout IsVisible="true"
+                                         Orientation="Vertical"
+                                         x:Name="Total">
+                                <StackLayout Orientation="Horizontal"
+                                             HorizontalOptions="End">
+                                    <Label Text="Subtotal: "
+                                           VerticalTextAlignment="Center"
+                                           TextColor="Wheat" />
+                                    <Label Text="{Binding main.td.NewSubtotal}"
+                                           WidthRequest="100"
+                                           VerticalTextAlignment="Center"
+                                           HorizontalTextAlignment="Center"
+                                           
+                                           TextColor="Wheat" />
+                                </StackLayout>
+                                <Frame Padding="1"
+                                       BackgroundColor="LightGreen">
+                                    <StackLayout WidthRequest="100"
+                                                 VerticalOptions="End"
+                                                 Padding="20,0,20,0">
+                                        <Entry Keyboard="Numeric"
+                                               Text=""
+                                               HorizontalTextAlignment="End"
+                                               FontSize="Small"
+                                               x:Name="PaymentValue"
+                                               TextChanged="UpdatePaymentValue" />
+                                    </StackLayout>
+                                </Frame>
+                            </StackLayout>
+                            <StackLayout Orientation="Horizontal"
+                                         BackgroundColor="OrangeRed"
+                                         IsVisible="{Binding main.td.zeroRatedTransactionIdentifier}"
+                                         x:Name="ZeroRatedIndicator">
+                                <Label HorizontalOptions="CenterAndExpand"
+                                       VerticalOptions="CenterAndExpand"
+                                       Text="Zero rated transaction" />
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+                    <!-- ================================================================================================================================= -->
+                    <StackLayout x:Name="VoidAndBackButton">
+                        <ScrollView Orientation="Horizontal">
+                            <StackLayout Orientation="Horizontal">
+                                <Button Text="Void"
+                                        Clicked="VoidButtonOnClicked"
+                                        VerticalOptions="FillAndExpand"
+                                        HorizontalOptions="FillAndExpand"
+                                        CornerRadius="10"
+                                        x:Name="VoidButtonForVisibility" />
+                                <Button Text="Void all"
+                                        Clicked="VoidAllOnClicked"
+                                        VerticalOptions="FillAndExpand"
+                                        HorizontalOptions="FillAndExpand"
+                                        CornerRadius="10"
+                                        x:Name="VoidAllButtonVisibility" />
+                                <Button Text="Discount"
+                                        Clicked="DiscountButtonOnClicked"
+                                        VerticalOptions="FillAndExpand"
+                                        HorizontalOptions="FillAndExpand"
+                                        CornerRadius="10"
+                                        x:Name="DiscountButtonForVisibility" />
+                                <Button Text="Set Quantity"
+                                        Clicked="SetQuantityButtonOnClicked"
+                                        VerticalOptions="FillAndExpand"
+                                        HorizontalOptions="FillAndExpand"
+                                        CornerRadius="10"
+                                        x:Name="SetQTYForVisibility" />
+                                <!-- <Button Text="Price override" Clicked="PriceOverrideButtonOnClicked" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" CornerRadius="10" x:Name="PriceOverrideForVisibility"/> -->
+                                <Button Text="Tax Type"
+                                        VerticalOptions="FillAndExpand"
+                                        HorizontalOptions="FillAndExpand"
+                                        Clicked="TaxTypeButtonOnClick"
+                                        CornerRadius="10"
+                                        x:Name="TaxTypeButtonForVisibility" />
+                                <Button Text="MOP"
+                                        VerticalOptions="FillAndExpand"
+                                        HorizontalOptions="FillAndExpand"
+                                        x:Name="BackToMOPButton"
+                                        Clicked="BackToMOPButtonOnClicked"
+                                        CornerRadius="10" />
+                                <Button Text="Client Info"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="FillAndExpand"
+                                        CornerRadius="10"
+                                        Clicked="GetClientInfo"
+                                        x:Name="ClientInfoButton" />
+                                <Button Text="Back"
+                                        Clicked="BackButtonOnClicked"
+                                        VerticalOptions="FillAndExpand"
+                                        HorizontalOptions="FillAndExpand"
+                                        CornerRadius="10"
+                                        x:Name="BackButton" />
+                            </StackLayout>
+                        </ScrollView>
+                    </StackLayout>
+
+                    <Frame Padding="10"
+                           CornerRadius="10"
+                           BackgroundColor="White"
+                           MinimumHeightRequest="260"
+                           HeightRequest="350"
+                           VerticalOptions="FillAndExpand"
+                           HorizontalOptions="FillAndExpand">
+                        <Frame CornerRadius="10"
+                               Padding="0"
+                               BackgroundColor="Transparent"
+                               VerticalOptions="FillAndExpand"
+                               HorizontalOptions="FillAndExpand">
+
+                            <ScrollView  VerticalOptions="FillAndExpand"
+                                         HorizontalOptions="FillAndExpand">
+                                <StackLayout x:Name="ButtonBasedOnSelected"
+                                             VerticalOptions="FillAndExpand"
+                                             HorizontalOptions="FillAndExpand" />
+                            </ScrollView>
+                        </Frame>
+                    </Frame>
+                </StackLayout>
+
+                <!-- ========================================================= Customer field ================================================================== -->
+                <StackLayout x:Name="CustomerField"
+                             VerticalOptions="CenterAndExpand"
+                             HorizontalOptions="CenterAndExpand"
+                             Orientation="Vertical"
+                             IsVisible="false">
+                    <ScrollView>
+                        <StackLayout>
+
+
+                            <Frame Padding="10"
+                                   CornerRadius="10"
+                                   VerticalOptions="FillAndExpand"
+                                   x:Name="CustomerFieldName">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Customer Name" />
+                                    <Entry x:Name="CustomerName"
+                                           MaxLength="100" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame Padding="10"
+                                   CornerRadius="10"
+                                   x:Name="CustomerFieldIDNumber"
+                                   VerticalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Customer ID Number" />
+                                    <Entry x:Name="CustomerIDNumber"
+                                           MaxLength="100" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame Padding="10"
+                                   CornerRadius="10"
+                                   x:Name="CustomerFieldAddress"
+                                   VerticalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Customer Address" />
+                                    <Entry x:Name="CustomerAddress"
+                                           MaxLength="100" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame Padding="10"
+                                   CornerRadius="10"
+                                   x:Name="CustomerFieldBusinessStyle"
+                                   VerticalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Business Style" />
+                                    <Entry x:Name="CustomerBusinessStyle"
+                                           MaxLength="100" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame Padding="10"
+                                   CornerRadius="10"
+                                   x:Name="CustomerFieldTIN"
+                                   VerticalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="TIN Number" />
+                                    <Entry x:Name="CustomerTIN"
+                                           MaxLength="19" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame Padding="10"
+                                   CornerRadius="10"
+                                   x:Name="CustomerFieldGiftCert"
+                                   VerticalOptions="FillAndExpand"
+                                   WidthRequest="270">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Gift Cert #" />
+                                    <Entry x:Name="GiftCertNumber" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame Padding="10"
+                                   CornerRadius="10"
+                                   x:Name="CustomerFieldCardNumber"
+                                   VerticalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Card Number" />
+                                    <Entry x:Name="CustomerCardNumber"
+                                           MaxLength="25" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldApprovalCode"
+                                   VerticalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Approval Code" />
+                                    <Entry x:Name="CustomerApprovalCode"
+                                           MaxLength="50" />
+                                </StackLayout>
+                            </Frame>
+                            <!-- SOLO PARENT FIELDS -->
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldParentName"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Parent name" />
+                                    <Entry x:Name="CustomerParentName" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldSPICNumber"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="SPIC Number" />
+                                    <Entry x:Name="CustomerSPICNumber" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldChildName"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Child name" />
+                                    <Entry x:Name="CustomerChildName" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldChildDOB"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Child date of birth" />
+                                    <DatePicker x:Name="CustomerChildDOB" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldChildAge"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="Child age" />
+                                    <Entry x:Name="CustomerChildAge"
+                                           Keyboard="Numeric" />
+                                </StackLayout>
+                            </Frame>
+
+                            <!-- NATIONAL ATHLETE AND COACH -->
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldNAACName"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="National athlete/coach name" />
+                                    <Entry x:Name="CustomerNAACName" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame CornerRadius="10"
+                                   Padding="10"
+                                   x:Name="CustomerFieldPNSTMNumber"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <StackLayout WidthRequest="270">
+                                    <Label Text="PNSTM Number" />
+                                    <Entry x:Name="CustomerPNSTMNumber" />
+                                </StackLayout>
+                            </Frame>
+
+
+                            <StackLayout HeightRequest="15" />
+                            <StackLayout Orientation="Horizontal"
+                                         HorizontalOptions="Center"
+                                         Margin="0,0,0,20">
+                                <StackLayout>
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="ConfirmClientInfo" />
+                                    </StackLayout.GestureRecognizers>
+                                    <Frame Padding="10"
+                                           BackgroundColor="AliceBlue"
+                                           HorizontalOptions="CenterAndExpand"
+                                           CornerRadius="10">
+                                        <Label Text="Confirm" />
+                                    </Frame>
+                                </StackLayout>
+
+                                <StackLayout>
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="CloseClientField" />
+                                    </StackLayout.GestureRecognizers>
+                                    <Frame Padding="10"
+                                           BackgroundColor="AliceBlue"
+                                           HorizontalOptions="CenterAndExpand"
+                                           CornerRadius="10">
+                                        <Label Text="Close" />
+                                    </Frame>
+                                </StackLayout>
+
+                            </StackLayout>
+                        </StackLayout>
+                    </ScrollView>
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout x:Name="loginDialog"
+                         IsVisible="false"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand"
+                         AbsoluteLayout.LayoutFlags="All"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1">
+                <Frame HorizontalOptions="FillAndExpand"
+                       VerticalOptions="CenterAndExpand"
+                       Margin="50,0,50,0"
+                       Padding="10"
+                       CornerRadius="10"
+                       BackgroundColor="AliceBlue">
+
+                    <StackLayout Orientation="Vertical">
+
+                        <Label Text="Login admin"
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Bold"
+                               FontSize="24"
+                               Margin="0,0,0,10" />
+                        <Frame Padding="5"
+                               CornerRadius="10"
+                               BorderColor="Black"
+                               Margin="0,0,0,10"
+                               HorizontalOptions="FillAndExpand">
+
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="User ID" />
+                                <Entry Margin="10,0,10,0"
+                                       x:Name="userID"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Padding="5"
+                               CornerRadius="10"
+                               BorderColor="Black"
+                               Margin="0,0,0,10"
+                               HorizontalOptions="FillAndExpand">
+
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="User Password" />
+                                <Entry Margin="10,0,10,0"
+                                       x:Name="userPass"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand">
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+                            <Button Text="Login"
+                                    CornerRadius="10"
+                                    Clicked="ConfirmAdmin" />
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+                            <Button Text="Cancel"
+                                    CornerRadius="10"
+                                    Clicked="CancelLogin" />
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+
+                        </StackLayout>
+
+
+                    </StackLayout>
+
+                </Frame>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

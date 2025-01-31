@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.SetupPrinterPage">
+    <ContentPage.Content>
+        <StackLayout Padding="10" BackgroundColor="AliceBlue" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <Frame CornerRadius="10" Padding="10"  WidthRequest="250" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="SeaGreen">
+                <StackLayout>
+                    <Label Text="Set up socket printer"
+                           TextColor="White"
+                           FontSize="Medium"
+                           FontAttributes="Bold"
+                           VerticalOptions="CenterAndExpand" 
+                           HorizontalOptions="CenterAndExpand" />
+                    <StackLayout HeightRequest="10"/>
+                    <Frame Padding="10" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="Printer IP"/>
+                            <Entry HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center"
+                                   x:Name="PrinterIP"
+                                   Text="{Binding main.appSettings.printerIPValue}"/>
+                        </StackLayout>
+                    </Frame>
+                    <StackLayout HeightRequest="10"/>
+                    <Frame Padding="10" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="Printer Port"/>
+                            <Entry HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center"
+                                   x:Name="PrinterPort"
+                                   Text="{Binding main.appSettings.printerPortValue}"/>
+                        </StackLayout>
+                    </Frame>
+                    <StackLayout HeightRequest="10"/>
+                    <Button Text="Save" CornerRadius="10" Clicked="SavePrinterInfo"/>
+                    <StackLayout HeightRequest="10"/>
+                    <Button Text="Test" CornerRadius="10" Clicked="TestSocketPrinter"/>
+                    
+                </StackLayout>
+            </Frame>
+            
+            <Button Text="Back" CornerRadius="10" WidthRequest="250" VerticalOptions="End" HorizontalOptions="Center" Clicked="BackToPOSConfig"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

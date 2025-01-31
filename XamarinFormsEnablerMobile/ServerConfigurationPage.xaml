@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.ServerConfigurationPage"
+             BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <ScrollView VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Padding="20" Orientation="Vertical">
+            <StackLayout>
+                <Label HorizontalOptions="Center" x:Name="Serial" Text="Device ID"/>
+                <!-- <Label Text="Current server: " HorizontalOptions="Center" x:Name="CurrentServer"/> -->
+                <Frame Padding="7" CornerRadius="10">
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Laravel API"/>
+                        <Switch Toggled="SetAPIType" HorizontalOptions="EndAndExpand" x:Name="APISwitch"/>
+                    </StackLayout>
+                </Frame>
+                <Frame Padding="7" CornerRadius="10">
+                    <StackLayout Orientation="Horizontal">
+                        <StackLayout>
+                            <Label Text="API Server"/>
+                            <Entry WidthRequest="200" Placeholder="..." x:Name="ServerField" HorizontalTextAlignment="Center" Text="172.16.12.235"/>
+                        </StackLayout>
+                        <StackLayout>
+                            <Label Text="API Port"/>
+                            <Entry WidthRequest="70" x:Name="ConfigurationPort" HorizontalTextAlignment="Start" Placeholder="..." Text="8700"/>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+                <Frame Padding="7" CornerRadius="10">
+                    <StackLayout>
+                        <Label Text="Enabler Server"/>
+                        <Entry WidthRequest="270"
+                               Placeholder="..."
+                               x:Name="EnablerServerField"
+                               HorizontalTextAlignment="Center"
+                               Text="{Binding main.terminalServer}"/>
+                    </StackLayout>
+                </Frame>
+                <Frame Padding="7" CornerRadius="10">
+                    <StackLayout>
+                        <Label Text="Enabler Terminal"/>
+                        <Entry WidthRequest="270" Placeholder="..." x:Name="EnablerTerminalField" HorizontalTextAlignment="Center" Text="2"/>
+                    </StackLayout>
+                </Frame>
+                <Frame Padding="7" CornerRadius="10">
+                    <StackLayout>
+                        <Label Text="Enabler Password"/>
+                        <Entry WidthRequest="270" Placeholder="..." x:Name="EnablerPasswordField" HorizontalTextAlignment="Center" IsPassword="True" Text="222222"/>
+                    </StackLayout>
+                </Frame>
+                <Frame Padding="7" CornerRadius="10">
+                    <StackLayout>
+                        <Label Text="Admin ID"/>
+                        <Entry WidthRequest="270" Placeholder="..." x:Name="AdminIDField" HorizontalTextAlignment="Center" Text="1"/>
+                    </StackLayout>
+                </Frame>
+                <Frame Padding="7" CornerRadius="10">
+                    <StackLayout>
+                        <Label Text="Admin Password"/>
+                        <Entry WidthRequest="270" Placeholder="..." x:Name="AdminPasswordField" HorizontalTextAlignment="Center" IsPassword="True" Text="1"/>
+                    </StackLayout>
+                </Frame>
+                <Button Text="Save" Clicked="EnablerConfigurationButtonOnClick" CornerRadius="10"/>
+                <Button Text="Close" Clicked="BackToLoginPage" CornerRadius="10"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

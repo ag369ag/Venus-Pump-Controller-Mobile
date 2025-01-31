@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.SettingsPage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="AliceBlue" Padding="10">
+            <Frame CornerRadius="10" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="SeaGreen">
+                <StackLayout>
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                            <Label Text="SocketPrinter" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                            <Switch IsToggled="{Binding  main.appSettings.useSocketPrinter}" x:Name="SocketPrinterSwitch" Toggled="SetSocketPrinterStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                        </StackLayout>
+                    </Frame>
+                    <StackLayout HeightRequest="10"/>
+                    <Frame CornerRadius="10" Padding="10" HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                            <Label Text="Paper Width" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                            <Entry WidthRequest="50"
+                                   TextChanged="SetPaperWidth"
+                                   Keyboard="Numeric"
+                                   Text="{Binding main.appSettings.paperWidth}"/>
+                        </StackLayout>
+                    </Frame>
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                            <Label Text="Require vehicle" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                            <Switch IsToggled="{Binding main.appSettings.requireVehicle}" x:Name="RequireVehicleSwitch" Toggled="SetRequireVehicleStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                        </StackLayout>
+                    </Frame>  
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                            <Label Text="Require attendant" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                            <Switch IsToggled="{Binding main.appSettings.requireAttendant}" x:Name="RequireAttendantSwitch" Toggled="SetRequireAttendantStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                        </StackLayout>
+                    </Frame>
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                            <Label Text="Quick transaction" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                            <Switch IsToggled="{Binding main.appSettings.isQuickTransaction}" x:Name="quickTransactionSwitch" Toggled="SetQuickTransactionStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                        </StackLayout>
+                    </Frame>
+                    <Frame CornerRadius="10"
+                           Padding="10"
+                           VerticalOptions="Start"
+                           HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand"
+                                     VerticalOptions="Center">
+                            <Label Text="Require Tapping"
+                                   HorizontalOptions="StartAndExpand"
+                                   VerticalTextAlignment="Center" />
+                            <Switch IsToggled="{Binding main.appSettings.requireTapping}"
+                                    x:Name="requireTappingSwitch"
+                                    Toggled="SetRequireTappingStatus"
+                                    OnColor="SeaGreen"
+                                    ThumbColor="DarkGray"
+                                    HorizontalOptions="End" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+            <Button Text="Back" CornerRadius="10" VerticalOptions="End" HorizontalOptions="Center" Clicked="BackToPOSConfig"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

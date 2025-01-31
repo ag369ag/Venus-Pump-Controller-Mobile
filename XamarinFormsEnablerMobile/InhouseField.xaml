@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.InhouseField">
+    <ContentPage.Content>
+        <StackLayout Padding="15">
+            <Label Text="Inhouse"
+        VerticalOptions="Start" 
+        HorizontalOptions="CenterAndExpand" />
+            <StackLayout/>
+            <Frame CornerRadius="10">
+                <StackLayout>
+                    <Label Text="Sub account number"/>
+                    <Entry IsPassword="false"
+                   HorizontalTextAlignment="Center"
+                   HorizontalOptions="FillAndExpand"
+                   TextChanged="SaveCurrentText"/>
+                </StackLayout>
+            </Frame>
+            <StackLayout/>
+            <Frame CornerRadius="10"
+                    Padding="10"
+           HorizontalOptions="FillAndExpand"
+           VerticalOptions="FillAndExpand">
+                <StackLayout>
+                    <ScrollView Orientation="Vertical" IsVisible="true" x:Name="SA_List">
+                        <StackLayout x:Name="SubAccountList"/>
+                    </ScrollView>
+                    <ScrollView  IsVisible="false" x:Name="SA_Field">
+                        <StackLayout>
+                            <Frame Padding="10">
+                            <StackLayout>
+                                <Label Text="PO #"/>
+                                <Entry x:Name="PONumField" Keyboard="Numeric"/>
+                            </StackLayout>
+                        </Frame>
+                            <Frame Padding="10">
+                            <StackLayout>
+                                <Label Text="Plate Number"/>
+                                <Entry x:Name="PlateNumField"/>
+                            </StackLayout>
+                        </Frame>
+                            <Frame Padding="10">
+                            <StackLayout>
+                                <Label Text="Odometer"/>
+                                <Entry x:Name="OdomField"/>
+                            </StackLayout>
+                        </Frame>
+                        <Button Text="Save" CornerRadius="10" Clicked="SaveInHouseInfo"/>
+                    </StackLayout>
+                    </ScrollView>
+                </StackLayout>
+            </Frame>
+            <StackLayout/>
+            <Button Text="Close" CornerRadius="10" Clicked="BackToTransaction"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

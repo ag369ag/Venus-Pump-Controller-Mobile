@@ -1,0 +1,493 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.FuelProducts"
+             BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <StackLayout Padding="10"
+                         Orientation="Vertical"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         x:Name="MainView">
+                <Frame Padding="3"
+                       CornerRadius="3">
+                    <StackLayout Orientation="Horizontal">
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="StartAndExpand">
+                            <Label Text="Pump Server: " />
+                            <Frame Padding="3,0,3,3"
+                                   BackgroundColor="Green"
+                                   WidthRequest="10"
+                                   HeightRequest="5"
+                                   CornerRadius="10"
+                                   x:Name="PumpServerStatus">
+                                <Label x:Name="PumpServerIconStatus"
+                                       FontAttributes="Bold"
+                                       FontSize="15"
+                                       TextColor="White"
+                                       HorizontalOptions="CenterAndExpand"
+                                       VerticalOptions="CenterAndExpand" />
+                            </Frame>
+                            
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="POS Server:" />
+                            <Frame Padding="3,0,3,3"
+                                   BackgroundColor="Green"
+                                   WidthRequest="10"
+                                   HeightRequest="5"
+                                   CornerRadius="10"
+                                   x:Name="POSServerStatus">
+                                <Label x:Name="POSServerIconStatus"
+                                       FontAttributes="Bold"
+                                       FontSize="15"
+                                       TextColor="White"
+                                       HorizontalOptions="CenterAndExpand"
+                                       VerticalOptions="CenterAndExpand" />
+                            </Frame>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+
+                <Frame HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       BackgroundColor="AliceBlue"
+                       HasShadow="False"
+                       BorderColor="Transparent"
+                       Margin="0,0,0,10"
+                       CornerRadius="10"
+                       Padding="0">
+                    <StackLayout HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="FillAndExpand">
+                        <Grid HorizontalOptions="FillAndExpand"
+                              VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <CollectionView x:Name="pumpCollections"
+                                            ItemsSource="{Binding myPumpController.pumpCollectionObs}"
+                                            SelectionMode="None"
+                                            >
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical"
+                                                     Span="2"
+                                                     VerticalItemSpacing="6"
+                                                     HorizontalItemSpacing="6" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame Padding="10"
+                                               CornerRadius="10">
+                                            <StackLayout x:Name="{Binding pumpPName}"
+                                                         AutomationId="{Binding pumpPName}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="PumpItemCardSelected" />
+                                                </StackLayout.GestureRecognizers>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Image Source="{Binding pumpImageString}"
+                                                           HeightRequest="80"
+                                                           WidthRequest="40"
+                                                           Aspect="Fill"
+                                                           Grid.Column="0" />
+
+                                                    <StackLayout Orientation="Vertical"
+                                                                 VerticalOptions="FillAndExpand"
+                                                                 HorizontalOptions="CenterAndExpand"
+                                                                 BackgroundColor="AliceBlue"
+                                                                 Grid.Column="1">
+
+                                                        <Label Text="{Binding pumpPName}"
+                                                               FontAttributes="Bold" />
+
+                                                        <ContentView VerticalOptions="FillAndExpand"
+                                                                     BackgroundColor="{Binding stackIndicator}" />
+
+
+
+                                                    </StackLayout>
+                                                </Grid>
+                                            </StackLayout>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <StackLayout x:Name="MainScreenButtons"
+                             Orientation="Vertical">
+
+                    <StackLayout Orientation="Horizontal">
+
+                        <Button Text="All auth"
+                                Clicked="AuthAllButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+
+                        <Button Text="All stop"
+                                Clicked="StopAllButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Button Text="Products"
+                                Clicked="OpenNonFuelView"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                        <Button Text="Payment"
+                                Clicked="ContinueToPaymentOnClick"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Button Text="Safedrop"
+                                Clicked="SafedropButtononClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                        <Button Text="POS Config"
+                                Clicked="ShowPOSConfig"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Button Text="About"
+                                Clicked="AboutButtonClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                        <Button Text="Logout"
+                                Clicked="LogoutButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                </StackLayout>
+            </StackLayout>
+
+            <Frame x:Name="dialog"
+                   IsVisible="false"
+                   Padding="10"
+                   AbsoluteLayout.LayoutFlags="All"
+                   AbsoluteLayout.LayoutBounds="0.5,0.5,0.9,0.9"
+                   CornerRadius="10"
+                   BackgroundColor="AliceBlue">
+
+                <StackLayout Orientation="Vertical">
+                    <Label x:Name="PumpIdentifier"
+                           HorizontalOptions="CenterAndExpand"
+                           Margin="0,0,0,5"
+                           FontAttributes="Bold" />
+                    <Frame Padding="0"
+                           CornerRadius="10"
+                           BorderColor="Black"
+                           VerticalOptions="FillAndExpand"
+                           HorizontalOptions="FillAndExpand">
+                        <StackLayout BackgroundColor="Aqua">
+                            <StackLayout Orientation="Horizontal"
+                                         Padding="5"
+                                         HorizontalOptions="FillAndExpand">
+
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Item"
+                                           WidthRequest="80"
+                                           BackgroundColor="MediumSpringGreen"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Quantity"
+                                           WidthRequest="80"
+                                           BackgroundColor="LightBlue"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Unit Price"
+                                           WidthRequest="80"
+                                           BackgroundColor="Coral"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                                <Frame Padding="0"
+                                       CornerRadius="5"
+                                       HorizontalOptions="FillAndExpand">
+                                    <Label Text="Total"
+                                           WidthRequest="80"
+                                           BackgroundColor="DarkGray"
+                                           HorizontalTextAlignment="Center"
+                                           Padding="5"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand" />
+                                </Frame>
+                            </StackLayout>
+                            <ListView x:Name="TransactionLists"
+                                      HasUnevenRows="True"
+                                      ItemsSource="{Binding myPumpController.pumpTransactionCollection}"
+                                      ItemTapped="OnTransactionSelected"
+                                      HeightRequest="0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <ViewCell>
+                                            <ViewCell.View>
+                                                <Grid>
+                                                    <StackLayout Orientation="Horizontal"
+                                                                 Padding="5">
+                                                        <Frame Padding="0"
+                                                               CornerRadius="5"
+                                                               HorizontalOptions="FillAndExpand">
+                                                            <Label Text="{Binding TransactionType}"
+                                                                   WidthRequest="80"
+                                                                   BackgroundColor="MediumSpringGreen"
+                                                                   HorizontalTextAlignment="Center"
+                                                                   VerticalTextAlignment="Center"
+                                                                   VerticalOptions="FillAndExpand"
+                                                                   HorizontalOptions="FillAndExpand" />
+                                                        </Frame>
+                                                        <Frame Padding="0"
+                                                               CornerRadius="5"
+                                                               HorizontalOptions="FillAndExpand">
+                                                            <Label Text="{Binding TransactionFormattedVolume}"
+                                                                   WidthRequest="80"
+                                                                   BackgroundColor="LightBlue"
+                                                                   HorizontalTextAlignment="Center"
+                                                                   Padding="5"
+                                                                   VerticalOptions="FillAndExpand"
+                                                                   HorizontalOptions="FillAndExpand" />
+                                                        </Frame>
+                                                        <Frame Padding="0"
+                                                               CornerRadius="5"
+                                                               HorizontalOptions="FillAndExpand">
+                                                            <Label Text="{Binding TransactionFormattedUnitPrice}"
+                                                                   WidthRequest="80"
+                                                                   BackgroundColor="Coral"
+                                                                   HorizontalTextAlignment="Center"
+                                                                   Padding="5"
+                                                                   VerticalOptions="FillAndExpand"
+                                                                   HorizontalOptions="FillAndExpand" />
+                                                        </Frame>
+                                                        <Frame Padding="0"
+                                                               CornerRadius="5"
+                                                               HorizontalOptions="FillAndExpand">
+                                                            <Label Text="{Binding TransactionFormattedTotal}"
+                                                                   WidthRequest="80"
+                                                                   BackgroundColor="DarkGray"
+                                                                   HorizontalTextAlignment="Center"
+                                                                   Padding="5"
+                                                                   VerticalOptions="FillAndExpand"
+                                                                   HorizontalOptions="FillAndExpand" />
+                                                        </Frame>
+                                                    </StackLayout>
+                                                </Grid>
+                                            </ViewCell.View>
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackLayout>
+                    </Frame>
+
+
+                    <!-- ================================================THIS IS THE BUTTONS======================================================= -->
+
+                    <StackLayout Orientation="Horizontal">
+
+                        <Button Text="Authorize"
+                                Clicked="AuthorizeButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+
+                        <Button Text="Reserve"
+                                Clicked="ReserveButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Button x:Name="PauseButton"
+                                Text="Pause"
+                                Clicked="PauseButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                        <Button Text="Stop"
+                                Clicked="StopButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Button x:Name="BlockButton"
+                                Text="Block"
+                                Clicked="BlockButtonOnClicked"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                        <Button x:Name="driveOffButton"
+                                Text="Drive off"
+                                Clicked="DriveOffTransaction"
+                                Padding="0"
+                                CornerRadius="10"
+                                IsEnabled="False"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Button x:Name="testDeliveryButton"
+                                Text="Test Delivery"
+                                Clicked="TestDeliveryOnClick"
+                                Padding="0"
+                                CornerRadius="10"
+                                IsEnabled="False"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                        <Button x:Name="transactButton"
+                                Text="Transact"
+                                Clicked="AddToTransactionOnClick"
+                                Padding="0"
+                                CornerRadius="10"
+                                IsEnabled="False"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <!-- ================================================THIS IS THE BUTTONS======================================================= -->
+
+                    <Button Padding="0"
+                            Text="Close"
+                            HorizontalOptions="Center"
+                            CornerRadius="10"
+                            Clicked="CloseDialog" />
+                </StackLayout>
+
+
+            </Frame>
+
+            <StackLayout x:Name="loginDialog"
+                         IsVisible="false"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand"
+                         AbsoluteLayout.LayoutFlags="All"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1">
+                <Frame HorizontalOptions="FillAndExpand"
+                       VerticalOptions="CenterAndExpand"
+                       Margin="50,0,50,0"
+                       Padding="10"
+                       CornerRadius="10"
+                       BackgroundColor="AliceBlue">
+
+                    <StackLayout Orientation="Vertical">
+
+                        <Label Text="Login admin"
+                               HorizontalOptions="CenterAndExpand"
+                               FontAttributes="Bold"
+                               FontSize="24"
+                               Margin="0,0,0,10" />
+                        <Frame Padding="5"
+                               CornerRadius="10"
+                               BorderColor="Black"
+                               Margin="0,0,0,10"
+                               HorizontalOptions="FillAndExpand">
+
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="User ID" />
+                                <Entry Margin="10,0,10,0"
+                                       x:Name="userID"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Padding="5"
+                               CornerRadius="10"
+                               BorderColor="Black"
+                               Margin="0,0,0,10"
+                               HorizontalOptions="FillAndExpand">
+
+                            <StackLayout Orientation="Vertical">
+                                <Label Text="User Password" />
+                                <Entry Margin="10,0,10,0"
+                                       x:Name="userPass"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand">
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+                            <Button Text="Login"
+                                    CornerRadius="10"
+                                    Clicked="ConfirmAdmin" />
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+                            <Button Text="Cancel"
+                                    CornerRadius="10"
+                                    Clicked="CancelLogin" />
+
+                            <StackLayout HorizontalOptions="FillAndExpand" />
+
+
+                        </StackLayout>
+
+
+                    </StackLayout>
+
+                </Frame>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

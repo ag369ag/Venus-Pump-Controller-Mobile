@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Text;
+
+namespace XamarinFormsEnablerMobile
+{
+    public class SettingsClass : INotifyPropertyChanged
+    {
+
+        private string server;
+        private bool useSocket;
+        private int width;
+        private bool vehicle;
+        private bool attendant;
+        private bool tapping;
+        private bool quickTransaction;
+        private int printerPort;
+        private string printerIP;
+        public string enablerServer { get { return server; } set { server = value; OnPropertyChanged(); } }
+        public bool useSocketPrinter { get { return useSocket; } set {  useSocket = value; OnPropertyChanged(); } }
+        public int paperWidth { get { return width; } set { width = value; OnPropertyChanged(); } }
+        public bool requireVehicle { get { return vehicle; } set { vehicle = value; OnPropertyChanged(); } }
+        public bool requireAttendant { get { return attendant; } set {  attendant = value; OnPropertyChanged(); } }
+        public bool requireTapping { get { return tapping; } set {  tapping = value; OnPropertyChanged(); } }
+        public bool isQuickTransaction { get { return quickTransaction; } set {  quickTransaction = value; OnPropertyChanged(); } }
+        public int printerPortValue { get { return printerPort; } set {  printerPort = value; OnPropertyChanged(); } }
+        public string printerIPValue { get { return printerIP; } set { printerIP = value; OnPropertyChanged(); } }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Console.WriteLine("DATA SHOULD UPDATE");
+        }
+
+        
+
+
+
+    }
+}

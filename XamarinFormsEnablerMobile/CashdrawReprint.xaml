@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.CashdrawReprint">
+    <ContentPage.Content>
+        <StackLayout Padding="10" BackgroundColor="AliceBlue">
+            <Label Text="Reprint Cashdraw Report"
+                   FontAttributes="Bold"
+                   FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand" />
+            <Frame Padding="10" CornerRadius="10" BackgroundColor="White" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Frame Padding="0" CornerRadius="10" BackgroundColor="Transparent" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <ScrollView Orientation="Vertical" Padding="0">
+                        <StackLayout x:Name="CashdrawList"/>
+                    </ScrollView>
+                </Frame>
+            </Frame>
+            <Button Text="Close" VerticalOptions="End" CornerRadius="10" Padding="10" Clicked="BackToPOSConfig"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

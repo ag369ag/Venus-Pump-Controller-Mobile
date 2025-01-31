@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.FinalWindow">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout BackgroundColor="AliceBlue"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand"
+                         Padding="15">
+            <Frame CornerRadius="10" Padding="10" BackgroundColor="SeaGreen" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                <StackLayout>
+                    <Label Text="Customer Informations" TextColor="AliceBlue" FontSize="Medium" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
+                    <Frame Padding="10" CornerRadius="10" VerticalOptions="FillAndExpand" x:Name="CustomerFieldName">
+                        <StackLayout WidthRequest="270">
+                            <Label Text="Customer Name"/>
+                            <Entry x:Name="CustomerName"/>
+                        </StackLayout>
+                    </Frame>
+
+                    <Frame Padding="10" CornerRadius="10" x:Name="CustomerFieldAddress" VerticalOptions="FillAndExpand">
+                        <StackLayout>
+                            <Label Text="Customer Address"/>
+                            <Entry x:Name="CustomerAddress"/>
+                        </StackLayout>
+                    </Frame>
+
+                    <Frame Padding="10" CornerRadius="10" x:Name="CustomerFieldBusinessStyle" VerticalOptions="FillAndExpand">
+                        <StackLayout>
+                            <Label Text="Business Style"/>
+                            <Entry x:Name="CustomerBusinessStyle"/>
+                        </StackLayout>
+                    </Frame>
+                    <StackLayout HeightRequest="5"/>
+                    <Button Text="Attendant" CornerRadius="10" Clicked="SelectAttendant"/>
+                    <StackLayout HeightRequest="5"/>
+                    <Button Text="Vehicle Type" CornerRadius="10" Clicked="ShowVehicleTypes"/>
+                    <StackLayout HeightRequest="10"/>
+                    <Label Text="Final Payment Information" TextColor="AliceBlue" FontSize="Medium" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="MOP" x:Name="LastMOPName" HorizontalOptions="FillAndExpand" TextColor="AliceBlue" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Label Text="Amount" x:Name="LastMOPAmount" HorizontalOptions="FillAndExpand" TextColor="AliceBlue" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                    </StackLayout>
+                    <StackLayout HeightRequest="5"/>
+                    <Button Text="Proceed" CornerRadius="10" Clicked="ProceedToPrinting"/>
+                    <StackLayout HeightRequest="5"/>
+                    <Button Text="Cancel" CornerRadius="10" Clicked="CancelFinalPayment"/>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

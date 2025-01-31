@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.ReprintReceipt"
+             BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <StackLayout Padding="20">
+            <Frame CornerRadius="10" BackgroundColor="SeaGreen">
+                <StackLayout Orientation="Horizontal">
+                    <DatePicker DateSelected="GetDateSelected" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" TextColor="AliceBlue" />
+                    <!-- <Button Text="Search" CornerRadius="10" Clicked="SearchTransaction"/> -->
+                </StackLayout>
+            </Frame>
+            <StackLayout HeightRequest="1"/>
+            <Frame HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" CornerRadius="10" BackgroundColor="SeaGreen">
+                <Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+                    <ScrollView Orientation="Vertical">
+                        <StackLayout HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand"
+                             x:Name="TransactionItems" >
+                        </StackLayout>
+                    </ScrollView>
+                </Frame>
+            </Frame>
+            <Button Text="Back" CornerRadius="10" Clicked="BackToPOSConfig" VerticalOptions="End"/>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
