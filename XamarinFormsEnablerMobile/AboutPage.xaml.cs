@@ -20,8 +20,8 @@ namespace XamarinFormsEnablerMobile
             InitializeComponent();
 
             Forecourt forecourt = mainPage.forecourt;
-            enablerVersion.Text = $"Enabler Server Version: {forecourt.ServerInformation.ServerVersion}";
-            ActiveXVersion.Text = $"Enabler API Version: {forecourt.ServerInformation.ApiVersion}.0";
+           // enablerVersion.Text = $"Enabler Server Version: {forecourt.ServerInformation.ServerVersion}";
+           // ActiveXVersion.Text = $"Enabler API Version: {forecourt.ServerInformation.ApiVersion}.0";
             //otherVersion.Text = $"API Version:  {forecourt.ServerInformation.ApiVersion}";
 
             Console.WriteLine($"server name {forecourt.ServerInformation.ServerName}");

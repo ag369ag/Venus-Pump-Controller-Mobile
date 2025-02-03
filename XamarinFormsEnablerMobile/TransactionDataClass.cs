@@ -289,7 +289,7 @@ namespace XamarinFormsEnablerMobile
             SetDiscountType(discount.presetDiscountType);
             SetDiscountValue(discount.presetValue);
             SetPresetID(discount.presetId);
-            double discVal = GetNonBIRDiscValue(discount);
+            double discVal = Math.Abs(GetNonBIRDiscValue(discount)) * -1;
 
             SetDiscountedValue(discVal);
             OnPropertyChanged();
@@ -303,6 +303,7 @@ namespace XamarinFormsEnablerMobile
             SetPresetID(discount.SAID);
             double discVal = Math.Abs(GetNonBIRDiscValue(discount)) * -1;
 
+            Console.WriteLine($"SUB ACCOUNT DISCOUNT VALUE IS {discVal}");
             SetDiscountedValue(discVal);
             OnPropertyChanged();
         }
