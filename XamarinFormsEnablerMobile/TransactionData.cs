@@ -29,10 +29,9 @@ namespace XamarinFormsEnablerMobile
         }
 
         MainPage main;
-        private bool isZeroRatedTransaction = false;
+        public bool isZeroRatedTransaction = false;
         private bool isSCPWDDiscounted = false;
         private string subTotal = "0.00";
-
         public bool zeroRatedTransactionIdentifier
         {
             get { return isZeroRatedTransaction; }
@@ -206,9 +205,18 @@ namespace XamarinFormsEnablerMobile
         }
 */
         public void AddTransactionItem(int itemType, int itemID, int itemTaxID, string itemDescription, double itemUnitPrice, double itemQuantity, double itemTotal, string displayUnitPrice, string displayQuantity, string displayTotal,
-           bool isDiscounted, bool isBIRDiscount, int discountType, double discountValue, double discountedValue, int presetID, string gcNumber)
+           bool isDiscounted, bool isBIRDiscount, int discountType, double discountValue, double discountedValue, int presetID, string gcNumber, int discountedItemIndex = 999)
         {
-            transactionsItem.Add(new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemUnitPrice, itemTotal, gcNumber, itemTotal.ToString()));
+            TransactionDataClass newItem = new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemUnitPrice, itemTotal, gcNumber, itemTotal.ToString());
+            if (discountedItemIndex.Equals(999))
+            {
+                transactionsItem.Add(newItem);
+            }
+            else
+            {
+                transactionsItem.Insert(discountedItemIndex, newItem);
+            }
+           // transactionsItem.Add(new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemUnitPrice, itemTotal, gcNumber, itemTotal.ToString()));
             NewSubtotal = ComputeSubtotal().ToString("#,##0.00");
             OnPropertyChanged();
         }
@@ -324,6 +332,7 @@ namespace XamarinFormsEnablerMobile
             double discountValue = 0;
             double baseValue = transItem.GetUnitPrice() / 1.12;
             bool isBIRDisc = true;
+            int itemIndex = GetTransactionItems.IndexOf(transItem) + 1;
             switch (discount.presetDiscountId)
             {
                 case 1:
@@ -377,18 +386,29 @@ namespace XamarinFormsEnablerMobile
 
             if (discount.presetDiscountId == 6 || discount.presetDiscountId == 8)
             {
-                AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, NegativeDiscount, 1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "");
+                AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", itemIndex);
+                transItem.ApplyNonBIRDiscount(discount);
                 return;
             }
 
             if (discount.presetDiscountId == 7)
             {
                 string forDisplayUnitPrice = $"P{1.ToString("#,##0.00")}";
-                AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, -1, discountValue, NegativeDiscount, forDisplayUnitPrice, forDisplayDiscount.Remove(0), forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "");
+                AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, -1, discountValue, NegativeDiscount, forDisplayUnitPrice, forDisplayDiscount.Remove(0), forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", itemIndex);
+                transItem.ApplyNonBIRDiscount(discount);
                 return;
             }
             Console.WriteLine($"Negative discount is {NegativeDiscount}");
-            AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "");
+            if (discount.presetName.ToLower().Contains("naac"))
+            {
+
+                AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", itemIndex);
+            }
+            else
+            {
+                AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", itemIndex);
+
+            }    
             OnPropertyChanged();
         }
 
@@ -423,7 +443,7 @@ namespace XamarinFormsEnablerMobile
             isZeroRatedTransaction = false;
             NewSubtotal = ComputeSubtotal().ToString("#,##0.00");
         }
-        public void SaveInhouseData(string name, int number, int po, string plateNum, string odo1)
+        public void SaveInhouseData(string name, int number, string po, string plateNum, string odo1)
         {
             inhouseData = new InhouseDataClass(name, number, po, plateNum, odo1);
         }
@@ -735,7 +755,14 @@ namespace XamarinFormsEnablerMobile
             {
                 if (transItem.GetItemType() != 7 && transItem.GetItemType() != 8 && transItem.GetItemType() != 10)
                 {
-                    forPrintString.Add(transItem.GetItemDescription());
+                    if(transItem.GetItemType() == 52|| transItem.GetItemType() == 54)
+                    {
+                        forPrintString.Add($" {transItem.GetItemDescription()}");
+                    }
+                    else
+                    {
+                        forPrintString.Add(transItem.GetItemDescription());
+                    }
                 }
 
 
@@ -905,8 +932,33 @@ namespace XamarinFormsEnablerMobile
                 AddSideString("Total Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
 
                 AddCenterString("");
+                string firstPartAccountName = GetInhouseData().GetAccountName();
+                string secondPartName = "";
+                int lengthWithLeftString = main.appSettings.paperWidth;
+                Console.WriteLine($"Length of left string is {lengthWithLeftString}");
+                Console.WriteLine($"Length of name is {firstPartAccountName.Length}");
+                Console.WriteLine($"Result of if statement is {firstPartAccountName.Length + 18 > lengthWithLeftString}");
+                if(firstPartAccountName.Length + 18 > lengthWithLeftString)
+                {
+                    firstPartAccountName = "";
+                    foreach(string namePart in GetInhouseData().GetAccountName().Split(' '))
+                    {
+                        if((firstPartAccountName + namePart + "").Length + 18 < lengthWithLeftString)
+                        {
+                            firstPartAccountName += (namePart + " ");
+                        }
+                        else
+                        {
+                            secondPartName += (namePart + " ");
+                        }
+                    }
+                }
 
-                AddSideString($"AccNm          : {GetInhouseData().GetAccountName()}", "");
+                AddSideString($"AccNm          : {firstPartAccountName}", "");
+                if(secondPartName.Length > 0)
+                {
+                    AddSideString(new string(' ', 18) + secondPartName, "");
+                }
                 AddSideString($"Acc#           : {GetInhouseData().GetAccountNumber()}", "");
                 AddSideString($"PO#            : {GetInhouseData().GetPONum()}", "");
                 AddSideString($"Plate #        : {GetInhouseData().GetPlateNumber()}", "");
@@ -1151,7 +1203,12 @@ namespace XamarinFormsEnablerMobile
 
         private double GetTotalValueByTaxID(double taxID)
         {
-            return transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => a.GetTotal());
+            double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
+            double witouthBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
+            //double amount = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
+            //return transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - a.GetDiscountedValue()));
+            return withBIRDisc + witouthBIRDisc;
+            //return amount;
         }
 
         private string FormatReceiptMoneyValue(double value)
@@ -1194,14 +1251,16 @@ namespace XamarinFormsEnablerMobile
             }
         }
 
-        public void AddInhouseDiscount(InhouseField.SubAccountDiscount discount)
+        public void AddInhouseDiscount(InhouseField.SubAccountDiscount discount, InhouseDataClass inhouseValues)
         {
             double discVal = 0;
+            SaveInhouseData(inhouseValues.GetAccountName(), inhouseValues.GetAccountNumber(), inhouseValues.GetPONum(), inhouseValues.GetPlateNumber(), inhouseValues.GetOdometer());
             if (discount.SADItemType == 2)
             {
                 while(GetTransactionItems.Where(a=>a.GetItemDescription().ToLower().Equals(discount.SAGradeName) && !a.GetIsDiscounted).Count() > 0)
                 {
                     discVal = GetTransactionItems.Where(a => a.GetItemDescription().ToLower().Equals(discount.SAGradeName) && !a.GetIsDiscounted).First().GetNonBIRDiscValue(discount);
+                    AddSubAccountDiscount(discount, GetTransactionItems.Where(a => a.GetItemDescription().ToLower().Equals(discount.SAGradeName) && !a.GetIsDiscounted).First(), discVal);
                 }
             }
             else
@@ -1209,8 +1268,51 @@ namespace XamarinFormsEnablerMobile
                 while(GetTransactionItems.Where(a=>a.GetItemType().Equals(14) && !a.GetIsDiscounted).Count() > 0)
                 {
                     discVal = GetTransactionItems.Where(a => a.GetItemType().Equals(14) && !a.GetIsDiscounted).First().GetNonBIRDiscValue(discount);
+                    AddSubAccountDiscount(discount, GetTransactionItems.Where(a => a.GetItemType().Equals(14) && !a.GetIsDiscounted).First(), discVal);
                 }
             }
+        }
+
+        private bool AddSubAccountDiscount(InhouseField.SubAccountDiscount subAccDisc, TransactionDataClass trans, double discountValue)
+        {
+            string desc = "Acct Disc - Product";
+            if (trans.GetItemType().Equals(2))
+            {
+                desc = $"Acct Disc - {trans.GetItemDescription()}";
+            }
+            double NegativeDiscount = Math.Abs(discountValue) * -1;
+            string forDisplayDiscount = $"P{Math.Abs(discountValue).ToString("#,##0.00")}";
+            string forDisplayQuantity = (1).ToString("#,##0.00");
+            int itemIndex = GetTransactionItems.IndexOf(trans) + 1;
+            switch (subAccDisc.SADDiscountType)
+            {
+
+                case 1:
+                    {
+                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, discountValue, 0, 0, "", itemIndex);
+                       // trans.ApplyNonBIRDiscount(subAccDisc);
+                    }
+                    break;
+                case 2:
+                    {
+                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, -1, trans.GetQuantity(), discountValue, $"P{(-1).ToString("#,##0.00")}", trans.GetDisplayQuantity(), $"P{discountValue.ToString("#,##0.00")}",
+                    false, false, subAccDisc.SADDiscountType, discountValue, 0, 0, "", itemIndex);
+                    }
+                    break;
+                case 3:
+                    {
+                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, discountValue, 0, 0, "", itemIndex);
+                    }
+                    break;
+                    default:
+                    { } break;
+
+            }
+            trans.ApplyNonBIRDiscount(subAccDisc);
+          //  trans.SetIsDiscounted(true);
+            //OnPropertyChanged();
+
+            return true;
         }
     }
 }

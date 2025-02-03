@@ -129,7 +129,7 @@ namespace XamarinFormsEnablerMobile
             main.userSAPlateNumber = PlateNumField.Text;
             main.userSAPONum = PONumField.Text;
             main.userSAOdometer = OdomField.Text;
-
+            InhouseDataClass inhouseInfo = new InhouseDataClass(main.userSAName.Trim(), int.Parse(main.userSAID), main.userSAPONum, main.userSAPlateNumber, main.userSAOdometer);
             SubAccountDiscount selectedAccount = subAccountDiscount.Where(a => a.SAID.ToString() == saID).First();
 
             DateTime discountStartDate;
@@ -161,13 +161,17 @@ namespace XamarinFormsEnablerMobile
                 }
             }
 
-            if (main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentType.Contains("20%")).Count() > 0)
+           // if (main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentType.Contains("20%")).Count() > 0)
+            if (main.td.GetTransactionItems.Where(a => a.GetItemType().Equals(52) && a.IsBIRDiscount()).Count() > 0)
             {
 
             }
 
-            if (transPayment.SelectedTaxType != "ZeroRated" ||
+            /*if (transPayment.SelectedTaxType != "ZeroRated" ||
                 main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentType.Contains("20%")).Count() <= 0
+                )*/
+            if (!main.td.isZeroRatedTransaction ||
+                main.td.GetTransactionItems.Where(a => a.GetItemType().Equals(52) && a.IsBIRDiscount()).Count() <= 0
                 )
             {
                 Console.WriteLine($"Number of subAccountDisc {subAccountDiscount.Where(a => a.SAID.ToString() == saID).Count()}");
@@ -178,7 +182,8 @@ namespace XamarinFormsEnablerMobile
                     if (item.SADItemType == 2)
                     {
                         Console.WriteLine($"this is the grade name {item.SAGradeName}");
-                        int count = main.PaymentStack.Where(a => ((a.ForPaymentType.ToLower().Trim() == item.SAGradeName.ToLower().Trim()) && a.ForPaymentIsDiscounted == 1)).Count();
+                        //int count = main.PaymentStack.Where(a => ((a.ForPaymentType.ToLower().Trim() == item.SAGradeName.ToLower().Trim()) && a.ForPaymentIsDiscounted == 1)).Count();
+                        int count = main.td.GetTransactionItems.Where(a => ((a.ForPaymentType.ToLower().Trim() == item.SAGradeName.ToLower().Trim()) && !a.GetIsDiscounted)).Count();
                         Console.WriteLine(count);
                         //int count1 = mainPage.PaymentStacks.Where(a => (a.ForPaymentType.ToLower().Trim() != item.SAGradeName.ToLower().Trim() && a.ForPaymentIsDiscounted == "1")).Count();
                         if (count > 0)
@@ -194,12 +199,15 @@ namespace XamarinFormsEnablerMobile
                                 return;
                             }
                         }
-                        CheckDiscountByGrade(item);
+                        
+                        main.td.AddInhouseDiscount(item, inhouseInfo);
+                        //CheckDiscountByGrade(item);
                     }
                     else
                     {
-                        int count = main.PaymentStack.Where(a => a.ForPaymentDiscountButton != 1 && a.ForPaymentIsFuel == 0 && a.ForPaymentIsDiscounted == 1).Count();
-                        Console.WriteLine(main.PaymentStack.Where(a => a.ForPaymentDiscountButton != 1 && a.ForPaymentIsFuel == 0 && a.ForPaymentIsDiscounted == 0).Count() + " NotDiscountedCount");
+                        //int count = main.PaymentStack.Where(a => a.ForPaymentDiscountButton != 1 && a.ForPaymentIsFuel == 0 && a.ForPaymentIsDiscounted == 1).Count();
+                        int count = main.td.GetTransactionItems.Where(a => a.GetItemType().Equals(14) && !a.GetIsDiscounted).Count();
+                        Console.WriteLine(count + " NotDiscountedCount");
                         if (count > 0)
                         {
                             bool enter = await DisplayAlert(null, "The discount in this sub account won't be applied to all item. Continue?", "Yes", "No");
@@ -214,7 +222,8 @@ namespace XamarinFormsEnablerMobile
                                 return;
                             }
                         }
-                        CheckNonFuelDiscount(item);
+                        main.td.AddInhouseDiscount(item, inhouseInfo);
+                       // CheckNonFuelDiscount(item);
                     }
 
                 }
@@ -222,8 +231,8 @@ namespace XamarinFormsEnablerMobile
             }
 
 
-            transPayment.paymentMethod();
             Device.BeginInvokeOnMainThread(() => Navigation.PopModalAsync(false));
+            transPayment.paymentMethod();
         }
         void BackToTransaction(object sender, EventArgs e) { Device.BeginInvokeOnMainThread(() => Navigation.PopModalAsync(false)); }
 

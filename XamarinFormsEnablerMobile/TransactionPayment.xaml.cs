@@ -1662,7 +1662,7 @@ namespace XamarinFormsEnablerMobile
                         {
                             main.td.AddDiscount(selectedTransaction, checkDiscountType);
                             selectedTransaction.SetIsDiscounted(true);
-                            RemoveItemFocus();
+                           // RemoveItemFocus();
                             ShowMOPButtons();
                             /*double totalDisc = (itemAmount / 100) * selectedDiscountValue;
                             Console.WriteLine(selectedPresetID);
@@ -1739,7 +1739,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         main.td.AddDiscount(selectedTransaction, checkDiscountType);
                         selectedTransaction.SetIsDiscounted(true);
-                        RemoveItemFocus();
+                       // RemoveItemFocus();
                         ShowMOPButtons();
                         /*double unitPrice = selectedVoidingItem.ForPaymentUnitPrice;
                         double totalDisc = selectedVoidingItem.ForPaymentVolume * selectedDiscountValue;
@@ -1793,7 +1793,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         main.td.AddDiscount(selectedTransaction, checkDiscountType);
                         selectedTransaction.SetIsDiscounted(true);
-                        RemoveItemFocus();
+                        
                         ShowMOPButtons();
                         /*Console.WriteLine(selectedDiscountType);
                         Console.WriteLine(selectedDiscountValue);
@@ -1864,7 +1864,9 @@ namespace XamarinFormsEnablerMobile
                 return;
             }
 
-            bool confirm1 = main.td.GetTransactionItems.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.GetIsDiscounted).Count() > 0;
+            bool confirm1 = selectedTransaction.GetIsDiscounted;
+            RemoveItemFocus();
+            //bool confirm1 = main.td.GetTransactionItems.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.GetIsDiscounted).Count() > 0;
             //bool confirm = selectedVoidingItem.ForPaymentIsFuel == 0;
             //bool confirm1 = main.PaymentStack.Where(a => a.ForPaymentIsFuel == 0 && a.ForPaymentIsDiscounted == 0 && a.ForPaymentDiscountButton == 0).Count() > 0;
             //bool confirm2 = main.PaymentStack.Where(a => a.ForPaymentIsFuel == 1 && a.ForPaymentIsDiscounted == 0 && a.ForPaymentDiscountButton == 0 && a.ForPaymentType == selectedVoidingItem.ForPaymentType).Count() > 0;
@@ -1878,13 +1880,19 @@ namespace XamarinFormsEnablerMobile
             bool applyTotAll = await DisplayAlert("Apply discount to all?", null, "Confirm", "Cancel");
             if (applyTotAll)
             {
-                foreach (var item in main.td.GetTransactionItems.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.GetIsDiscounted))
+                while(main.td.GetTransactionItems.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.GetIsDiscounted).Count() > 0)
+                {
+                    main.td.AddDiscount(main.td.GetTransactionItems.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.GetIsDiscounted).First(), checkDiscountType);
+                    main.td.GetTransactionItems.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.GetIsDiscounted).First().SetIsDiscounted(true);
+                }
+                /*foreach (var item in main.td.GetTransactionItems.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.GetIsDiscounted))
                 {
                     main.td.AddDiscount(item, checkDiscountType);
-                    selectedTransaction.SetIsDiscounted(true);
-                    RemoveItemFocus();
+                    item.SetIsDiscounted(true);
+                   // selectedTransaction.SetIsDiscounted(true);
+                    //RemoveItemFocus();
 
-                }
+                }*/
                 //  ApplyDiscountToAll();
             }
             Console.WriteLine(applyTotAll);

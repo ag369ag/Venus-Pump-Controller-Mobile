@@ -8,11 +8,11 @@ namespace XamarinFormsEnablerMobile
     {
         private string AccountName { get; set; }
         private int AccountNumber { get; set; }
-        private int PONum { get; set; }
+        private string PONum { get; set; }
         private string PlateNumber { get; set; }
         private string Odometer { get; set; }
 
-        public InhouseDataClass(string accountName, int accountNumber, int pONum, string plateNumber, string odometer)
+        public InhouseDataClass(string accountName, int accountNumber, string pONum, string plateNumber, string odometer)
         {
             AccountName = accountName;
             AccountNumber = accountNumber;
@@ -23,7 +23,7 @@ namespace XamarinFormsEnablerMobile
 
         public string GetAccountName() { return AccountName; }
         public int GetAccountNumber() { return AccountNumber; }
-        public int GetPONum() { return PONum; }
+        public string GetPONum() { return PONum; }
         public string GetPlateNumber() { return PlateNumber; }
         public string GetOdometer() { return Odometer; }
     }

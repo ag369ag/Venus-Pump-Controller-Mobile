@@ -146,8 +146,8 @@ namespace XamarinFormsEnablerMobile
         public void SetIsDiscounted(bool discounted) { GetIsDiscounted = discounted; }
         public void SetIsBIRDiscount(bool isBIR) { isBIRDiscount = isBIR; }
         private void SetDiscountType(int discType) { discountType = discType; }
-        private void SetDiscountValue(double discVal) { discountValue = discVal; }
-        private void SetDiscountedValue(double discountedVal) { discountedValue = discountedVal; }
+        public void SetDiscountValue(double discVal) { discountValue = discVal; }
+        public void SetDiscountedValue(double discountedVal) { discountedValue = discountedVal; }
         private void SetPresetID(int preset) { presetID = preset; }
 
         private void SetNewTotal(double quantity, double unitPrice)
@@ -290,6 +290,18 @@ namespace XamarinFormsEnablerMobile
             SetDiscountValue(discount.presetValue);
             SetPresetID(discount.presetId);
             double discVal = GetNonBIRDiscValue(discount);
+
+            SetDiscountedValue(discVal);
+            OnPropertyChanged();
+        }
+
+        public void ApplyNonBIRDiscount(InhouseField.SubAccountDiscount discount)
+        {
+            SetIsDiscounted(true);
+            SetDiscountType(discount.SADDiscountType);
+            SetDiscountValue(double.Parse(discount.SADDiscountValue));
+            SetPresetID(discount.SAID);
+            double discVal = Math.Abs(GetNonBIRDiscValue(discount)) * -1;
 
             SetDiscountedValue(discVal);
             OnPropertyChanged();
