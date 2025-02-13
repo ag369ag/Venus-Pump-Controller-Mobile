@@ -977,8 +977,8 @@ namespace XamarinFormsEnablerMobile
                 DisplayAlert("", "Fill approval code field", "Okay");
                 return;
             }
-            customerBankName = this.CustomerName.Text;
-            customerCardNumber = this.CustomerCardNumber.Text;
+            customerBankName = this.CustomerName.Text ?? "";
+            customerCardNumber = this.CustomerCardNumber.Text ?? "";
             customerApprovalCode = this.CustomerApprovalCode.Text;
 
             main.td.AddCardDetail(customerBankName, customerCardNumber, customerApprovalCode, main.currentMOP.MOPType);

@@ -1032,7 +1032,7 @@ namespace XamarinFormsEnablerMobile
             {
                 foreach (CardDetailsClass cardInfo in GetCardDetails())
                 {
-                    string lastCardNumber = "XXXX-XXXX-XXXX-" + cardInfo.GetCardNumber().Substring(cardInfo.GetCardNumber().Length - 4);
+                    string lastCardNumber = string.IsNullOrEmpty(cardInfo.GetCardNumber()) ? "" : "XXXX-XXXX-XXXX-" + cardInfo.GetCardNumber().Substring(cardInfo.GetCardNumber().Length - 4);
                     AddSideString($"Card#         : {lastCardNumber}", "");
                     AddSideString($"AppCode       : {cardInfo.GetApprovalCode()}", "");
                     AddSideString($"Name          : {cardInfo.GetCustomerName()}", "");
