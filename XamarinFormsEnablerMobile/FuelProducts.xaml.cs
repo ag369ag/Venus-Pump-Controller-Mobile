@@ -934,7 +934,8 @@ namespace XamarinFormsEnablerMobile
 
                 // THIS IS FOR PRINT MANAGER
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
+                //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
             }
             // Console.WriteLine(FORPRINTINGTEXT);
 

@@ -107,6 +107,25 @@ namespace XamarinFormsEnablerMobile.Droid
         }
 
 
+        public void PrintReceiptOnNative(string receipt, int fontSize)
+        {
+
+            /*string receiptValue = "";
+            foreach(string value in receipt)
+            {
+                receiptValue += 
+            }*/
+
+            Intent intent = new Intent("com.sunmisilentprinterlibrary.PrintReceipt");
+            intent.SetAction("com.sunmisilentprinterlibrary.PrintReceipt");
+            intent.AddFlags(ActivityFlags.IncludeStoppedPackages);
+            intent.PutExtra("testReceipt", receipt);
+            intent.PutExtra("fontSize", fontSize);
+            Android.App.Application.Context.SendBroadcast(intent);
+
+        }
+
+
 
 
     }

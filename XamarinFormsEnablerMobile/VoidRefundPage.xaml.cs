@@ -360,7 +360,8 @@ namespace XamarinFormsEnablerMobile
                     printingText += withNextLine;
                 }
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(printingText, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(printingText, 17);
+                //printService.Print(printingText, main.appSettings.paperWidth);
             }
 
         }
@@ -544,7 +545,8 @@ namespace XamarinFormsEnablerMobile
                     printingText += withNextLine;
                 }
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(printingText, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(printingText, 17);
+                //printService.Print(printingText, main.appSettings.paperWidth);
             }
         }
 

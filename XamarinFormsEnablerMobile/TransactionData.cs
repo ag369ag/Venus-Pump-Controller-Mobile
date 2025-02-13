@@ -49,7 +49,7 @@ namespace XamarinFormsEnablerMobile
 
         private List<CustomerDetailsClass> customerDetails = new List<CustomerDetailsClass>();
         private List<CardDetailsClass> cards = new List<CardDetailsClass>();
-        private List<SeniorPWDCustomerDetailsClass> seniorpwds = new List<SeniorPWDCustomerDetailsClass>();
+        private List<SeniorPWDMoVCustomerDetailsClass> seniorpwds = new List<SeniorPWDMoVCustomerDetailsClass>();
         private List<SoloParentDetailClass> soloparents = new List<SoloParentDetailClass>();
         private List<NAACDetailClass> naacs = new List<NAACDetailClass>();
         private InhouseDataClass inhouseData = null;
@@ -105,7 +105,7 @@ namespace XamarinFormsEnablerMobile
         private List<string> forPrintString = new List<string>();
         public List<CustomerDetailsClass> GetCustomerDetails() { return customerDetails; }
         public List<CardDetailsClass> GetCardDetails() { return cards; }
-        public List<SeniorPWDCustomerDetailsClass> GetSCPWDDetails() { return seniorpwds; }
+        public List<SeniorPWDMoVCustomerDetailsClass> GetSCPWDDetails() { return seniorpwds; }
         public List<SoloParentDetailClass> GetSoloParentDetails() { return soloparents; }
         public List<NAACDetailClass> GetNAACDetails() { return naacs; }
 
@@ -153,9 +153,9 @@ namespace XamarinFormsEnablerMobile
         #endregion
 
         #region SCPWD Details Functions
-        public void AddSCPWD(string name, string ID, string TIN, bool isSC)
+        public void AddSCPWD(string name, string ID, string TIN, bool isSC, bool isMoV)
         {
-            seniorpwds.Add(new SeniorPWDCustomerDetailsClass(name, ID, TIN, isSC));
+            seniorpwds.Add(new SeniorPWDMoVCustomerDetailsClass(name, ID, TIN, isSC, isMoV));
         }
 
         public void RemoveSCPWD(string name)
@@ -331,7 +331,7 @@ namespace XamarinFormsEnablerMobile
         {
             double discountValue = 0;
             double baseValue = transItem.GetUnitPrice() / 1.12;
-            bool isBIRDisc = true;
+            bool isBIRDisc = discount.isBIRDisc;
             int itemIndex = GetTransactionItems.IndexOf(transItem) + 1;
             switch (discount.presetDiscountId)
             {
@@ -364,13 +364,18 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case 5:
                     {
+                        discountValue = (baseValue / 100) * discount.presetValue;
+                    }
+                    break;
+                case 6:
+                    {
 
                     }
                     break;
                 default:
                     {
                         discountValue = transItem.GetNonBIRDiscValue(discount);
-                        isBIRDisc = false;
+                        //isBIRDisc = false;
                     }
                     break;
             }
@@ -378,20 +383,28 @@ namespace XamarinFormsEnablerMobile
             double NegativeDiscount = discountValue * -1;
             string forDisplayDiscount = $"P{discountValue.ToString("#,##0.00")}";
             string forDisplayQuantity = transItem.GetQuantity().ToString("#,##0.00");
-
+/*
             if (discount.presetDiscountId == 5)
             {
                 return;
-            }
+            }*/
 
-            if (discount.presetDiscountId == 6 || discount.presetDiscountId == 8)
+            if (discount.presetDiscountId == 6)
             {
+                return;
+            }
+            
+            // disc type 1
+            if (!discount.isBIRDisc && (discount.presetDiscountType.Equals(1) || discount.presetDiscountType.Equals(3))) //discount.presetDiscountId == 7 || discount.presetDiscountId == 9)
+            {
+                
                 AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", itemIndex);
                 transItem.ApplyNonBIRDiscount(discount);
                 return;
             }
 
-            if (discount.presetDiscountId == 7)
+            // disc type 2
+            if (!discount.isBIRDisc && discount.presetDiscountType.Equals(2))//(discount.presetDiscountId == 7)
             {
                 string forDisplayUnitPrice = $"P{1.ToString("#,##0.00")}";
                 AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, -1, discountValue, NegativeDiscount, forDisplayUnitPrice, forDisplayDiscount.Remove(0), forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", itemIndex);
@@ -496,6 +509,10 @@ namespace XamarinFormsEnablerMobile
             //==================================================================================
             string NAACData = GetNAACHistoryDetails();
 
+            // MEDAL OF VALOR DATA
+            //==================================================================================
+            string MoVData = GetMoVHistoryDetails();
+
             Console.WriteLine("After setting transaction history data");
 
             string newItemString = Newtonsoft.Json.JsonConvert.SerializeObject(transItems);
@@ -558,7 +575,8 @@ namespace XamarinFormsEnablerMobile
                 scData = newSCData,
                 pwdData = newPWDData,
                 spData = SoloParentData,
-                naacData = NAACData
+                naacData = NAACData,
+                movData = MoVData
             };
             Console.WriteLine("After creating object");
 
@@ -605,6 +623,47 @@ namespace XamarinFormsEnablerMobile
         private double GetGrossSale()
         {
             return GetTransProductItems().Sum(a => a.GetTotal());
+        }
+
+        private string GetMoVHistoryDetails()
+        {
+            double fivePercentValue = 0;
+            double twentyPercentValue = GetTransactionItems.Where(a => a.GetPresetID() == 7 && a.GetItemType() == 52).Sum(a => a.GetTotal());
+            double netValue = GetNetSale();
+            double vatableValue = GetTotalValueByTaxID(1);
+            double vatableSale = vatableValue / 1.12;
+            double vatAmt = vatableValue - vatableSale;
+            double vatEx = GetTotalValueByTaxID(2);
+            bool hasFivePercent = !(fivePercentValue.Equals(0));
+            bool hasTwentyPercent = !(twentyPercentValue.Equals(0));
+
+            List<object> DataArray = new List<object>();
+
+            if (GetSCPWDDetails().Count() < 1)
+            {
+                return Newtonsoft.Json.JsonConvert.SerializeObject(DataArray);
+            }
+
+            object data = new
+            {
+                customerName = GetSCPWDDetails().Last().GetCustomerName() ?? "",
+                idNumber = GetSCPWDDetails().Last().GetCustomerIDNumber() ?? "",
+                tinNumber = GetSCPWDDetails().Last().GetCustomerTIN() ?? "",
+                vatable = vatableSale,
+                vatAmount = vatAmt,
+                vatExempt = vatEx,
+                fivePerDisc = fivePercentValue,
+                twentyPerDisc = twentyPercentValue,
+                netSales = netValue
+            };
+
+
+            if (hasFivePercent || hasTwentyPercent)
+            {
+                DataArray.Add(data);
+            }
+            string MoVData = Newtonsoft.Json.JsonConvert.SerializeObject(DataArray);
+            return MoVData;
         }
 
 
@@ -871,11 +930,11 @@ namespace XamarinFormsEnablerMobile
 
             if (GetSCPWDDetails().Count > 0)
             {
-                string discType = GetSCPWDDetails().First().GetCustomerType() ? "Senior Citizen" : "PWD";
+                string discType = GetSCPWDDetails().First().CheckMoV() ? "Medal of Valor" : GetSCPWDDetails().First().GetCustomerType() ? "Senior Citizen" : "PWD";
 
                 AddSideString($"Total {discType} Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
 
-                foreach (SeniorPWDCustomerDetailsClass scData in GetSCPWDDetails())
+                foreach (SeniorPWDMoVCustomerDetailsClass scData in GetSCPWDDetails())
                 {
                     AddCenterString("");
                     AddSideString(signLine, "");
@@ -1140,7 +1199,8 @@ namespace XamarinFormsEnablerMobile
             else
             {
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
+                //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
                 if (main.currentMOP.MOPReceiptCount > 1)
                 {
                     List<string> newPrintingArray = new List<string>();
@@ -1160,7 +1220,8 @@ namespace XamarinFormsEnablerMobile
                     }
                     for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
                     {
-                        printService.Print(newPrintingText, main.appSettings.paperWidth);
+                        printService.PrintReceiptOnNative(newPrintingText, 15);
+                        //printService.Print(newPrintingText, main.appSettings.paperWidth);
                     }
                 }
                 if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
@@ -1178,7 +1239,8 @@ namespace XamarinFormsEnablerMobile
                     }
                     for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
                     {
-                        printService.Print(newPrintingText, main.appSettings.paperWidth);
+                        printService.PrintReceiptOnNative(newPrintingText, 15);
+                        //printService.Print(newPrintingText, main.appSettings.paperWidth);
                     }
                 }
             }

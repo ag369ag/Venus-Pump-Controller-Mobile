@@ -957,7 +957,8 @@ namespace XamarinFormsEnablerMobile
             {
 
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
             }
 
         }
@@ -1318,7 +1319,8 @@ namespace XamarinFormsEnablerMobile
             else
             {
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
+                //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
             }
         }
 
@@ -1459,7 +1461,8 @@ namespace XamarinFormsEnablerMobile
             else
             {
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
+                //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
             }
         }
 

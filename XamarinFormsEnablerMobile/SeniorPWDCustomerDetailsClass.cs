@@ -4,20 +4,22 @@ using System.Text;
 
 namespace XamarinFormsEnablerMobile
 {
-    public class SeniorPWDCustomerDetailsClass
+    public class SeniorPWDMoVCustomerDetailsClass
     {
         private string CustomerName {  get; set; }
         private string CustomerIDNumber {  get; set; }
         private string CustomerTIN {  get; set; }
         
         private bool isSCCustomer { get; set; }
+        private bool isMoVCustomer { get; set; }
 
-        public SeniorPWDCustomerDetailsClass(string customerName, string customerIDNumber, string customerTIN, bool SCCustomer)
+        public SeniorPWDMoVCustomerDetailsClass(string customerName, string customerIDNumber, string customerTIN, bool SCCustomer, bool MoVCustomer)
         {
             CustomerName = customerName;
             CustomerIDNumber = customerIDNumber;
             CustomerTIN = customerTIN;
             isSCCustomer = SCCustomer;
+            isMoVCustomer = MoVCustomer;
         }
 
         public string GetCustomerName()
@@ -35,6 +37,11 @@ namespace XamarinFormsEnablerMobile
         public bool GetCustomerType()
         {
             return isSCCustomer;
+        }
+
+        public bool CheckMoV()
+        {
+            return isMoVCustomer;
         }
     }
 }

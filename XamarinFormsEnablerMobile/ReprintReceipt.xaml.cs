@@ -135,10 +135,10 @@ namespace XamarinFormsEnablerMobile
             switch (transactionType)
             {
                 //case "1": { transactionTypeString = "Invoice No. "; } break;
-                case "1": { transactionTypeString = ""; } break;
+                case "1": { transactionTypeString = "INV #"; } break;
                 case "2": { transactionTypeString = "-SD#"; } break;
                // case "3": { transactionTypeString = "Invoice No. "; } break;
-                case "3": { transactionTypeString = ""; } break;
+                case "3": { transactionTypeString = "INV #"; } break;
                 case "4": { transactionTypeString = "-TR#"; } break;
                 default: { } break;
             }
@@ -150,6 +150,10 @@ namespace XamarinFormsEnablerMobile
             {
                 //formattedReceiptNumber = transactionTypeString + newResetter + "-" + newBIRTransNum;
                 formattedReceiptNumber = newResetter + "-" + newBIRTransNum;
+            }
+            else if (transactionTypeString.Contains("INV"))
+            {
+                formattedReceiptNumber = transactionTypeString + newResetter + "-" + newBIRTransNum;
             }
             else
             {
@@ -294,7 +298,8 @@ namespace XamarinFormsEnablerMobile
             else
             {
                 var printService = DependencyService.Get<IPrintService>();
-                printService.Print(forprint, main.appSettings.paperWidth);
+                printService.PrintReceiptOnNative(forprint, 17);
+                //printService.Print(forprint, main.appSettings.paperWidth);
             }
         }
         /*async void Search()

@@ -280,12 +280,18 @@ namespace XamarinFormsEnablerMobile
                 if (selectedTransaction.GetIsDiscounted || main.td.GetTransactionItems.Where(a => a.GetItemType() == 7 || a.GetItemType() == 52).Count() > 0)
                 {
                     SetQTYForVisibility.IsEnabled = false;
-                    DiscountButtonForVisibility.IsEnabled = false;
+                   // DiscountButtonForVisibility.IsEnabled = false;
                 }
                 else
                 {
                     SetQTYForVisibility.IsEnabled = true;
                     DiscountButtonForVisibility.IsEnabled = true;
+                }
+
+                if(selectedTransaction.GetItemType().Equals(52) || selectedTransaction.GetItemType().Equals(54))
+                {
+                    DiscountButtonForVisibility.IsEnabled = false;
+                    SetQTYForVisibility.IsEnabled = false;
                 }
 
             }
@@ -723,7 +729,7 @@ namespace XamarinFormsEnablerMobile
             }
             else
             {
-                if (selectedPresetID == 1 || selectedPresetID == 2 || selectedPresetID == 3 || selectedPresetID == 4)
+                if (selectedPresetID == 1 || selectedPresetID == 2 || selectedPresetID == 3 || selectedPresetID == 4 || selectedPresetID == 7) 
                 {
 
                     ConfirmSeniorInformation();
@@ -996,9 +1002,9 @@ namespace XamarinFormsEnablerMobile
             // selectedDiscountValue = 0;
             //selectedDiscountID = 0;
             //selectedPresetID = 0;
-            main.td.AddSCPWD(SeniorName, SeniorIDNumber, SeniorTIN, (selectedPresetID == 1 || selectedPresetID == 2));
+            main.td.AddSCPWD(SeniorName, SeniorIDNumber, SeniorTIN, (selectedPresetID == 1 || selectedPresetID == 2), selectedPresetID == 7);
             main.td.AddDiscount(selectedTransaction, checkDiscountType);
-            selectedTransaction.ApplySCPWD(checkDiscountType);
+            selectedTransaction.ApplySCPWDMOV(checkDiscountType);
             selectedTransaction.SetIsDiscounted(true);
             main.td.UpdateSubtotal();
             RemoveItemFocus();
@@ -1376,13 +1382,14 @@ namespace XamarinFormsEnablerMobile
             JsonElement jsonResponseElement = jsonResponse.RootElement.GetProperty("data");
             foreach (var data in jsonResponseElement.EnumerateArray())
             {
+                Console.WriteLine(data.GetProperty("discount_name").ToString());
                 main.DiscountButtonList.Add(new DiscountButtonsClass
                 {
                     discountId = int.Parse(data.GetProperty("discount_id").ToString()),
                     discountName = data.GetProperty("discount_name").ToString(),
                     discountType = int.Parse(data.GetProperty("discount_type").ToString()),
                     discountIsVisible = int.Parse(data.GetProperty("discount_list_visible").ToString()),
-                    discountMinimumValue = double.Parse(data.GetProperty("item_limit_min_value").ToString())
+                    discountMinimumValue = 0//double.Parse(data.GetProperty("item_limit_min_value").ToString())
                 });
 
                 //JsonElement presets = data.GetProperty("presets");
@@ -1390,18 +1397,21 @@ namespace XamarinFormsEnablerMobile
                 JsonElement presets = data.GetProperty(propertyString);
                 foreach (var presetItem in presets.EnumerateArray())
                 {
+                    int presetID = int.Parse(presetItem.GetProperty("preset_id").ToString());
                     main.DiscountPresetButtonList.Add(new DiscountPresetsClass
                     {
                         presetDiscountId = int.Parse(presetItem.GetProperty("discount_id").ToString()),
                         presetDiscountType = int.Parse(data.GetProperty("discount_type").ToString()),
-                        presetId = int.Parse(presetItem.GetProperty("preset_id").ToString()),
+                        presetId = presetID,
                         presetName = presetItem.GetProperty("preset_name").ToString(),
                         presetValue = Convert.ToInt32(double.Parse(presetItem.GetProperty("preset_value").ToString())),
                         presetItemType = int.Parse(presetItem.GetProperty("Item_Type").ToString() ?? "0"),
                         presetItemID = int.Parse(presetItem.GetProperty("Item_ID").ToString() ?? "0"),
                         presetStartDate = presetItem.GetProperty("start_date").ToString() ?? "",
-                        presetEndtDate = presetItem.GetProperty("end_date").ToString() ?? ""
+                        presetEndtDate = presetItem.GetProperty("end_date").ToString() ?? "",
+                        isBIRDisc = presetID < 8
                     });
+                    Console.WriteLine(presetItem.GetProperty("preset_name").ToString());
                 }
             }
 
@@ -1414,6 +1424,8 @@ namespace XamarinFormsEnablerMobile
             {
                 return;
             }
+
+            Console.WriteLine("SHOWING DISCOUNTS");
 
             foreach (var discountItem in main.DiscountButtonList)
             {
@@ -1469,66 +1481,9 @@ namespace XamarinFormsEnablerMobile
                 Console.WriteLine(item.presetItemID.ToString() + " this is the preset item id");
                 Console.WriteLine(gradeID + " this is grade id");
                 button.Clicked += AddDiscountToItem;
-                /*
-                                bool condition1 = item.presetItemID.ToString().Contains(gradeID.ToString()) || item.presetItemID == 0; // ITEM ID IS CONNECTED
-                                bool condition2 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1).Count() > 0; // NUMBER OF DISCOUNT BUTTON IS GREATER THAN 0
-                                bool condition3 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 1).Count() > 0; // NUMBER OF DISCOUNT WHERE PRESET ID IS 1 IS GREATER THAN 0
-                                bool condition4 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 2).Count() > 0; // NUMBER OF DISCOUNT WHERE PRESET ID IS 2 IS GREATER THAN 0
-                                bool condition5 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID != 1).Count() > 0; // NUMBER OF DISCOUNT WHERE PRESET ID IS NOT 1 IS GREATER THAN 0
-                                bool condition6 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID != 2).Count() > 0; // NUMBER OF DISCOUNT WHERE PRESET ID IS NOT 2 IS GREATER THAN 0
-                                bool condition7 = item.presetId == 1;
-                                bool condition8 = item.presetId == 2;
-                                bool condition9 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 1).Count() > 0;
-                                bool condition10 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 2).Count() > 0;
-                                bool condition11 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && (a.ForPaymentPresetID == 2 || a.ForPaymentPresetID == 1 || a.ForPaymentPresetID == 3 || a.ForPaymentPresetID == 4)).Count() > 0;
-
-                                // FOR PWD 20% DISCOUNT
-                                bool condition12 = item.presetId == 3;
-                                bool condition13 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID != 3).Count() > 0;
-                                bool condition14 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 3).Count() > 0;
-
-                                // FOR PWD 5% DISCOUNT
-                                bool condition15 = item.presetId == 4;
-                                bool condition16 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID != 4).Count() > 0;
-                                bool condition17 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 4).Count() > 0;
-
-
-                                bool condition18 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 3).Count() > 0;
-                                bool condition19 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentPresetID == 4).Count() > 0;
-                                bool condition9 = main.PaymentStack.Where(a => a.ForPaymentIsFuel == 1 && a.ForPaymentIsDiscounted == 1 && a.ForPaymentType.ToLower().Trim() == selectedVoidingItem.ForPaymentType.ToLower().Trim()).Count() > 0;
-                                bool condition10 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1 && a.ForPaymentType == gradeName && a.ForPaymentPresetID != item.presetItemID).Count() > 0;
-                                bool condition11 = gradeName != "" ? condition10 : true;
-
-                                //Console.WriteLine(condition9.ToString() + " this is condition9");
-
-                                if (item.presetDiscountId == 1 && condition1 && condition7 && (!condition2 || !condition5 || condition9))
-                                {
-                                    button.IsEnabled = true;
-                                }
-                                else if (item.presetDiscountId == 1 && condition1 && condition8 && (!condition2 || !condition6 || condition10))
-                                {
-                                    button.IsEnabled = true;
-                                }
-                                else if (item.presetDiscountId == 2 && condition1 && condition12 && (!condition2 || !condition13 || condition14))
-                                {
-                                    button.IsEnabled = true;
-                                }
-                                else if (item.presetDiscountId == 2 && condition1 && condition15 && (!condition2 || !condition16 || condition17))
-                                {
-                                    button.IsEnabled = true;
-                                }
-                                else if ((item.presetDiscountId != 1 || item.presetDiscountId != 2) && condition1 && (!condition3 || !condition4 || !condition18 || !condition19) && (!condition7 || !condition8 || !condition12 || !condition15) && !condition11)
-                                {
-                                    button.IsEnabled = true;
-                                }
-
-                                else
-                                {
-                                    button.IsEnabled = false;
-                                }*/
-
+               
                 button.IsEnabled = false;
-
+/*
                 //Test conditions
                 bool condition0 = item.presetItemID.ToString().Contains(gradeID.ToString()) || item.presetItemID == 0;
                 // bool condition1 = main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1).Count() > 0;
@@ -1583,6 +1538,25 @@ namespace XamarinFormsEnablerMobile
                 if (!condition10 && !condition2 && !condition4 && !condition6 && !condition8)
                 {
                     button.IsEnabled = true;
+                }*/
+
+                bool hasSameDiscount = main.td.GetTransactionItems.Where(a=>a.GetItemType().Equals(52) && a.GetPresetID().Equals(item.presetId)).Count() > 0;
+                bool hasBIRDiscount = main.td.GetTransactionItems.Where(a=>a.IsBIRDiscount()).Count() > 0;
+                bool hasDiscount = main.td.GetTransactionItems.Where(a => a.GetItemType().Equals(52) || a.GetItemType().Equals(54)).Count() > 0;
+
+                if (item.isBIRDisc && !hasDiscount)
+                {
+                    button.IsEnabled = true;
+                }
+
+                if (item.isBIRDisc && hasSameDiscount)
+                {
+                    button.IsEnabled = true;
+                }
+               
+                if(!item.isBIRDisc && !hasBIRDiscount)
+                {
+                    button.IsEnabled= true;
                 }
 
                 ButtonBasedOnSelected.Children.Add(button);
@@ -1658,7 +1632,7 @@ namespace XamarinFormsEnablerMobile
             {
                 case 1:
                     {
-                        if (buttonText.ToLower().Contains("perc"))
+                        if (!checkDiscountType.isBIRDisc)
                         {
                             main.td.AddDiscount(selectedTransaction, checkDiscountType);
                             selectedTransaction.SetIsDiscounted(true);
@@ -1713,7 +1687,7 @@ namespace XamarinFormsEnablerMobile
                         }
                         else
                         {
-                            if (selectedPresetID == 1 || selectedPresetID == 2 || selectedPresetID == 3 || selectedPresetID == 4)
+                            if (selectedPresetID == 1 || selectedPresetID == 2 || selectedPresetID == 3 || selectedPresetID == 4 || selectedPresetID == 7)
                             {
                                 Console.WriteLine(discountButtonText + " Before opening senior field");
                                 ShowSeniorDiscountField();

@@ -188,6 +188,8 @@ namespace XamarinFormsEnablerMobile
             public int presetItemID { get; set; }
             public string presetStartDate { get; set; }
             public string presetEndtDate { get; set; }
+
+            public bool isBIRDisc { get; set; }
         }
         public ObservableCollection<DiscountPresetsClass> DiscountPresetButtonList { get; set; } = new ObservableCollection<DiscountPresetsClass>();
         #endregion
@@ -691,6 +693,8 @@ namespace XamarinFormsEnablerMobile
         public interface IPrintService
         {
             void Print(string message, int width);
+
+            void PrintReceiptOnNative(string receipt, int fontSize);
         }
 
         public interface IPrintingSocket
@@ -748,8 +752,8 @@ namespace XamarinFormsEnablerMobile
             terminalId = (terminalIDFromPreferences == "0" || terminalIDFromPreferences == "") ? 0 : int.Parse(terminalIDFromPreferences);
             terminalPassword = Preferences.Get("EnablerPassword", string.Empty) ?? null;
             APIServer = Preferences.Get("APIServer", string.Empty) ?? null;
-            UserIDField.Text = Preferences.ContainsKey("UserID") ? Preferences.Get("UserID", string.Empty) : "";
-            UserPasswordField.Text = Preferences.ContainsKey("UserPassword", string.Empty) ? Preferences.Get("UserPassword", string.Empty) : "";
+         //   UserIDField.Text = Preferences.ContainsKey("UserID") ? Preferences.Get("UserID", string.Empty) : "";
+          //  UserPasswordField.Text = Preferences.ContainsKey("UserPassword", string.Empty) ? Preferences.Get("UserPassword", string.Empty) : "";
             useLaravelAPI = Preferences.Get("useLaravelAPI", false);
             Console.WriteLine("Enter conditions");
             Console.WriteLine(terminalId != 0);

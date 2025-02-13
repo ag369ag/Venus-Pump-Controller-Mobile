@@ -220,7 +220,7 @@ namespace XamarinFormsEnablerMobile
             }
         }
 
-        public void ApplySCPWD(MainPage.DiscountPresetsClass discount)
+        public void ApplySCPWDMOV(MainPage.DiscountPresetsClass discount)
         {
             SetNewTaxID(2);
             RemoveTax();
