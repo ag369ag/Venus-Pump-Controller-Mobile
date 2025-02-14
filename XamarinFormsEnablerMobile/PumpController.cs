@@ -231,7 +231,7 @@ namespace XamarinFormsEnablerMobile
                         continue;
                     }
 
-                    if (pump.CurrentTransaction != null)
+                    if (pump.CurrentTransaction != null && !pump.CurrentTransaction.IsLocked)
                     {
                         Console.WriteLine("CURRENT TRANSACTION IS SELECTED");
                         DeliveryData delivery = pump.CurrentTransaction.DeliveryData;

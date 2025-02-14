@@ -38,8 +38,9 @@ namespace XamarinFormsEnablerMobile
         private double originalTotal;
         private string gcNumber;
         private string gcAmount;
+        private string pumpID;
 
-        public TransactionDataClass(int itemType, int itemID, int itemTaxID, string itemDescription, double itemUnitPrice, double itemQuantity, double itemTotal, string displayUnitPrice, string displayQuantity, string displayTotal, bool isDiscounted, bool isBIRDiscount, int discountType, double discountValue, double discountedValue, int presetID, int originalTaxID, double originalUnitPrice, double originalTotal, string gcNumber, string gcAmount)
+        public TransactionDataClass(int itemType, int itemID, int itemTaxID, string itemDescription, double itemUnitPrice, double itemQuantity, double itemTotal, string displayUnitPrice, string displayQuantity, string displayTotal, bool isDiscounted, bool isBIRDiscount, int discountType, double discountValue, double discountedValue, int presetID, int originalTaxID, double originalUnitPrice, double originalTotal, string gcNumber, string gcAmount, string pumpID)
         {
             this.itemType = itemType;
             this.itemID = itemID;
@@ -62,6 +63,7 @@ namespace XamarinFormsEnablerMobile
             this.originalTotal = originalTotal;
             this.gcNumber = gcNumber;
             this.gcAmount = gcAmount;
+            this.pumpID = pumpID;
         }
 
         public string ForPaymentType { get { return itemDescription; } }
@@ -83,6 +85,11 @@ namespace XamarinFormsEnablerMobile
                 displayTotal = value;
                 OnPropertyChanged();
             }
+        }
+
+        public string GetPumpID()
+        {
+            return pumpID;
         }
 
         public int GetItemType() { return itemType; }

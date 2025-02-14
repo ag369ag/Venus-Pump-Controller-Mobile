@@ -73,7 +73,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     getSubAccounts();
                     getDiscounts();
-
+                    GetGradeInfo();
                 });
             }).ConfigureAwait(false);
         }
@@ -114,6 +114,37 @@ namespace XamarinFormsEnablerMobile
                         presetEndtDate = presetItem.GetProperty("end_date").ToString()
                     });
                 }
+            }
+        }
+
+        async void GetGradeInfo()
+        {
+            Console.WriteLine("GETTING GRADES");
+            main.Grades.Clear();
+            HttpClient client = new HttpClient();
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(new Uri(main.routes.grades).ToString());
+                string responseMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseMessage);
+                JsonDocument decodedResponse = JsonDocument.Parse(responseMessage);
+                JsonElement responseData = decodedResponse.RootElement.GetProperty("data");
+                foreach (var data in responseData.EnumerateArray())
+                {
+                    Console.WriteLine(data.GetProperty("id"));
+                    Console.WriteLine(data.GetProperty("name"));
+                    main.Grades.Add(new MainPage.GradeInfo { gradeID = int.Parse(data.GetProperty("id").ToString()), gradeType = data.GetProperty("name").ToString().Trim() });
+                }
+
+                foreach (var item in main.Grades)
+                {
+                    Console.WriteLine(item.gradeID.ToString());
+                    Console.WriteLine(item.gradeType.ToString());
+                }
+            }
+            catch (Exception)
+            {
+                //Console.WriteLine("ERROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOR");
             }
         }
 
@@ -183,7 +214,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         Console.WriteLine($"this is the grade name {item.SAGradeName}");
                         //int count = main.PaymentStack.Where(a => ((a.ForPaymentType.ToLower().Trim() == item.SAGradeName.ToLower().Trim()) && a.ForPaymentIsDiscounted == 1)).Count();
-                        int count = main.td.GetTransactionItems.Where(a => ((a.ForPaymentType.ToLower().Trim() == item.SAGradeName.ToLower().Trim()) && !a.GetIsDiscounted)).Count();
+                        int count = main.td.GetTransactionItems.Where(a => ((a.ForPaymentType.ToLower().Trim() == item.SAGradeName.ToLower().Trim()) && a.GetIsDiscounted)).Count();
                         Console.WriteLine(count);
                         //int count1 = mainPage.PaymentStacks.Where(a => (a.ForPaymentType.ToLower().Trim() != item.SAGradeName.ToLower().Trim() && a.ForPaymentIsDiscounted == "1")).Count();
                         if (count > 0)
@@ -206,7 +237,7 @@ namespace XamarinFormsEnablerMobile
                     else
                     {
                         //int count = main.PaymentStack.Where(a => a.ForPaymentDiscountButton != 1 && a.ForPaymentIsFuel == 0 && a.ForPaymentIsDiscounted == 1).Count();
-                        int count = main.td.GetTransactionItems.Where(a => a.GetItemType().Equals(14) && !a.GetIsDiscounted).Count();
+                        int count = main.td.GetTransactionItems.Where(a => a.GetItemType().Equals(14) && a.GetIsDiscounted).Count();
                         Console.WriteLine(count + " NotDiscountedCount");
                         if (count > 0)
                         {
@@ -273,7 +304,10 @@ namespace XamarinFormsEnablerMobile
                     if (itemType == 2)
                     {
                         //string gradeName = "";
+                        Console.WriteLine($"SUB ACCOUNT ID IS {item[0].GetProperty("Sub_Account_ID")}");
+                        Console.WriteLine($"ITEM ID IS {itemID}");
                         string gradeName = main.Grades.Where(a => a.gradeID == itemID).First().gradeType.Trim();
+                        Console.WriteLine($"GRADE NAME IS {gradeName}");
                         /*foreach (var data in main.Grades.Where(a => a.gradeID == itemID))
                         {
                             gradeName = data.gradeType.Trim();

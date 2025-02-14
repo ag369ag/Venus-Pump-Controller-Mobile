@@ -137,9 +137,31 @@ namespace XamarinFormsEnablerMobile
                 GetFromPreferences();
                 GetPrerequisiteFromAPI();
                 GetPOSServerStatus();
-
+                GetLockedTransaction();
             }).ConfigureAwait(false);
 
+        }
+
+        private void GetLockedTransaction()
+        {
+            foreach(Pump pump in forecourt.Pumps)
+            {
+                if(pump.CurrentTransaction.LockedById == main.terminalId)
+                {
+                    main.td.AddTransactionItem(2, pump.CurrentTransaction.DeliveryData.DeliveryID, 1, pump.CurrentTransaction.DeliveryData.Grade.ToString(), double.Parse(pump.CurrentTransaction.DeliveryData.UnitPrice.ToString()), 
+                        double.Parse(pump.CurrentTransaction.DeliveryData.Quantity.ToString()), double.Parse(pump.CurrentTransaction.DeliveryData.Money.ToString()), $"P{pump.CurrentTransaction.DeliveryData.UnitPrice.ToString("#,##0.00")}",
+                        $"{pump.CurrentTransaction.DeliveryData.Quantity.ToString("#,##0.000")}L", $"P{pump.CurrentTransaction.DeliveryData.Money.ToString("#,##0.00")}", false, false, 0, 0, 0, 0, "");
+                }
+
+                foreach(Transaction trans in pump.TransactionStack)
+                {
+                    if(trans.IsLocked && trans.LockedById == main.terminalId)
+                    {
+                        main.td.AddTransactionItem(2, trans.DeliveryData.DeliveryID, 1, trans.DeliveryData.Grade.ToString(), double.Parse(trans.DeliveryData.UnitPrice.ToString()), double.Parse(trans.DeliveryData.Quantity.ToString()),  double.Parse(trans.DeliveryData.Money.ToString()), $"P{trans.DeliveryData.UnitPrice.ToString("#,##0.00")}", $"{trans.DeliveryData.Quantity.ToString("#,##0.000")}L",
+                    $"P{trans.DeliveryData.Money.ToString("#,##0.00")}", false, false, 0, 0, 0, 0, "");
+                    }
+                }
+            }
         }
 
         public async void InternetConnectionChange(object sender, ConnectivityChangedEventArgs e)
@@ -1057,8 +1079,22 @@ namespace XamarinFormsEnablerMobile
             if (selectedFromStackList != null)
             {
                 bool isFuel = false;
-               
-                    Transaction selectedTrans = forecourt.GetTransactionById(selectedFromStackList.GetDeliveryID());
+
+                Console.WriteLine($"Delivery ID is {selectedFromStackList.GetDeliveryID()}");
+                //int transactionDeliveryID = selectedFromStackList.GetDeliveryID();
+                    Transaction selectedTrans = null;
+                foreach(Transaction trans in forecourt.Pumps[selectedFromStackList.GetPumpID()].TransactionStack)
+                {
+                    if(trans.DeliveryData.DeliveryID == selectedFromStackList.GetDeliveryID())
+                    {
+                        selectedTrans = trans;
+                    }
+                }
+
+                if(selectedTrans == null)
+                {
+                    selectedTrans = forecourt.Pumps[selectedFromStackList.GetPumpID()].CurrentTransaction;
+                }
                     /*foreach (Transaction trans in forecourt.Pumps[selectedPumpID].TransactionStack)
                     {
                         if (trans.DeliveryData.DeliveryID != selectedFromStackList.GetDeliveryID())
@@ -1089,8 +1125,8 @@ namespace XamarinFormsEnablerMobile
                 
 
                 main.td.AddTransactionItem(2, selectedFromStackList.GetDeliveryID(), 1, selectedFromStackList.GetGrade(), selectedFromStackList.GetPrice(), selectedFromStackList.GetVolume(), selectedFromStackList.GetTotal(), selectedFromStackList.GetDisplayPrice(), selectedFromStackList.GetDisplayVolume(),
-                    selectedFromStackList.GetDisplayTotal(), false, false, 0, 0, 0, 0, "");
-
+                    selectedFromStackList.GetDisplayTotal(), false, false, 0, 0, 0, 0, "", selectedFromStackList.GetPumpID().ToString());
+                
                 //main.PaymentStack.Add(selectedStack);
                 //StackList.Remove(selectedFromStackList);
                 myPumpController.AddedToTransaction(selectedFromStackList);
@@ -1114,8 +1150,8 @@ namespace XamarinFormsEnablerMobile
                 NonFuelItems.SelectedItem = null;*/
                 //NonFuelItems.Unfocus();
                 DisplayAlert("Item added to transaction", null, "Close");
-                string stringOfPaymentStack = Newtonsoft.Json.JsonConvert.SerializeObject(main.PaymentStack);
-                Preferences.Set("ForPayment", stringOfPaymentStack);
+               // string stringOfPaymentStack = Newtonsoft.Json.JsonConvert.SerializeObject(main.PaymentStack);
+               // Preferences.Set("ForPayment", stringOfPaymentStack);
             }
             else
             {
@@ -1957,6 +1993,7 @@ namespace XamarinFormsEnablerMobile
 
             if (Preferences.ContainsKey("ForPayment"))
             {
+                return;
                 Console.WriteLine("HAS FOR PAYMENT VALUE");
                 main.PaymentStack.Clear();
                 string retrievedForPayment = Preferences.Get("ForPayment", null);
