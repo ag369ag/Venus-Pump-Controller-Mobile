@@ -830,7 +830,8 @@ namespace XamarinFormsEnablerMobile
                 scData = blankString,
                 pwdData = blankString,
                 spData = blankString,
-                naacData = blankString
+                naacData = blankString,
+                movData = blankString
             };
 
             string JsonEncodedSafedrop = Newtonsoft.Json.JsonConvert.SerializeObject(SafedropData);
@@ -892,10 +893,10 @@ namespace XamarinFormsEnablerMobile
 
             foreach(string foot in main.footer)
             {
-                if (foot.ToLower().Contains("is not valid for claim of") || foot.ToLower().Contains("input tax"))
+                /*if (foot.ToLower().Contains("is not valid for claim of") || foot.ToLower().Contains("input tax"))
                 {
                     continue;
-                }
+                }*/
 
                 int spaceInfooter = (main.appSettings.paperWidth - foot.Length) / 2;
                 string newFooter = new string(' ', spaceInfooter) + foot + new string(' ', spaceInfooter);
@@ -953,8 +954,12 @@ namespace XamarinFormsEnablerMobile
                 // THIS IS FOR BLUETOOTH SOCKET PRINTING
                 /*var btPrinting = DependencyService.Get<PrintBluetooth>();
                 btPrinting.PrintReceiptBT(FORPRINTINGTEXT, main.appSettings.paperWidth);*/
-
+                FORPRINTINGTEXT = "";
                 // THIS IS FOR PRINT MANAGER
+                foreach(string text in FORPRINTINGARRAY)
+                {
+                    FORPRINTINGTEXT += (text +"\n");
+                }
                 var printService = DependencyService.Get<IPrintService>();
                 printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
                 //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);

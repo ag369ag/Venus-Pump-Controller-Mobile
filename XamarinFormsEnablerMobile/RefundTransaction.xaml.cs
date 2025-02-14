@@ -383,6 +383,7 @@ namespace XamarinFormsEnablerMobile
             JsonElement personWithDData = responseElement.GetProperty("pwdData");
             JsonElement nationalAthleteData = responseElement.GetProperty("naacData");
             JsonElement soloParentData = responseElement.GetProperty("solopData");
+            JsonElement moVData = responseElement.GetProperty("moVData");
 
             // SENIOR DATA
             //==================================================================================
@@ -401,6 +402,21 @@ namespace XamarinFormsEnablerMobile
                 string id = scdata[0].GetProperty("OSCAID_Number").ToString();
                 string tin = scdata[0].GetProperty("SC_TIN").ToString();
                 newSCData = GetSCPWDDiscountData(true, name, id, tin);
+
+            }
+
+            string newMoVData = "";
+            if (moVData.EnumerateArray().Count() <= 0)
+            {
+                newMoVData = blankObject;
+            }
+            else
+            {
+                var movdata = moVData.EnumerateArray().ToArray();
+                string name = movdata[0].GetProperty("MOV_Name").ToString();
+                string id = movdata[0].GetProperty("MOVID_Number").ToString();
+                string tin = movdata[0].GetProperty("MOV_TIN").ToString();
+                newMoVData = GetMoVDiscountData(name, id, tin);
 
             }
 
@@ -728,7 +744,8 @@ namespace XamarinFormsEnablerMobile
                 scData = newSCData,
                 pwdData = newPWDData,
                 spData = SoloParentData,
-                naacData = NAACData
+                naacData = NAACData,
+                movData = newMoVData
             };
 
             customerName = transactionDetails.GetProperty("CustomerName").ToString() ?? "";
@@ -774,7 +791,7 @@ namespace XamarinFormsEnablerMobile
             //Console.WriteLine(refundString);
             int TransType = int.Parse(transaction.GetProperty("Transaction_Type").ToString());
 
-            ProcessPrinting(trsORString, ORString, referenceNumber, trsTransNumber, TransType, seniorCitizenData, personWithDData, soloParentData, nationalAthleteData);
+            ProcessPrinting(trsORString, ORString, referenceNumber, trsTransNumber, TransType, seniorCitizenData, personWithDData, soloParentData, nationalAthleteData, moVData);
 
            
         }
@@ -827,6 +844,54 @@ namespace XamarinFormsEnablerMobile
             string pwdSCData = Newtonsoft.Json.JsonConvert.SerializeObject(DataArray);
             return pwdSCData;
         }
+
+
+        private string GetMoVDiscountData(string name, string id, string tin = null)
+        {
+            string discountIdentifier = "MEDAL OF VALOR 20%";
+           
+
+            //string discountDescriptionFive = discountIdentifier + " disc 5";
+            //string discountDescriptionTwenty = discountIdentifier + " disc 20";
+
+            double VatExValue = RefundItem.Where(a => a.itemTaxID == "2" && (a.itemType == "2" || a.itemType == "14")).Sum(a => double.Parse(a.itemValue));
+            double VatValue = RefundItem.Where(a => a.itemTaxID == "1" && (a.itemType == "2" || a.itemType == "14")).Sum(a => double.Parse(a.itemValue));
+
+            if (main.Items.Where(a => a.itemDesc.ToLower().Trim().Contains(discountIdentifier)).Count() > 0)
+            {
+                VatValue = RefundItem.Where(a => a.itemTaxID == "1").Sum(a => double.Parse(a.itemValue));
+            }
+
+            double fivePercentValue = 0;
+            double twentyPercentValue = RefundItem.Where(a => a.itemDesc.ToLower().Contains(discountIdentifier)).Sum(a => System.Math.Abs(double.Parse(a.itemValue)));
+
+           
+            bool hasTwentyPercent = RefundItem.Where(a => a.itemDesc.ToLower().Contains(discountIdentifier)).Count() > 0;
+
+            double saleTotal = RefundItem.Where(a => a.itemType != "7" || a.itemType != "8" || a.itemType != "10").Sum(a => double.Parse(a.itemValue));
+
+            object data = new
+            {
+                customerName = name,
+                idNumber = id,
+                tinNumber = tin,
+                vatable = VatValue / 1.12,
+                vatAmount = VatValue - (VatValue / 1.12),
+                vatExempt = VatExValue,
+                fivePerDisc = fivePercentValue,
+                twentyPerDisc = twentyPercentValue,
+                netSales = saleTotal
+            };
+            Console.WriteLine(data);
+            List<object> DataArray = new List<object>();
+            if (hasTwentyPercent)
+            {
+                DataArray.Add(data);
+            }
+            string pwdSCData = Newtonsoft.Json.JsonConvert.SerializeObject(DataArray);
+            return pwdSCData;
+        }
+
 
         private string GetSoloParentData(string name, string id, string cName, string cDOB, string cAge)
         {
@@ -889,7 +954,7 @@ namespace XamarinFormsEnablerMobile
 
         }
 
-        async void ProcessPrinting(string trsORNumber, string trsORNumWithoutTRS, string referenceNumber, string trsTransID, int transactionType, JsonElement sc, JsonElement pwd, JsonElement solo, JsonElement naac)
+        async void ProcessPrinting(string trsORNumber, string trsORNumWithoutTRS, string referenceNumber, string trsTransID, int transactionType, JsonElement sc, JsonElement pwd, JsonElement solo, JsonElement naac, JsonElement mov)
         {
             foreach(string item in main.header)
             {
@@ -1209,6 +1274,33 @@ namespace XamarinFormsEnablerMobile
                
                 FORPRINTINGARRAY.Add(" ");
             }
+
+            Console.WriteLine($"Before mov + {mov.EnumerateArray().ToArray().Count()}");
+            if (mov.EnumerateArray().ToArray().Count() > 0)
+            {
+                var movdata = mov.EnumerateArray().ToArray();
+                string name = movdata[0].GetProperty("MOV_Name").ToString();
+                string id = movdata[0].GetProperty("MOVID_Number").ToString();
+                string tin = movdata[0].GetProperty("MOV_TIN").ToString();
+
+                string signString = "Sign      : " + new string('_', 27);
+                FORPRINTINGARRAY.Add(signString);
+
+                string SeniorIDNumberString = "MOV ID No. : ";
+                AddCustomerInfo(SeniorIDNumberString, id);
+
+
+                string nameString = "Name      : ";
+                AddCustomerInfo(nameString, name);
+
+
+                string addressString = "TIN       : ";
+                AddCustomerInfo(addressString, tin);
+
+                FORPRINTINGARRAY.Add(" ");
+            }
+
+
 
             Console.WriteLine($"Before solo + {solo.EnumerateArray().ToArray().Count()}");
             if (solo.EnumerateArray().ToArray().Count() > 0)

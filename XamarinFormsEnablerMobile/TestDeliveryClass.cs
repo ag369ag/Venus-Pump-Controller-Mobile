@@ -127,7 +127,7 @@ namespace XamarinFormsEnablerMobile
             else
             {
                 var printingService = DependencyService.Get<MainPage.IPrintService>();
-                printingService.Print(forPrintingString, main.appSettings.paperWidth);
+                printingService.PrintReceiptOnNative(forPrintingString, 17);
             }
 
             /*foreach (Transaction trans in main.theForeCourt.Pumps[main.SelectedPump].TransactionStack)
