@@ -18,13 +18,13 @@ namespace XamarinFormsEnablerMobile
         public int itemTaxID { get; set; }
         public string gcNumber { get; set; }
         public string gcAmount { get; set; }
-        public double originalItemValuePreTaxChange { get; set; }
+        public double? originalItemValuePreTaxChange { get; set; }
         public int isTaxExemptItem { get; set; }
         public int isZeroRatedTaxItem { get; set; }
         public double itemDiscTotal { get; set; }
         public int departmentID { get; set; }
         public string itemDiscCodeType { get; set; }
-        public double itemDBPrice { get; set; }
+        public double? itemDBPrice { get; set; }
         public string itemGCNumber { get; set; }
         public double forDiscountUnitPrice { get; set; }
         public double forDiscountQTY { get; set; }
@@ -35,7 +35,7 @@ namespace XamarinFormsEnablerMobile
         public int discountID { get; set; }
 
         public TransactionItemClass(int itemNumber, int itemType, string itemDesc, double itemPrice, double itemQTY, double itemValue, int itemID, double itemTaxAmount, int deliveryID, int itemTaxID, string gcNumber, string gcAmount,
-            double originalItemValuePreTaxChange, int isTaxExemptItem, int isZeroRatedTaxItem, double itemDiscTotal, int departmentID, string itemDiscCodeType, double itemDBPrice, string itemGCNumber, double forDiscountUnitPrice, double forDiscountQTY, 
+            double? originalItemValuePreTaxChange, int isTaxExemptItem, int isZeroRatedTaxItem, double itemDiscTotal, int departmentID, string itemDiscCodeType, double? itemDBPrice, string itemGCNumber, double forDiscountUnitPrice, double forDiscountQTY, 
             double beforeDiscountValue,  double originalAmount, int discountPresetID, int discountID)
         {
             this.itemNumber = itemNumber;

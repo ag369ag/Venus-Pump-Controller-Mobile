@@ -30,7 +30,7 @@ namespace XamarinFormsEnablerMobile
 
         MainPage main;
         public bool isZeroRatedTransaction = false;
-        private bool isSCPWDDiscounted = false;
+        private bool isSCPWDMoVDiscounted = false;
         private string subTotal = "0.00";
         public bool zeroRatedTransactionIdentifier
         {
@@ -65,7 +65,7 @@ namespace XamarinFormsEnablerMobile
             naacs.Clear();
             inhouseData = null;
             isZeroRatedTransaction = false;
-            isSCPWDDiscounted = false;
+            isSCPWDMoVDiscounted = false;
             forPrintString.Clear();
             OnPropertyChanged();
         }
@@ -338,14 +338,14 @@ namespace XamarinFormsEnablerMobile
                 case 1:
                     {
                         discountValue = (baseValue / 100) * discount.presetValue;
-                        isSCPWDDiscounted = true;
+                        isSCPWDMoVDiscounted = true;
                         //discountValue = transItem.ApplySCPWD(discount);
                     }
                     break;
                 case 2:
                     {
                         discountValue = (baseValue / 100) * discount.presetValue;
-                        isSCPWDDiscounted = true;
+                        isSCPWDMoVDiscounted = true;
                         //discountValue = transItem.ApplySCPWD(discount);
                     }
                     break;
@@ -365,6 +365,7 @@ namespace XamarinFormsEnablerMobile
                 case 5:
                     {
                         discountValue = (baseValue / 100) * discount.presetValue;
+                        isSCPWDMoVDiscounted = true;
                     }
                     break;
                 case 6:
@@ -474,10 +475,22 @@ namespace XamarinFormsEnablerMobile
                 }
                 int isTaxEx = item.GetTaxID() == 1 ? 0 : 1;
                 int isZero = isZeroRatedTransaction ? 1 : 0;
-                string scpwdDiscounted = isSCPWDDiscounted && (item.GetItemType() == 52) ? "2" : "";
+                string scpwdDiscounted = isSCPWDMoVDiscounted && (item.GetItemType() == 52) ? "2" : "";
                 int depID = item.GetItemType() == 2 ? 1 : item.GetItemType() == 14 ? 2 : 0;
-                transItems.Add(new TransactionItemClass(count, item.GetItemType(), item.GetItemDescription(), item.GetUnitPrice(), item.GetQuantity(), item.GetTotal(), item.GetItemID(), item.GetTaxAmount(), item.GetItemID(), item.GetTaxID(), item.GetGCNum(), item.GetGCNum() ?? item.GetGCAmount(), item.GetOrigTotal(), isTaxEx, isZero, item.GetDiscountedValue(),
-                    depID, scpwdDiscounted, item.GetOrigUnitPrice(), "", item.GetOrigUnitPrice(), item.GetQuantity(), item.GetOrigTotal(), item.GetOrigTotal(), item.GetPresetID(), item.GetDiscountType()));
+                double? itemDBPrice =  null;
+                if ((item.GetItemType() == 2 || item.GetItemType() == 14))
+                {
+                    itemDBPrice = item.GetOrigUnitPrice();
+                }
+                double? originalItemValue = null;
+                if ((item.GetItemType() == 2 || item.GetItemType() == 14) && item.GetIsDiscounted)
+                {
+                    Console.WriteLine($"{item.GetItemDescription()} is discounted");
+                    originalItemValue = item.GetOrigTotal();
+                }
+                   
+                transItems.Add(new TransactionItemClass(count, item.GetItemType(), item.GetItemDescription(), item.GetUnitPrice(), item.GetQuantity(), item.GetTotal(), item.GetItemID(), item.GetTaxAmount(), item.GetItemID(), item.GetTaxID(), item.GetGCNum(), item.GetGCNum() ?? item.GetGCAmount(), originalItemValue, isTaxEx, isZero, item.GetDiscountedValue(),
+                    depID, scpwdDiscounted, itemDBPrice, "", item.GetOrigUnitPrice(), item.GetQuantity(), item.GetOrigTotal(), item.GetOrigTotal(), item.GetPresetID(), item.GetDiscountType()));
 
             }
             Console.WriteLine("After setting items");
@@ -832,17 +845,19 @@ namespace XamarinFormsEnablerMobile
                     AddSideString(secondLine, transItem.GetDisplayTotal());
                     itemPrice = transItem.GetTotal();
                 }
+                
 
                 if (transItem.GetItemType() == 14)
                 {
                     string productTaxType = transItem.GetOrigTaxID() == 1 ? "VAT" : transItem.GetOrigTaxID() == 2 ? "NVAT" : "ZeroRated";
-                    string secondLine = $"  {transItem.GetQuantity().ToString("#,##0.00")} x {transItem.GetUnitPrice().ToString("#,##0.00")} {productTaxType}";
-                    AddSideString(secondLine, transItem.GetDisplayTotal());
+                    string secondLine = $"  {transItem.GetQuantity().ToString("#,##0.00")} x {transItem.GetOrigUnitPrice().ToString("#,##0.00")} {productTaxType}";
+                    AddSideString(secondLine, transItem.GetOrigUnitPrice().ToString("#,##0.00"));
 
                     if ((transItem.GetIsDiscounted && transItem.IsBIRDiscount() && (transItem.GetPresetID() != 2 && transItem.GetPresetID() != 4 && transItem.GetPresetID() != 5)) || transItem.GetTaxID() == 3)
                     {
                         string lessVatString = " Less VAT 12%";
-                        string originalAmount = $"(P{(transItem.GetOrigUnitPrice() * transItem.GetQuantity()).ToString("#,##0.00")})";
+                        //string originalAmount = $"(P{(transItem.GetOrigUnitPrice() * transItem.GetQuantity()).ToString("#,##0.00")})";
+                        string originalAmount = $"(P{(transItem.GetOrigTotal() - (transItem.GetOrigTotal()/1.12)).ToString("#,##0.00")})";
                         AddSideString(lessVatString, originalAmount);
                     }
 
