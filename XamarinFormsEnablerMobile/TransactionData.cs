@@ -820,20 +820,33 @@ namespace XamarinFormsEnablerMobile
             string invoiceNumber = FormatORNumber(resetter, orNumber);
             AddSideString(main.CashierData.CashierName, invoiceNumber);
 
+            if (isZeroRatedTransaction)
+            {
+                AddCenterString(" ");
+                AddCenterString("*** ZERO RATED SALES ***");
+            }
+            AddCenterString(" ");
             AddCenterString("*** INVOICE ***");
-            AddCenterString("");
+            AddCenterString(" ");
 
             foreach (TransactionDataClass transItem in transactionsItem)
             {
                 if (transItem.GetItemType() != 7 && transItem.GetItemType() != 8 && transItem.GetItemType() != 10)
                 {
-                    if(transItem.GetItemType() == 52|| transItem.GetItemType() == 54)
+                    if (transItem.GetItemType() == 52 || transItem.GetItemType() == 54)
                     {
                         forPrintString.Add($" {transItem.GetItemDescription()}");
                     }
                     else
                     {
-                        forPrintString.Add(transItem.GetItemDescription());
+                        if (transItem.GetItemType().Equals(2))
+                        {
+                            forPrintString.Add($"0{transItem.GetPumpID()}-{transItem.GetItemDescription()}");
+                        }
+                        else
+                        {
+                            forPrintString.Add(transItem.GetItemDescription());
+                        }
                     }
                 }
 
@@ -850,6 +863,7 @@ namespace XamarinFormsEnablerMobile
                 if (transItem.GetItemType() == 14)
                 {
                     string productTaxType = transItem.GetOrigTaxID() == 1 ? "VAT" : transItem.GetOrigTaxID() == 2 ? "NVAT" : "ZeroRated";
+
                     string secondLine = $"  {transItem.GetQuantity().ToString("#,##0.00")} x {transItem.GetOrigUnitPrice().ToString("#,##0.00")} {productTaxType}";
                     AddSideString(secondLine, transItem.GetOrigUnitPrice().ToString("#,##0.00"));
 
@@ -911,7 +925,14 @@ namespace XamarinFormsEnablerMobile
                 }
 
                 //FormatSideString(transItem.GetItemDescription(), $"P{Math.Abs(transItem.GetTotal()).ToString("#,##0.00")}");
-                AddSideString(transItem.GetItemDescription(), FormatReceiptMoneyValue(transItem.GetTotal()));
+                if (transItem.GetItemType().Equals(10))
+                {
+                    AddSideString(transItem.GetItemDescription(), $"({FormatReceiptMoneyValue(transItem.GetTotal())})");
+                }
+                else
+                {
+                    AddSideString(transItem.GetItemDescription(), FormatReceiptMoneyValue(transItem.GetTotal()));
+                }
 
                 if (transItem.GetItemDescription().ToLower().Contains("gift cert"))
                 {
