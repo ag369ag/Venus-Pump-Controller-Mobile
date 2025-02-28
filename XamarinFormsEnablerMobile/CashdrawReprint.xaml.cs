@@ -160,7 +160,7 @@ namespace XamarinFormsEnablerMobile
                 }
             }
 
-            posConfig.FormatCashDrawReport();
+           // posConfig.FormatCashDrawReport();
             posConfig.FormatCashDrawReportReprint();
 
         }

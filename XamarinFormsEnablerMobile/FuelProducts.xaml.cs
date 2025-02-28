@@ -960,6 +960,15 @@ namespace XamarinFormsEnablerMobile
                 {
                     FORPRINTINGTEXT += (text +"\n");
                 }
+
+                var toPrintLog = new
+                {
+                    posID = main.terminalId,
+                    printedData = FORPRINTINGTEXT
+                };
+
+                await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
                 var printService = DependencyService.Get<IPrintService>();
                 printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
                 //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);

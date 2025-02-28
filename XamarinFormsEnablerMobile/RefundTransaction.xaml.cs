@@ -1670,7 +1670,16 @@ namespace XamarinFormsEnablerMobile
             StringContent EjournalStringContent = new StringContent(EJournalObjectString,Encoding.UTF8, "application/json");
             HttpResponseMessage response = await http.PostAsync(main.routes.saveToEJournal, EjournalStringContent);
             FORPRINTINGARRAY.Add(receiptCut);
-            if(main.appSettings.useSocketPrinter)
+
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = FORPRINTINGTEXT
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
+            if (main.appSettings.useSocketPrinter)
             {
                 List<string> cuttedForPrinting = new List<string>();
                 foreach(string item in FORPRINTINGARRAY)

@@ -189,7 +189,7 @@ namespace XamarinFormsEnablerMobile
             GetVoidRefundReport();
         }
 
-        private void FormatFullReport()
+        private async void FormatFullReport()
         {
             VoidItemList.OrderBy(a=>int.Parse(a.VoidEventCashierID));
             
@@ -334,7 +334,22 @@ namespace XamarinFormsEnablerMobile
                 forPrintingArray.Add(item);
             }
 
-            if(main.appSettings.useSocketPrinter)
+            string printingText = "";
+            foreach (string text in forPrintingArray)
+            {
+                string withNextLine = text + "\n";
+                printingText += withNextLine;
+            }
+
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = printingText
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
+            if (main.appSettings.useSocketPrinter)
             {
                 var printer = DependencyService.Get<IPrintingSocket>();
                 try
@@ -353,12 +368,7 @@ namespace XamarinFormsEnablerMobile
             }
             else
             {
-                string printingText = "";
-                foreach(string text in forPrintingArray)
-                {
-                    string withNextLine = text + "\n";
-                    printingText += withNextLine;
-                }
+               
                 var printService = DependencyService.Get<IPrintService>();
                 printService.PrintReceiptOnNative(printingText, 17);
                 //printService.Print(printingText, main.appSettings.paperWidth);
@@ -366,7 +376,7 @@ namespace XamarinFormsEnablerMobile
 
         }
 
-        private void FormatSummaryReport()
+        private async void FormatSummaryReport()
         {
             VoidItemList.OrderBy(a => int.Parse(a.VoidEventCashierID));
 
@@ -519,6 +529,23 @@ namespace XamarinFormsEnablerMobile
                 forPrintingArraySummary.Add(item);
             }
 
+
+            string printingText = "";
+            foreach (string text in forPrintingArraySummary)
+            {
+                string withNextLine = text + "\n";
+                printingText += withNextLine;
+            }
+
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = printingText
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+           
+
             if (main.appSettings.useSocketPrinter)
             {
                 var printer = DependencyService.Get<IPrintingSocket>();
@@ -538,12 +565,7 @@ namespace XamarinFormsEnablerMobile
             }
             else
             {
-                string printingText = "";
-                foreach (string text in forPrintingArraySummary)
-                {
-                    string withNextLine = text + "\n";
-                    printingText += withNextLine;
-                }
+                
                 var printService = DependencyService.Get<IPrintService>();
                 printService.PrintReceiptOnNative(printingText, 17);
                 //printService.Print(printingText, main.appSettings.paperWidth);

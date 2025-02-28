@@ -292,6 +292,7 @@ namespace XamarinFormsEnablerMobile
             public string getCDrawHistoryByPeriodID { get; set; }
             public string saveCumulative { get; set; }
             public string getDocumentNumber { get; set; }
+            public string savePrintedData { get; set; }
             public string apiEndpoint { get; set; }
         }
         public apiRoutes routes = new apiRoutes();
@@ -456,6 +457,7 @@ namespace XamarinFormsEnablerMobile
                 routes.saveCumulative = APIServer + "/VJournalCtrl/saveToAccumulatingReport";
                 routes.apiEndpoint = APIServer;
                 routes.getDocumentNumber = APIServer + "/lookUpCtrl/getDocumentNumber";
+                routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
             }
             else
             {
@@ -489,6 +491,7 @@ namespace XamarinFormsEnablerMobile
                 routes.saveCumulative = APIServer + "/VJournalCtrl/saveToAccumulatingReport";
                 routes.apiEndpoint = APIServer;
                 routes.getDocumentNumber = APIServer + "/lookUpCtrl/getDocumentNumber";
+                routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
             }
 
         }

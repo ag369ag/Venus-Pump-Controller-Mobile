@@ -119,6 +119,14 @@ namespace XamarinFormsEnablerMobile
                 forPrintingString += (item + "\n");
             }
 
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = forPrintingString
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
             if (main.appSettings.useSocketPrinter)
             {
                 var printer = DependencyService.Get<IPrintingSocket>();

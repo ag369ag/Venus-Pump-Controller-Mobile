@@ -936,6 +936,14 @@ namespace XamarinFormsEnablerMobile
             string returnREsponse = await response.Content.ReadAsStringAsync();
             Console.WriteLine(returnREsponse);
 
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = FORPRINTINGTEXT
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
             if (main.appSettings.useSocketPrinter)
             {
                 var printer = DependencyService.Get<IPrintingSocket>();
@@ -1173,7 +1181,7 @@ namespace XamarinFormsEnablerMobile
             return formattedInvoiceNumber;
         }
 
-        public void FormatCashDrawReportReprint()
+        public async void FormatCashDrawReportReprint()
         {
             FORPRINTINGARRAY.Clear();
             FORPRINTINGTEXT = "";
@@ -1299,6 +1307,14 @@ namespace XamarinFormsEnablerMobile
             }
             Console.WriteLine(FORPRINTINGTEXT);
 
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = FORPRINTINGTEXT
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
             if (main.appSettings.useSocketPrinter)
             {
                 var printer = DependencyService.Get<IPrintingSocket>();
@@ -1324,7 +1340,7 @@ namespace XamarinFormsEnablerMobile
             }
         }
 
-        public void FormatCashDrawReport()
+        public async void FormatCashDrawReport()
         {
             FORPRINTINGARRAY.Clear();
             FORPRINTINGTEXT = "";
@@ -1440,6 +1456,14 @@ namespace XamarinFormsEnablerMobile
                 FORPRINTINGTEXT += data;
             }
             Console.WriteLine(FORPRINTINGTEXT);
+
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = FORPRINTINGTEXT
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
 
             if (main.appSettings.useSocketPrinter)
             {

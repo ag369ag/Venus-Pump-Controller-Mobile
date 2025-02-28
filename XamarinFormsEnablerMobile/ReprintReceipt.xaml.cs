@@ -269,6 +269,14 @@ namespace XamarinFormsEnablerMobile
 
             }
 
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = forprint
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
             //return;
             Console.WriteLine(forprint);
 

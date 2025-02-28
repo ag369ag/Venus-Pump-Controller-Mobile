@@ -1156,6 +1156,17 @@ namespace XamarinFormsEnablerMobile
             await main.APIservice.APIQuery(toElectronicJournal, main.routes.saveToEJournal);
 
             Console.WriteLine("After saving to journal");
+
+            Console.WriteLine("Before saving to log");
+
+            var toPrintLog = new
+            {
+                posID = main.terminalId,
+                printedData = FORPRINTINGTEXT
+            };
+
+            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
             /*HttpClient SendToEJournal = new HttpClient();
             string toEJournalBody = Newtonsoft.Json.JsonConvert.SerializeObject(toElectronicJournal);
             StringContent toEJournalContent = new StringContent(toEJournalBody, Encoding.UTF8, "application/json");
