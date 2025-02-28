@@ -413,16 +413,19 @@ namespace XamarinFormsEnablerMobile
                 return;
             }
             Console.WriteLine($"Negative discount is {NegativeDiscount}");
-            if (discount.presetName.ToLower().Contains("naac"))
+
+            // NAAC CONDITION
+            /*if (discount.presetName.ToLower().Contains("naac"))
             {
 
                 AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
-            }
-            else
-            {
+            }*/
+            //else
+           // {
+            //=======================
                 AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
 
-            }    
+            //}    
             OnPropertyChanged();
         }
 
@@ -1313,7 +1316,8 @@ namespace XamarinFormsEnablerMobile
 
         private double GetTotalValueByTaxID(double taxID)
         {
-            double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
+            double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
+           // double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
             double witouthBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
             //double amount = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
             //return transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - a.GetDiscountedValue()));

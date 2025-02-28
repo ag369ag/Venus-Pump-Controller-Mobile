@@ -1209,9 +1209,13 @@ namespace XamarinFormsEnablerMobile
             customerNAACName = NAACNAmeChecker;
             customerPNSTMNumber = NAACPNSTMNumberChecker;
             main.td.AddNAAC(customerNAACName, customerPNSTMNumber);
-
             main.td.AddDiscount(selectedTransaction, checkDiscountType);
             selectedTransaction.SetIsDiscounted(true);
+            // Added for naac discount vat ex
+            //========================================
+            selectedTransaction.ApplyNAAC(checkDiscountType);
+            main.td.UpdateSubtotal();
+            //========================================
             RemoveItemFocus();
             ShowMOPButtons();
             /*

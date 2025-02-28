@@ -274,6 +274,7 @@ namespace XamarinFormsEnablerMobile
 
         public void ApplyNAAC(MainPage.DiscountPresetsClass discount)
         {
+            SetNewTaxID(2);
             SetIsDiscounted(true);
             SetIsBIRDiscount(true);
             SetDiscountType(discount.presetDiscountType);
@@ -283,10 +284,12 @@ namespace XamarinFormsEnablerMobile
             double baseValue = itemUnitPrice / 1.12;
             double discValue = (baseValue / 100) * discount.presetValue;
             double removedTaxValue = itemUnitPrice - baseValue;
-            double returnedNAACTax = (baseValue - discValue) + removedTaxValue;
+            // With naac discount double returnedNAACTax = (baseValue - discValue) + removedTaxValue;
 
             SetDiscountedValue(discValue);
-            SetUnitPrice(returnedNAACTax);
+            //RemoveTax();
+            SetUnitPrice(baseValue);
+            //SetUnitPrice(removedTaxValue);
             OnPropertyChanged();
         }
 
