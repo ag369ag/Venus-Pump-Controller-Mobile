@@ -1414,19 +1414,19 @@ namespace XamarinFormsEnablerMobile
 
                 case 1:
                     {
-                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, discountValue, 0, 0, "", "", itemIndex);
+                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, double.Parse(subAccDisc.SADDiscountValue), 0, 0, "", "", itemIndex);
                        // trans.ApplyNonBIRDiscount(subAccDisc);
                     }
                     break;
                 case 2:
                     {
                         AddTransactionItem(52, subAccDisc.SAID, 1, desc, -1, trans.GetQuantity(), discountValue, $"P{(-1).ToString("#,##0.00")}", trans.GetDisplayQuantity(), $"P{discountValue.ToString("#,##0.00")}",
-                    false, false, subAccDisc.SADDiscountType, discountValue, 0, 0, "", "", itemIndex);
+                    false, false, subAccDisc.SADDiscountType, double.Parse(subAccDisc.SADDiscountValue), 0, 0, "", "", itemIndex);
                     }
                     break;
                 case 3:
                     {
-                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, discountValue, 0, 0, "", "", itemIndex);
+                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, double.Parse(subAccDisc.SADDiscountValue), 0, 0, "", "", itemIndex);
                     }
                     break;
                     default:

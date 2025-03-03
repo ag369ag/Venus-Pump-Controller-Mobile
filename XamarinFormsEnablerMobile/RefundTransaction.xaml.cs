@@ -496,8 +496,22 @@ namespace XamarinFormsEnablerMobile
                 Console.WriteLine("after conversion");
                 if (itemTypeNumber == 2 || itemTypeNumber == 14)
                 {
-                    Console.WriteLine($"Processing item type {itemTypeNumber}");
                     refundValue += double.Parse(item.GetProperty("Item_Value").ToString());
+                    Console.WriteLine($"Processing item type {itemTypeNumber}, {string.IsNullOrEmpty(item.GetProperty("Item_Discount_Total").ToString())}, this");
+                    Console.WriteLine($"{(Math.Abs(double.Parse(item.GetProperty("Item_Price").ToString())))}");
+                    Console.WriteLine($"{(Math.Abs(double.Parse(item.GetProperty("Item_Quantity").ToString())))}");
+                    Console.WriteLine($"{(Math.Abs(double.Parse(item.GetProperty("Item_Value").ToString())))}");
+                    Console.WriteLine($"{(Math.Abs(double.Parse(item.GetProperty("Item_Tax_Amount").ToString())))}");
+                    string discTotal = "0";
+                    double origVal = 0;
+                    if (!string.IsNullOrEmpty(item.GetProperty("Item_Discount_Total").ToString()))
+                    {
+                        discTotal = (Math.Abs(double.Parse(item.GetProperty("Item_Discount_Total").ToString()))).ToString();
+                    }
+                    if (!string.IsNullOrEmpty(item.GetProperty("Original_Item_Value").ToString()))
+                    {
+                        origVal = Math.Abs(double.Parse(item.GetProperty("Original_Item_Value").ToString()));
+                    }
                     RefundItem.Add(new Item
                     {
                         deliveryID = item.GetProperty("Item_ID").ToString(),
@@ -506,18 +520,18 @@ namespace XamarinFormsEnablerMobile
                         itemTaxID = item.GetProperty("Tax_ID").ToString(),
                         itemDesc = item.GetProperty("Item_Description").ToString().Trim(),
                         itemPrice = (Math.Abs(double.Parse(item.GetProperty("Item_Price").ToString()))).ToString(),
-                        itemQTY = (Math.Abs(double.Parse(item.GetProperty("Item_Quantity").ToString())) * (-1)   ).ToString(),
-                        itemValue = ( Math.Abs(double.Parse(item.GetProperty("Item_Value").ToString())) * (-1) ).ToString(),
+                        itemQTY = (Math.Abs(double.Parse(item.GetProperty("Item_Quantity").ToString())) * (-1)).ToString(),
+                        itemValue = ( Math.Abs(double.Parse(item.GetProperty("Item_Value").ToString())) * (-1)).ToString(),
                         itemID = item.GetProperty("Item_ID").ToString(),
                         itemTaxAmount = (Math.Abs(double.Parse(item.GetProperty("Item_Tax_Amount").ToString())) * (-1)).ToString(),
-                        itemDiscTotal = item.GetProperty("Item_Discount_Total").ToString() == null ? (Math.Abs(double.Parse( item.GetProperty("Item_Discount_Total").ToString()))).ToString() : "0",
+                        itemDiscTotal = discTotal,
                         isTaxExemptItem = item.GetProperty("is_tax_exempt_item").ToString(),
                         isZeroRatedTaxItem = item.GetProperty("is_zero_rated_tax_item").ToString(),
                         itemDBPrice = item.GetProperty("Item_DB_Price").ToString(),
-                        originalAmount = item.GetProperty("Original_Item_Value").ToString(),
+                        originalAmount = origVal.ToString(),
                         gcNumber = item.GetProperty("GC_Number").ToString() ?? "",
                         departmentID = "0",
-                        originalItemValuePreTaxChange = item.GetProperty("Original_Item_Value").ToString(),
+                        originalItemValuePreTaxChange = origVal.ToString(),
                         percentDiscount = "0",
                         beforeDiscountValue = "0",
                         forDiscountQTY = "0",
@@ -525,10 +539,10 @@ namespace XamarinFormsEnablerMobile
                         gcAmount = "0",
                         itemDiscCodeType = "0",
                         itemGCNumber = "0",
-                        forDiscountOriginalValue = double.Parse(item.GetProperty("Original_Item_Value").ToString()),
+                        forDiscountOriginalValue = origVal,
                         discountPresetID = null
                     });
-                    OriginalAmountForDiscount =  double.Parse(item.GetProperty("Original_Item_Value").ToString());
+                    OriginalAmountForDiscount = origVal;
                 }
                 else if (itemTypeNumber == 7 || itemTypeNumber == 8)
                 {

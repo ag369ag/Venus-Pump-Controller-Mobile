@@ -320,7 +320,7 @@ namespace XamarinFormsEnablerMobile
 
         public double GetNonBIRDiscValue(MainPage.DiscountPresetsClass discount)
         {
-            double unitPrice = GetUnitPrice();
+            double unitPrice = GetTotal();
             double quantity = GetQuantity();
 
             double discVal = 0;
@@ -354,7 +354,7 @@ namespace XamarinFormsEnablerMobile
 
         public double GetNonBIRDiscValue(InhouseField.SubAccountDiscount discount)
         {
-            double unitPrice = GetUnitPrice();
+            double unitPrice = GetTotal();
             double quantity = GetQuantity();
 
             double discVal = 0;
