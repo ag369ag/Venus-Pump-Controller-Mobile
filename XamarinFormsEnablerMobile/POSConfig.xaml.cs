@@ -1197,8 +1197,8 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add(" ");
             FormatCenterStringForPrinting("CASH DRAW REPORT");
             FORPRINTINGARRAY.Add(" ");
-            FormatCenterStringForPrinting("X-Reading");
-            FORPRINTINGARRAY.Add(" ");
+            /*FormatCenterStringForPrinting("X-Reading");
+            FORPRINTINGARRAY.Add(" ");*/
             FormatCenterStringForPrinting("*** REPRINT ***");
             FormatCenterStringForPrinting($"Reprint Date: {formattedDate}");
             FORPRINTINGARRAY.Add(" ");
@@ -1354,8 +1354,8 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add(" ");
             FormatCenterStringForPrinting("CASH DRAW REPORT");
             FORPRINTINGARRAY.Add(" ");
-            FormatCenterStringForPrinting("X-Reading");
-            FORPRINTINGARRAY.Add(" ");
+            /*FormatCenterStringForPrinting("X-Reading");
+            FORPRINTINGARRAY.Add(" ");*/
             FormatCenterStringForPrinting("Open: " + openDateDetail);
             FormatCenterStringForPrinting("Close: " + closeDateDetail);
             FormatCenterStringForPrinting("Closed by: " + cashierNameDetail);
