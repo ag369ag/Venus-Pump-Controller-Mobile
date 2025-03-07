@@ -255,8 +255,8 @@ namespace XamarinFormsEnablerMobile
                         // Console.WriteLine(reprintDateString);
                         forprint += reprintDateString;
 
-                        forprint += "\n";
-                        forprint += "\n";
+                        forprint += " \n";
+                        forprint += " \n";
                 //    }
                 }
 
@@ -268,6 +268,22 @@ namespace XamarinFormsEnablerMobile
                 //lineNumber++;
 
             }
+
+            forprint += " \n";
+            if(!forprint.ToLower().Contains("is not valid for claim of"))
+            {
+                foreach (string footer in main.footer)
+                {
+                    if ((footer.ToLower().Contains("is not valid for claim of")) || (footer.ToLower().Contains("input tax")))
+                    {
+                        forprint += $"{footer}\n";
+                    }
+
+                }
+            }
+            
+
+            forprint += " \n";
 
             var toPrintLog = new
             {

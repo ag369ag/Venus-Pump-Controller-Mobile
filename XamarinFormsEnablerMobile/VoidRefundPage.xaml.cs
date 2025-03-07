@@ -331,6 +331,10 @@ namespace XamarinFormsEnablerMobile
 
             foreach(string item in main.footer)
             {
+                if (item.ToLower().Contains("thank you"))
+                {
+                    continue;
+                }
                 forPrintingArray.Add(item);
             }
 
@@ -526,6 +530,10 @@ namespace XamarinFormsEnablerMobile
 
             foreach (string item in main.footer)
             {
+                if (item.ToLower().Contains("thank you"))
+                {
+                    continue;
+                }
                 forPrintingArraySummary.Add(item);
             }
 

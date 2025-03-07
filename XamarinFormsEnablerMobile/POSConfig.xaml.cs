@@ -888,6 +888,10 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add("");
             foreach (var item in main.footer)
             {
+                if (item.ToLower().Contains("thank you"))
+                {
+                    continue;
+                }
                 FORPRINTINGARRAY.Add(item.ToString());
             }
 
@@ -1297,6 +1301,10 @@ namespace XamarinFormsEnablerMobile
 
             foreach(string foot in main.footer)
             {
+                if (foot.ToLower().Contains("thank you"))
+                {
+                    continue;
+                }
                 FORPRINTINGARRAY.Add(foot);
             }
 
@@ -1449,6 +1457,16 @@ namespace XamarinFormsEnablerMobile
             FormatCenterStringForPrinting("- MANUAL REFUNDS -");
             FORPRINTINGARRAY.Add(" ");
             FormatList(ManualFuelRefunds);
+
+            foreach (var item in main.footer)
+            {
+
+                if(item.ToLower().Contains("thank you"))
+                {
+                    continue;
+                }
+                FORPRINTINGARRAY.Add(item.ToString());
+            }
 
             foreach (var item in FORPRINTINGARRAY)
             {
