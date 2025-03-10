@@ -720,7 +720,7 @@ namespace XamarinFormsEnablerMobile
             string printType = "ACCUMULATING GRAND TOTAL SALES REPORT";
             FormatCenterStringForPrinting(printType);
             string readingType = "Z-Reading";
-            FormatCenterStringForPrinting(readingType);
+            //FormatCenterStringForPrinting(readingType);
             FORPRINTINGARRAY.Add("");
             foreach (string s in main.header)
             {
