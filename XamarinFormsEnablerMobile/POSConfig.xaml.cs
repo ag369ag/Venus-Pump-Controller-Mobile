@@ -882,7 +882,7 @@ namespace XamarinFormsEnablerMobile
             string EndingSalesInvoice = FormatInvoiceNumber(endSalesResetter, endSalesInvoice);
             FormatSideStringsForPrinting("Ending Sales Invoice", BeginningSalesInvoice == EndingSalesInvoice ? "NO ACTIVITY" : EndingSalesInvoice);
             FORPRINTINGARRAY.Add("");
-            FormatSideStringsForPrinting("Z-Counter", zCounter);
+            //FormatSideStringsForPrinting("Z-Counter", zCounter);
             FORPRINTINGARRAY.Add("");
             FormatSideStringsForPrinting("ACCUMULATING GRAND TOTAL", "P" + (double.Parse(currentAccumulatingSales)).ToString("#,##0.00"));
             FORPRINTINGARRAY.Add("");
