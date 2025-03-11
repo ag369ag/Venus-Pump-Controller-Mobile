@@ -31,6 +31,7 @@ namespace XamarinFormsEnablerMobile
         string plateNum = "";
         string odometer = "";
         string subAccID = "";
+
         List<string> FORPRINTINGARRAY = new List<string>();
 
         #region List of transactions
@@ -94,6 +95,7 @@ namespace XamarinFormsEnablerMobile
             DateForReprint = (DateTime.Now).ToString("MM/dd/yyyy");
             FORPRINTINGTEXT = string.Empty;
             FORPRINTINGARRAY.Clear();
+            BindingContext = this;
         }
 
         protected override void OnAppearing()
@@ -261,23 +263,34 @@ namespace XamarinFormsEnablerMobile
                 return;
             }*/
 
+            
+
             string receiptNumber = transactionFromDB.Where(a => a.buttonText.ToLower().Trim() == button.Text.ToLower().Trim()).First().orNumber;
 
             bool continueToRefund = await DisplayAlert("Do you want to refund transaction " + receiptNumber + " ?", null, "Continue", "Cancel");
-            if(!continueToRefund)
+            
+            
+
+            Button btn = sender as Button;
+            btn.IsEnabled = false;
+
+            if (!continueToRefund)
             {
+                btn.IsEnabled = true;
                 return;
             }
+
+            
 
             var dividedSINum = receiptNumber.Trim().ToLower().Replace("invoice no.", "").Replace("-", ".").Split('.');
             Console.WriteLine(int.Parse(dividedSINum[0]) + 0);
             Console.WriteLine(int.Parse(dividedSINum[1]) + 0);
             string transNum = (int.Parse(dividedSINum[1]) + 0).ToString();
             string resetter = (int.Parse(dividedSINum[0]) + 0).ToString();
-            CheckForRefund(transNum, resetter, receiptNumber);
+            CheckForRefund(transNum, resetter, receiptNumber, btn);
         }
         
-        async void CheckForRefund(string transNum, string resetter, string referenceNumber)
+        async void CheckForRefund(string transNum, string resetter, string referenceNumber, Button btn)
         {
             Object data = new
             {
@@ -299,12 +312,13 @@ namespace XamarinFormsEnablerMobile
                 if(refundStatus.ToString() != "0")
                 {
                     await DisplayAlert("This transaction is already refunded", null, "Close");
+                    btn.IsEnabled = true;
                     return;
                 }
             }
-            catch (Exception e) { }
+            catch (Exception e) { btn.IsEnabled = true; }
             //return;
-            GetTransactionData(transNum, referenceNumber, resetter);
+            GetTransactionData(transNum, referenceNumber, resetter, btn);
         }
 
         async void GetDiscounts()
@@ -348,7 +362,7 @@ namespace XamarinFormsEnablerMobile
             }
         }
 
-        async void GetTransactionData(string transNum, string referenceNumber, string resetter)
+        async void GetTransactionData(string transNum, string referenceNumber, string resetter, Button btn)
         {
             if(main.DiscountPresetButtonList.Count() < 1  || main.DiscountButtonList.Count() < 1 )
             {
@@ -373,6 +387,7 @@ namespace XamarinFormsEnablerMobile
             if(responseCode == "401")
             {
                 await DisplayAlert("Transaction doesn't have record", null, "Close");
+                btn.IsEnabled = true;
                 return;
             }
 

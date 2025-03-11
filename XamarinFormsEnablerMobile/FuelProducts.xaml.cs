@@ -149,16 +149,16 @@ namespace XamarinFormsEnablerMobile
                 if(pump.CurrentTransaction.LockedById == main.terminalId)
                 {
                     main.td.AddTransactionItem(2, pump.CurrentTransaction.DeliveryData.DeliveryID, 1, pump.CurrentTransaction.DeliveryData.Grade.ToString(), double.Parse(pump.CurrentTransaction.DeliveryData.UnitPrice.ToString()), 
-                        double.Parse(pump.CurrentTransaction.DeliveryData.Quantity.ToString()), double.Parse(pump.CurrentTransaction.DeliveryData.Money.ToString()), $"P{pump.CurrentTransaction.DeliveryData.UnitPrice.ToString("#,##0.00")}",
-                        $"{pump.CurrentTransaction.DeliveryData.Quantity.ToString("#,##0.000")}L", $"P{pump.CurrentTransaction.DeliveryData.Money.ToString("#,##0.00")}", false, false, 0, 0, 0, 0, "");
+                        double.Parse(pump.CurrentTransaction.DeliveryData.Quantity.ToString()), double.Parse(pump.CurrentTransaction.DeliveryData.Money.ToString()), $"P{pump.CurrentTransaction.DeliveryData.UnitPrice}",
+                        $"{pump.CurrentTransaction.DeliveryData.Quantity}L", $"P{pump.CurrentTransaction.DeliveryData.Money}", false, false, 0, 0, 0, 0, "");
                 }
 
                 foreach(Transaction trans in pump.TransactionStack)
                 {
                     if(trans.IsLocked && trans.LockedById == main.terminalId)
                     {
-                        main.td.AddTransactionItem(2, trans.DeliveryData.DeliveryID, 1, trans.DeliveryData.Grade.ToString(), double.Parse(trans.DeliveryData.UnitPrice.ToString()), double.Parse(trans.DeliveryData.Quantity.ToString()),  double.Parse(trans.DeliveryData.Money.ToString()), $"P{trans.DeliveryData.UnitPrice.ToString("#,##0.00")}", $"{trans.DeliveryData.Quantity.ToString("#,##0.000")}L",
-                    $"P{trans.DeliveryData.Money.ToString("#,##0.00")}", false, false, 0, 0, 0, 0, "");
+                        main.td.AddTransactionItem(2, trans.DeliveryData.DeliveryID, 1, trans.DeliveryData.Grade.ToString(), double.Parse(trans.DeliveryData.UnitPrice.ToString()), double.Parse(trans.DeliveryData.Quantity.ToString()),  double.Parse(trans.DeliveryData.Money.ToString()), $"P{trans.DeliveryData.UnitPrice}", $"{trans.DeliveryData.Quantity}L",
+                    $"P{trans.DeliveryData.Money}", false, false, 0, 0, 0, 0, "");
                     }
                 }
             }
@@ -448,9 +448,9 @@ namespace XamarinFormsEnablerMobile
                         TransactionVolume = selectedPump.CurrentTransaction.DeliveryData.Quantity,
                         TransactionUnitPrice = selectedPump.CurrentTransaction.DeliveryData.UnitPrice,
                         TransactionTotal = selectedPump.CurrentTransaction.DeliveryData.Money,
-                        TransactionFormattedVolume = string.Format("{0:f03}L", selectedPump.CurrentTransaction.DeliveryData.Quantity),
-                        TransactionFormattedUnitPrice = string.Format("{0:f02}", selectedPump.CurrentTransaction.DeliveryData.UnitPrice),
-                        TransactionFormattedTotal = "P" + selectedPump.CurrentTransaction.DeliveryData.Money.ToString("#,##0.00"),
+                        TransactionFormattedVolume = selectedPump.CurrentTransaction.DeliveryData.Quantity.ToString() + "L",
+                        TransactionFormattedUnitPrice = selectedPump.CurrentTransaction.DeliveryData.UnitPrice.ToString(),
+                        TransactionFormattedTotal = "P" + selectedPump.CurrentTransaction.DeliveryData.Money.ToString(),
                         isCurrentTransaction = 1
                     });
                 }
@@ -474,9 +474,9 @@ namespace XamarinFormsEnablerMobile
                             TransactionVolume = transactions.DeliveryData.Quantity,
                             TransactionUnitPrice = transactions.DeliveryData.UnitPrice,
                             TransactionTotal = transactions.DeliveryData.Money,
-                            TransactionFormattedVolume = string.Format("{0:f03}L", transactions.DeliveryData.Quantity),
-                            TransactionFormattedUnitPrice = string.Format("{0:f02}", transactions.DeliveryData.UnitPrice),
-                            TransactionFormattedTotal = "P" + transactions.DeliveryData.Money.ToString("#,##0.00"),
+                            TransactionFormattedVolume = transactions.DeliveryData.Quantity.ToString() + "L",
+                            TransactionFormattedUnitPrice = transactions.DeliveryData.UnitPrice.ToString(),
+                            TransactionFormattedTotal = "P" + transactions.DeliveryData.Money.ToString(),
                             isCurrentTransaction = 0
                         });
                     }
@@ -1314,7 +1314,7 @@ namespace XamarinFormsEnablerMobile
                 if (pumpTransaction != null)
                 {
                     pumpClass.pumpCurrentType = pumpTransaction.DeliveryData.Grade.ToString();
-                    pumpClass.currentVolumeFormat = String.Format("{0:f03}L", pumpTransaction.DeliveryData.Quantity);
+                    pumpClass.currentVolumeFormat = string.Format("{0:f03}L", pumpTransaction.DeliveryData.Quantity);
                     pumpClass.currentTotalFormat = pumpTransaction.DeliveryData.Money.ToString("#,##0.00");
                 }
                 else
@@ -1502,8 +1502,8 @@ namespace XamarinFormsEnablerMobile
                                 pumpCurrentType = (pump.CurrentTransaction.DeliveryData.Grade.ToString() == null || pump.CurrentTransaction.DeliveryData.Grade.ToString() == "") ? "Error" : pump.CurrentTransaction.DeliveryData.Grade.ToString(),
                                 pumpCurrentVolume = (pump.CurrentTransaction.DeliveryData.Quantity.ToString() == null || pump.CurrentTransaction.DeliveryData.Quantity.ToString() == "") ? "" : pump.CurrentTransaction.DeliveryData.Quantity.ToString(),
                                 pumpCurrentTotal = (pump.CurrentTransaction.DeliveryData.Money.ToString() == null || pump.CurrentTransaction.DeliveryData.Money.ToString() == "") ? "" : pump.CurrentTransaction.DeliveryData.Money.ToString(),
-                                currentVolumeFormat = (pump.CurrentTransaction.DeliveryData.Quantity.ToString() == null || pump.CurrentTransaction.DeliveryData.Quantity.ToString() == "") ? "" : pump.CurrentTransaction.DeliveryData.Quantity.ToString("{0:f03}") + "L",
-                                currentTotalFormat = (pump.CurrentTransaction.DeliveryData.Money.ToString() == null || pump.CurrentTransaction.DeliveryData.Money.ToString() == "") ? "" : "P" + String.Format("{0:f02}", pump.CurrentTransaction.DeliveryData.Money)
+                                currentVolumeFormat = (pump.CurrentTransaction.DeliveryData.Quantity.ToString() == null || pump.CurrentTransaction.DeliveryData.Quantity.ToString() == "") ? "" : pump.CurrentTransaction.DeliveryData.Quantity.ToString() + "L",
+                                currentTotalFormat = (pump.CurrentTransaction.DeliveryData.Money.ToString() == null || pump.CurrentTransaction.DeliveryData.Money.ToString() == "") ? "" : "P" + pump.CurrentTransaction.DeliveryData.Money.ToString()
                             });
 
                     }
@@ -1546,8 +1546,8 @@ namespace XamarinFormsEnablerMobile
                 if (pumpTransaction != null)
                 {
                     pumpItem.pumpCurrentType = pumpTransaction.DeliveryData.Grade.ToString();
-                    pumpItem.currentVolumeFormat = String.Format("{0:f03}L", pumpTransaction.DeliveryData.Quantity);
-                    pumpItem.currentTotalFormat = pumpTransaction.DeliveryData.Money.ToString("#,##0.00");
+                    pumpItem.currentVolumeFormat = pumpTransaction.DeliveryData.Quantity.ToString() + "L";
+                    pumpItem.currentTotalFormat = pumpTransaction.DeliveryData.Money.ToString();
                     pumpItem.stackIndicator = Color.Green;
                 }
                 else
@@ -1618,9 +1618,9 @@ namespace XamarinFormsEnablerMobile
                         TransactionVolume = selectedPump.CurrentTransaction.DeliveryData.Quantity,
                         TransactionUnitPrice = selectedPump.CurrentTransaction.DeliveryData.UnitPrice,
                         TransactionTotal = selectedPump.CurrentTransaction.DeliveryData.Money,
-                        TransactionFormattedVolume = string.Format("{0:f03}L", selectedPump.CurrentTransaction.DeliveryData.Quantity),
-                        TransactionFormattedUnitPrice = string.Format("{0:f02}", selectedPump.CurrentTransaction.DeliveryData.UnitPrice),
-                        TransactionFormattedTotal = "P" + String.Format("{0:f02}", selectedPump.CurrentTransaction.DeliveryData.Money),
+                        TransactionFormattedVolume = selectedPump.CurrentTransaction.DeliveryData.Quantity.ToString() + "L",
+                        TransactionFormattedUnitPrice = selectedPump.CurrentTransaction.DeliveryData.UnitPrice.ToString(),
+                        TransactionFormattedTotal = "P" + selectedPump.CurrentTransaction.DeliveryData.Money.ToString(),
                         isCurrentTransaction = 1
                     });
                 }
@@ -1646,9 +1646,9 @@ namespace XamarinFormsEnablerMobile
                         TransactionVolume = transactions.DeliveryData.Quantity,
                         TransactionUnitPrice = transactions.DeliveryData.UnitPrice,
                         TransactionTotal = transactions.DeliveryData.Money,
-                        TransactionFormattedVolume = string.Format("{0:f03}L", transactions.DeliveryData.Quantity),
-                        TransactionFormattedUnitPrice = string.Format("{0:f02}", transactions.DeliveryData.UnitPrice),
-                        TransactionFormattedTotal = "P" + String.Format("{0:f02}", transactions.DeliveryData.Money),
+                        TransactionFormattedVolume = transactions.DeliveryData.Quantity.ToString() + "L",
+                        TransactionFormattedUnitPrice = transactions.DeliveryData.UnitPrice.ToString(),
+                        TransactionFormattedTotal = "P" + transactions.DeliveryData.Money.ToString(),
                         isCurrentTransaction = 0
                     });
                 }
@@ -1672,9 +1672,9 @@ namespace XamarinFormsEnablerMobile
                         TransactionVolume = selectedPump.CurrentTransaction.DeliveryData.Quantity,
                         TransactionUnitPrice = selectedPump.CurrentTransaction.DeliveryData.UnitPrice,
                         TransactionTotal = selectedPump.CurrentTransaction.DeliveryData.Money,
-                        TransactionFormattedVolume = string.Format("{0:f03}L", selectedPump.CurrentTransaction.DeliveryData.Quantity),
-                        TransactionFormattedUnitPrice = string.Format("{0:f02}", selectedPump.CurrentTransaction.DeliveryData.UnitPrice),
-                        TransactionFormattedTotal = "P" + selectedPump.CurrentTransaction.DeliveryData.Money.ToString("#,##0.00"),
+                        TransactionFormattedVolume = selectedPump.CurrentTransaction.DeliveryData.Quantity.ToString() + "L",
+                        TransactionFormattedUnitPrice = selectedPump.CurrentTransaction.DeliveryData.UnitPrice.ToString(),
+                        TransactionFormattedTotal = "P" + selectedPump.CurrentTransaction.DeliveryData.Money.ToString(),
                         isCurrentTransaction = 1
                     });
                 }
@@ -1698,9 +1698,9 @@ namespace XamarinFormsEnablerMobile
                             TransactionVolume = transactions.DeliveryData.Quantity,
                             TransactionUnitPrice = transactions.DeliveryData.UnitPrice,
                             TransactionTotal = transactions.DeliveryData.Money,
-                            TransactionFormattedVolume = string.Format("{0:f03}L", transactions.DeliveryData.Quantity),
-                            TransactionFormattedUnitPrice = string.Format("{0:f02}", transactions.DeliveryData.UnitPrice),
-                            TransactionFormattedTotal = "P" + transactions.DeliveryData.Money.ToString("#,##0.00"),
+                            TransactionFormattedVolume = transactions.DeliveryData.Quantity.ToString() + "L",
+                            TransactionFormattedUnitPrice = transactions.DeliveryData.UnitPrice.ToString(),
+                            TransactionFormattedTotal = "P" + transactions.DeliveryData.Money.ToString(),
                             isCurrentTransaction = 0
                         });
                     }

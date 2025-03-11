@@ -3,34 +3,66 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="XamarinFormsEnablerMobile.RefundTransaction">
     <ContentPage.Content>
-        <Frame Padding="20" BackgroundColor="AliceBlue">
-            <StackLayout>
+        <AbsoluteLayout>
+            <Frame Padding="20"
+                   BackgroundColor="AliceBlue"
+                   AbsoluteLayout.LayoutBounds="1,1,1,1"
+                   AbsoluteLayout.LayoutFlags="All">
+                <StackLayout>
 
-                <Frame CornerRadius="10" BackgroundColor="SeaGreen">
-                    <DatePicker HorizontalOptions="FillAndExpand" TextColor="AliceBlue" DateSelected="GetDateSelected" >
-                        <DatePicker.Style>
-                            <Style TargetType="DatePicker">
-                                <Setter Property="BackgroundColor" Value="SeaGreen"/>
-                            </Style>
-                        </DatePicker.Style>
-                    </DatePicker>
-                </Frame>
-                <Frame VerticalOptions="FillAndExpand" 
-                       HorizontalOptions="FillAndExpand"
-                       BackgroundColor="SeaGreen"
-                       CornerRadius="10"
-                       Margin="0,5,0,5">
-                    <Frame CornerRadius="10" BackgroundColor="Transparent" Padding="0">
-                        <ScrollView>
-                            <StackLayout x:Name="TransactionItems"/>
-
-
-                        </ScrollView>
+                    <Frame CornerRadius="10"
+                           BackgroundColor="SeaGreen">
+                        <DatePicker HorizontalOptions="FillAndExpand"
+                                    TextColor="AliceBlue"
+                                    DateSelected="GetDateSelected">
+                            <DatePicker.Style>
+                                <Style TargetType="DatePicker">
+                                    <Setter Property="BackgroundColor"
+                                            Value="SeaGreen" />
+                                </Style>
+                            </DatePicker.Style>
+                        </DatePicker>
                     </Frame>
-                </Frame>
-                    
-                <Button Text="Back" CornerRadius="10" HorizontalOptions="FillAndExpand" VerticalOptions="End" Clicked="BackToPOSConfig" TextColor="Black"/>
+                    <Frame VerticalOptions="FillAndExpand"
+                           HorizontalOptions="FillAndExpand"
+                           BackgroundColor="SeaGreen"
+                           CornerRadius="10"
+                           Margin="0,5,0,5">
+                        <Frame CornerRadius="10"
+                               BackgroundColor="Transparent"
+                               Padding="0">
+                            <ScrollView>
+                                <StackLayout x:Name="TransactionItems" />
+
+
+                            </ScrollView>
+                        </Frame>
+                    </Frame>
+
+                    <Button Text="Back"
+                            CornerRadius="10"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="End"
+                            Clicked="BackToPOSConfig"
+                            TextColor="Black" />
+                </StackLayout>
+            </Frame>
+
+            <StackLayout VerticalOptions="CenterAndExpand"
+                         HorizontalOptions="CenterAndExpand"
+                         AbsoluteLayout.LayoutFlags="All"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         IsVisible="{Binding isRefundOnGoing}">
+
+                <ProgressBar HeightRequest="100"
+                             WidthRequest="100"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             
+                              />
+
             </StackLayout>
-        </Frame>
+        
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

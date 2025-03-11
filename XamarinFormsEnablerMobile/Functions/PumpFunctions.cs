@@ -83,7 +83,7 @@ namespace XamarinFormsEnablerMobile.Functions
                 if(trans != null)
                 {
                     pumpItem.pumpCurrentType = trans.DeliveryData.Grade.ToString();
-                    pumpItem.currentVolumeFormat = String.Format("{0:f03}L", trans.DeliveryData.Quantity);
+                    pumpItem.currentVolumeFormat = string.Format("{0:f03}L", trans.DeliveryData.Quantity);
                     pumpItem.pumpCurrentTotal = "P" + trans.DeliveryData.Money.ToString("#,##0.00");
                 }
                 else

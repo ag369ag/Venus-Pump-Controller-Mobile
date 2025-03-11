@@ -217,7 +217,7 @@ namespace XamarinFormsEnablerMobile
                 transactionsItem.Insert(discountedItemIndex, newItem);
             }
            // transactionsItem.Add(new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemUnitPrice, itemTotal, gcNumber, itemTotal.ToString()));
-            NewSubtotal = ComputeSubtotal().ToString("#,##0.00");
+            NewSubtotal = ComputeSubtotal().ToString();
             OnPropertyChanged();
         }
 
@@ -299,8 +299,21 @@ namespace XamarinFormsEnablerMobile
         {
             try
             {
-                Transaction fuelTransaction = main.forecourt.GetTransactionById(fuelTrans.GetItemID());
-                fuelTransaction.ReleaseLock();
+                Transaction equivalentTrans = null;
+                if(main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].CurrentTransaction.DeliveryData.DeliveryID == fuelTrans.GetItemID())
+                {
+                    equivalentTrans = main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].CurrentTransaction;
+                }
+                foreach(Transaction trans in main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].TransactionStack)
+                {
+                    if(trans.DeliveryData.DeliveryID != fuelTrans.GetItemID())
+                    {
+                        continue;
+                    }
+                    equivalentTrans = trans;
+                }
+                //Transaction fuelTransaction = main.forecourt.GetTransactionById(fuelTrans.GetItemID());
+                equivalentTrans.ReleaseLock();
             }
             catch (Exception ex)
             {
@@ -383,7 +396,7 @@ namespace XamarinFormsEnablerMobile
 
             double NegativeDiscount = discountValue * -1;
             string forDisplayDiscount = $"P{discountValue.ToString("#,##0.00")}";
-            string forDisplayQuantity = transItem.GetQuantity().ToString("#,##0.00");
+            string forDisplayQuantity = transItem.GetQuantity().ToString();
 /*
             if (discount.presetDiscountId == 5)
             {
@@ -407,7 +420,7 @@ namespace XamarinFormsEnablerMobile
             // disc type 2
             if (!discount.isBIRDisc && discount.presetDiscountType.Equals(2))//(discount.presetDiscountId == 7)
             {
-                string forDisplayUnitPrice = $"P{1.ToString("#,##0.00")}";
+                string forDisplayUnitPrice = $"P1.00";
                 AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, -1, discountValue, NegativeDiscount, forDisplayUnitPrice, forDisplayDiscount.Remove(0), forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
                 transItem.ApplyNonBIRDiscount(discount);
                 return;
@@ -458,7 +471,7 @@ namespace XamarinFormsEnablerMobile
         public void CancelZeroRated()
         {
             isZeroRatedTransaction = false;
-            NewSubtotal = ComputeSubtotal().ToString("#,##0.00");
+            NewSubtotal = ComputeSubtotal().ToString();
         }
         public void SaveInhouseData(string name, int number, string po, string plateNum, string odo1)
         {
@@ -1371,7 +1384,7 @@ namespace XamarinFormsEnablerMobile
             while (GetTransactionItems.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Count() > 0)
             {
                 GetTransactionItems.Remove(GetTransactionItems.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).First());
-                NewSubtotal = ComputeSubtotal().ToString("#,##0.00");
+                NewSubtotal = ComputeSubtotal().ToString();
                 OnPropertyChanged();
             }
         }
@@ -1406,8 +1419,8 @@ namespace XamarinFormsEnablerMobile
                 desc = $"Acct Disc - {trans.GetItemDescription()}";
             }
             double NegativeDiscount = Math.Abs(discountValue) * -1;
-            string forDisplayDiscount = $"P{Math.Abs(discountValue).ToString("#,##0.00")}";
-            string forDisplayQuantity = (1).ToString("#,##0.00");
+            string forDisplayDiscount = $"P{Math.Abs(discountValue).ToString()}";
+            string forDisplayQuantity = (1).ToString();
             int itemIndex = GetTransactionItems.IndexOf(trans) + 1;
             switch (subAccDisc.SADDiscountType)
             {
@@ -1420,7 +1433,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case 2:
                     {
-                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, -1, trans.GetQuantity(), discountValue, $"P{(-1).ToString("#,##0.00")}", trans.GetDisplayQuantity(), $"P{discountValue.ToString("#,##0.00")}",
+                        AddTransactionItem(52, subAccDisc.SAID, 1, desc, -1, trans.GetQuantity(), discountValue, $"P -1", trans.GetDisplayQuantity(), $"P{discountValue}",
                     false, false, subAccDisc.SADDiscountType, double.Parse(subAccDisc.SADDiscountValue), 0, 0, "", "", itemIndex);
                     }
                     break;
