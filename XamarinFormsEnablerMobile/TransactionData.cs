@@ -816,6 +816,8 @@ namespace XamarinFormsEnablerMobile
         {
 
             Console.WriteLine("Start creating receipt");
+            
+            bool hasBIRDIsc = GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0;
 
             forPrintString = new List<string>();
             double itemPrice = 0;
@@ -826,6 +828,13 @@ namespace XamarinFormsEnablerMobile
             }
 
             AddCenterString("");
+
+            if (hasBIRDIsc)
+            {
+                AddCenterString("*** Customer's Copy ***");
+                AddCenterString(" ");
+            }
+
 
             DateTime dateTime = DateTime.Now;
             string formattedDateTime = dateTime.ToString("MM/dd/yyyy hh:mm tt");
@@ -845,6 +854,7 @@ namespace XamarinFormsEnablerMobile
             AddCenterString("*** INVOICE ***");
             AddCenterString(" ");
 
+            
             foreach (TransactionDataClass transItem in transactionsItem)
             {
                 if (transItem.GetItemType() != 7 && transItem.GetItemType() != 8 && transItem.GetItemType() != 10)
@@ -1142,6 +1152,38 @@ namespace XamarinFormsEnablerMobile
                 AddCenterString(footer);
             }
 
+            List<string> newForPrintString = new List<string>();
+            //firstPartReceipt = forPrintString;
+
+            if (hasBIRDIsc)
+            {
+
+                foreach(string line in forPrintString)
+                {
+                    newForPrintString.Add(line);
+                }
+                
+                string lineCut = new string('-', main.appSettings.paperWidth);
+                newForPrintString.Add(lineCut);
+                newForPrintString.Add(" ");
+
+                foreach(string line in forPrintString)
+                {
+                    if(line.ToLower().Contains("customer's copy"))
+                    {
+                        string storeCopyString = "*** Store's Copy ***";
+                        int sideCount = (main.appSettings.paperWidth - storeCopyString.Length) / 2;
+                        string centeredStoreCopyString = new string(' ', sideCount) + storeCopyString + new string(' ', sideCount);
+                        newForPrintString.Add(centeredStoreCopyString);
+                        continue;
+                    }
+                    Console.WriteLine(line + "is added");
+                    newForPrintString.Add(line);
+                }
+
+                forPrintString = newForPrintString;
+            }
+                       
             string FORPRINTINGTEXT = "";
 
             await Task.Run(() =>
@@ -1214,6 +1256,11 @@ namespace XamarinFormsEnablerMobile
                     foreach (string text in forPrintString)
                     {
                         newPrintingArray.Add(text);
+                        string lineCut = new string('-', main.appSettings.paperWidth);
+                        if (text == lineCut)
+                        {
+                            newPrintingArray.Add(formattedReprintString);
+                        }
                     }
                     for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
                     {
@@ -1275,6 +1322,11 @@ namespace XamarinFormsEnablerMobile
                     foreach (string text in forPrintString)
                     {
                         newPrintingArray.Add(text);
+                        string lineCut = new string('-', main.appSettings.paperWidth);
+                        if (text == lineCut)
+                        {
+                            newPrintingArray.Add(formattedReprintString);
+                        }
                     }
                     foreach (string text in newPrintingArray)
                     {
