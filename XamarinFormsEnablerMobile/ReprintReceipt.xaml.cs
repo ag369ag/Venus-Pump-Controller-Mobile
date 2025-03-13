@@ -243,6 +243,20 @@ namespace XamarinFormsEnablerMobile
                 }
                 else
                 {*/
+
+                if (line.ToLower().Contains("customer's copy"))
+                {
+                    continue;
+                }
+
+
+                string lineCut = new string('-', main.appSettings.paperWidth);
+
+                if(line == lineCut)
+                {
+                    break;
+                }
+
                     if (line.ToLower().Contains("pos #"))
                     {
 

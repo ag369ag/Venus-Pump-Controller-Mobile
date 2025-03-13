@@ -816,7 +816,7 @@ namespace XamarinFormsEnablerMobile
         {
 
             Console.WriteLine("Start creating receipt");
-            
+
             bool hasBIRDIsc = GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0;
 
             forPrintString = new List<string>();
@@ -827,14 +827,14 @@ namespace XamarinFormsEnablerMobile
                 forPrintString.Add(header);
             }
 
-            AddCenterString("");
 
             if (hasBIRDIsc)
             {
                 AddCenterString("*** Customer's Copy ***");
-                AddCenterString(" ");
+                //AddCenterString(" ");
             }
 
+            AddCenterString("");
 
             DateTime dateTime = DateTime.Now;
             string formattedDateTime = dateTime.ToString("MM/dd/yyyy hh:mm tt");
@@ -854,7 +854,7 @@ namespace XamarinFormsEnablerMobile
             AddCenterString("*** INVOICE ***");
             AddCenterString(" ");
 
-            
+
             foreach (TransactionDataClass transItem in transactionsItem)
             {
                 if (transItem.GetItemType() != 7 && transItem.GetItemType() != 8 && transItem.GetItemType() != 10)
@@ -884,7 +884,7 @@ namespace XamarinFormsEnablerMobile
                     AddSideString(secondLine, transItem.GetDisplayTotal());
                     itemPrice = transItem.GetTotal();
                 }
-                
+
 
                 if (transItem.GetItemType() == 14)
                 {
@@ -897,7 +897,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         string lessVatString = " Less VAT 12%";
                         //string originalAmount = $"(P{(transItem.GetOrigUnitPrice() * transItem.GetQuantity()).ToString("#,##0.00")})";
-                        string originalAmount = $"(P{(transItem.GetOrigTotal() - (transItem.GetOrigTotal()/1.12)).ToString("#,##0.00")})";
+                        string originalAmount = $"(P{(transItem.GetOrigTotal() - (transItem.GetOrigTotal() / 1.12)).ToString("#,##0.00")})";
                         AddSideString(lessVatString, originalAmount);
                     }
 
@@ -1037,13 +1037,13 @@ namespace XamarinFormsEnablerMobile
 
                 AddCenterString("");
 
-                NAACDetailClass lastNAAC = GetNAACDetails().Count() < 1 ? new NAACDetailClass("","") : GetNAACDetails().Last();
+                NAACDetailClass lastNAAC = GetNAACDetails().Count() < 1 ? new NAACDetailClass("", "") : GetNAACDetails().Last();
 
                 AddSideString($"Athlete/Coach name: {lastNAAC.GetCustomerName()}", "");
                 AddSideString($"PNSTMID: {lastNAAC.GetCustomerIDNumber()}", "");
 
                 AddCenterString("");
-            
+
             }
 
             Console.WriteLine("after naac");
@@ -1059,12 +1059,12 @@ namespace XamarinFormsEnablerMobile
                 Console.WriteLine($"Length of left string is {lengthWithLeftString}");
                 Console.WriteLine($"Length of name is {firstPartAccountName.Length}");
                 Console.WriteLine($"Result of if statement is {firstPartAccountName.Length + 18 > lengthWithLeftString}");
-                if(firstPartAccountName.Length + 18 > lengthWithLeftString)
+                if (firstPartAccountName.Length + 18 > lengthWithLeftString)
                 {
                     firstPartAccountName = "";
-                    foreach(string namePart in GetInhouseData().GetAccountName().Split(' '))
+                    foreach (string namePart in GetInhouseData().GetAccountName().Split(' '))
                     {
-                        if((firstPartAccountName + namePart + "").Length + 18 < lengthWithLeftString)
+                        if ((firstPartAccountName + namePart + "").Length + 18 < lengthWithLeftString)
                         {
                             firstPartAccountName += (namePart + " ");
                         }
@@ -1076,7 +1076,7 @@ namespace XamarinFormsEnablerMobile
                 }
 
                 AddSideString($"AccNm          : {firstPartAccountName}", "");
-                if(secondPartName.Length > 0)
+                if (secondPartName.Length > 0)
                 {
                     AddSideString(new string(' ', 18) + secondPartName, "");
                 }
@@ -1107,9 +1107,9 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine("after card details");
 
             CustomerDetailsClass clientInfo = GetCustomerDetails().Count() > 0 ? GetCustomerDetails().Last() : null;
-            
+
             Console.WriteLine("after getting client info");
-            
+
             foreach (string infoField in main.footerForZeroRated)
             {
                 if (clientInfo == null)
@@ -1118,7 +1118,7 @@ namespace XamarinFormsEnablerMobile
                     AddCenterString(infoField);
                     continue;
                 }
-                string removedSpace = infoField.Replace("_","");
+                string removedSpace = infoField.Replace("_", "");
                 if (infoField.ToLower().Contains("name"))
                 {
                     AddLeftString($"{removedSpace}: {clientInfo.GetCustomerName()}");
@@ -1155,21 +1155,30 @@ namespace XamarinFormsEnablerMobile
             List<string> newForPrintString = new List<string>();
             //firstPartReceipt = forPrintString;
 
+            /*List<string> toLogReceipt = new List<string>();
+            foreach (string line in forPrintString)
+            {
+                if (line.ToLower().Contains("customer's copy"))
+                    continue;
+
+                toLogReceipt.Add(line);
+            }*/
+
             if (hasBIRDIsc)
             {
 
-                foreach(string line in forPrintString)
+                foreach (string line in forPrintString)
                 {
                     newForPrintString.Add(line);
                 }
-                
+
                 string lineCut = new string('-', main.appSettings.paperWidth);
                 newForPrintString.Add(lineCut);
                 newForPrintString.Add(" ");
 
-                foreach(string line in forPrintString)
+                foreach (string line in forPrintString)
                 {
-                    if(line.ToLower().Contains("customer's copy"))
+                    if (line.ToLower().Contains("customer's copy"))
                     {
                         string storeCopyString = "*** Store's Copy ***";
                         int sideCount = (main.appSettings.paperWidth - storeCopyString.Length) / 2;
@@ -1183,7 +1192,7 @@ namespace XamarinFormsEnablerMobile
 
                 forPrintString = newForPrintString;
             }
-                       
+
             string FORPRINTINGTEXT = "";
 
             await Task.Run(() =>
@@ -1196,6 +1205,8 @@ namespace XamarinFormsEnablerMobile
 
                 }
             });
+
+            
 
             string toEJournalString = FORPRINTINGTEXT.Replace(' ', '=');
             var toElectronicJournal = new
