@@ -1,11 +1,17 @@
-﻿using System;
+﻿using Android.Media;
+using ITL.Enabler.API;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using static XamarinFormsEnablerMobile.MainPage;
 
 namespace XamarinFormsEnablerMobile
 {
@@ -109,6 +115,37 @@ namespace XamarinFormsEnablerMobile
         {
             main.appSettings.requireTapping = e.Value;
             Preferences.Set("requireTapping", main.appSettings.requireTapping);
+        }
+
+        async void StartToPrintFromLog(object sender, EventArgs e)
+        {
+
+            var printService = DependencyService.Get<IPrintService>();
+            
+
+            var logSavingData = new
+            {
+                posID = main.terminalId
+            };
+            string jsonSavingData = Newtonsoft.Json.JsonConvert.SerializeObject(logSavingData);
+            StringContent savingContent = new StringContent(jsonSavingData, System.Text.Encoding.UTF8, "application/json");
+            HttpClient http = new HttpClient();
+            HttpResponseMessage response = await http.PostAsync(new Uri("http://172.16.12.235:8700/enablerAPI/VJournalCtrl/getDataFromPrintLog"), savingContent);
+            string responseMessage = await response.Content.ReadAsStringAsync();
+            JsonDocument jsonParsedResponse = JsonDocument.Parse(responseMessage);
+            string statusCode = jsonParsedResponse.RootElement.GetProperty("statusCode").ToString();
+            if (statusCode.Equals("1"))
+            {
+                foreach(var a in jsonParsedResponse.RootElement.GetProperty("data").EnumerateArray())
+                {
+                    Console.WriteLine(a.GetProperty("Data").ToString().Replace("\\", ""));
+
+                    printService.PrintReceiptOnNative(a.GetProperty("Data").ToString().Replace("\\", ""), 17);
+                }
+
+            }
+
+            //Console.WriteLine(responseMessage);
         }
     }
 }

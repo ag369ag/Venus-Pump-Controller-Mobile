@@ -877,9 +877,11 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add("");
             FormatCenterStringForPrinting("- Transactions -");
             FORPRINTINGARRAY.Add("");
-            string BeginningSalesInvoice = (begSalesResetter == "0" && begSalesInvoice == "0") ? "NO ACTIVITY" : FormatInvoiceNumber(begSalesResetter, begSalesInvoice);
+            string BSI = FormatInvoiceNumber(begSalesResetter, begSalesInvoice);
+            string ESI = FormatInvoiceNumber(endSalesResetter, endSalesInvoice);
+            string BeginningSalesInvoice = (!(begSalesResetter == "0" && begSalesInvoice == "0") && BSI == ESI ) ? "NO ACTIVITY" : BSI;
             FormatSideStringsForPrinting("Beginning Sales Invoice", BeginningSalesInvoice);
-            string EndingSalesInvoice = FormatInvoiceNumber(endSalesResetter, endSalesInvoice);
+            string EndingSalesInvoice = BSI == ESI ? "NO ACTIVITY" : ESI;
             FormatSideStringsForPrinting("Ending Sales Invoice", BeginningSalesInvoice == EndingSalesInvoice ? "NO ACTIVITY" : EndingSalesInvoice);
             FORPRINTINGARRAY.Add("");
             FormatSideStringsForPrinting("Z-Counter", zCounter);
@@ -918,10 +920,10 @@ namespace XamarinFormsEnablerMobile
                 startDate = openDateDataFormat,
                 endDate = closeDateDataFormat,
                 startTransNumber = BeginningSalesInvoice,
-                endTransNumber = BeginningSalesInvoice == EndingSalesInvoice ? "NO ACTIVITY" : EndingSalesInvoice,
+                endTransNumber = EndingSalesInvoice,
                 previousSales = double.Parse(previousAccumulatingSales),
                 currentSales = double.Parse(currentAccumulatingSales),
-                difference = double.Parse(previousAccumulatingSales) - double.Parse(currentAccumulatingSales),
+                difference = double.Parse(currentAccumulatingSales) - double.Parse(previousAccumulatingSales),
                 seniorPWD = scpwdTotal,
                 otherDisc = otherDiscount,
                 refundTotal = lessRefundValue,

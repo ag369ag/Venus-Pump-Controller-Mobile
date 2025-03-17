@@ -244,6 +244,8 @@ namespace XamarinFormsEnablerMobile
                 else
                 {*/
 
+
+                // ================================= COMMENTED FOR PRINT SAMPLE ======================================================
                 if (line.ToLower().Contains("customer's copy"))
                 {
                     continue;
@@ -271,9 +273,10 @@ namespace XamarinFormsEnablerMobile
 
                         forprint += " \n";
                         forprint += " \n";
-                //    }
-                }
+                    }
+                // }
 
+                // ====================================================================================================================
 
 
 
@@ -283,6 +286,7 @@ namespace XamarinFormsEnablerMobile
 
             }
 
+            // ================================= COMMENTED FOR PRINT SAMPLE ======================================================
             forprint += " \n";
             if(!forprint.ToLower().Contains("is not valid for claim of"))
             {
@@ -295,7 +299,7 @@ namespace XamarinFormsEnablerMobile
 
                 }
             }
-            
+            // ====================================================================================================================
 
             forprint += " \n";
 

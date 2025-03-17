@@ -58,6 +58,10 @@
                                     HorizontalOptions="End" />
                         </StackLayout>
                     </Frame>
+
+                    <Button Text="PRINT FROM LOG"
+                            HorizontalOptions="FillAndExpand"
+                            Clicked="StartToPrintFromLog"/>
                 </StackLayout>
             </Frame>
             <Button Text="Back" CornerRadius="10" VerticalOptions="End" HorizontalOptions="Center" Clicked="BackToPOSConfig"/>

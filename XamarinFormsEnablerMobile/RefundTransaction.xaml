@@ -3,11 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="XamarinFormsEnablerMobile.RefundTransaction">
     <ContentPage.Content>
-        <AbsoluteLayout>
+       
             <Frame Padding="20"
                    BackgroundColor="AliceBlue"
-                   AbsoluteLayout.LayoutBounds="1,1,1,1"
-                   AbsoluteLayout.LayoutFlags="All">
+                   >
                 <StackLayout>
 
                     <Frame CornerRadius="10"
@@ -48,21 +47,5 @@
                 </StackLayout>
             </Frame>
 
-            <StackLayout VerticalOptions="CenterAndExpand"
-                         HorizontalOptions="CenterAndExpand"
-                         AbsoluteLayout.LayoutFlags="All"
-                         AbsoluteLayout.LayoutBounds="1,1,1,1"
-                         IsVisible="{Binding isRefundOnGoing}">
-
-                <ProgressBar HeightRequest="100"
-                             WidthRequest="100"
-                             HorizontalOptions="Center"
-                             VerticalOptions="Center"
-                             
-                              />
-
-            </StackLayout>
-        
-        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>
