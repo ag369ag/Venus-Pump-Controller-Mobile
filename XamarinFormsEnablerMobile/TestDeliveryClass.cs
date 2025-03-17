@@ -68,7 +68,8 @@ namespace XamarinFormsEnablerMobile
 
             string deliveryReference = $"DLV #{TestID}";
 
-            string desc = "Test Delivery";
+            //string desc = "Test Delivery";
+            string desc = "Calibration Delivery";
             int spaceForDesc = (main.appSettings.paperWidth - desc.Length) / 2;
             string formattedDesc = new string(' ', spaceForDesc) + desc + new string(' ', spaceForDesc);
             List<string> forPrinting = new List<string>();

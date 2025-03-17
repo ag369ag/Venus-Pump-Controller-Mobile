@@ -72,7 +72,13 @@ namespace XamarinFormsEnablerMobile
 
             string deliveryReference = "DLV #" + driveOffID;
 
-            string desc = "Calibration Delivery";
+            //string desc = "Calibration Delivery";
+            string desc = "Drive Off";
+            if (main.appSettings.requireTapping)
+            {
+                desc = "Tapping Delivery";
+            }
+
             int spaceForDesc = (main.appSettings.paperWidth - desc.Length) / 2;
             string formattedDesc = new string(' ', spaceForDesc) + desc + new string(' ', spaceForDesc);
             List<string> forPrinting = new List<string>();
