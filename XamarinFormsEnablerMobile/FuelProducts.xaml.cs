@@ -148,6 +148,10 @@ namespace XamarinFormsEnablerMobile
             {
                 if(pump.CurrentTransaction.LockedById == main.terminalId)
                 {
+                    if(main.td.GetTransactionItems.Where(a=>a.GetItemType().Equals(2) && a.GetItemID().Equals(pump.CurrentTransaction.DeliveryData.DeliveryID)).Count() > 0)
+                    {
+                        return;
+                    }
                     main.td.AddTransactionItem(2, pump.CurrentTransaction.DeliveryData.DeliveryID, 1, pump.CurrentTransaction.DeliveryData.Grade.ToString(), double.Parse(pump.CurrentTransaction.DeliveryData.UnitPrice.ToString()), 
                         double.Parse(pump.CurrentTransaction.DeliveryData.Quantity.ToString()), double.Parse(pump.CurrentTransaction.DeliveryData.Money.ToString()), $"P{pump.CurrentTransaction.DeliveryData.UnitPrice}",
                         $"{pump.CurrentTransaction.DeliveryData.Quantity}L", $"P{pump.CurrentTransaction.DeliveryData.Money}", false, false, 0, 0, 0, 0, "");
@@ -157,6 +161,10 @@ namespace XamarinFormsEnablerMobile
                 {
                     if(trans.IsLocked && trans.LockedById == main.terminalId)
                     {
+                        if (main.td.GetTransactionItems.Where(a => a.GetItemType().Equals(2) && a.GetItemID().Equals(trans.DeliveryData.DeliveryID)).Count() > 0)
+                        {
+                            continue;
+                        }
                         main.td.AddTransactionItem(2, trans.DeliveryData.DeliveryID, 1, trans.DeliveryData.Grade.ToString(), double.Parse(trans.DeliveryData.UnitPrice.ToString()), double.Parse(trans.DeliveryData.Quantity.ToString()),  double.Parse(trans.DeliveryData.Money.ToString()), $"P{trans.DeliveryData.UnitPrice}", $"{trans.DeliveryData.Quantity}L",
                     $"P{trans.DeliveryData.Money}", false, false, 0, 0, 0, 0, "");
                     }

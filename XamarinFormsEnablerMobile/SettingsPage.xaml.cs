@@ -140,6 +140,8 @@ namespace XamarinFormsEnablerMobile
                 {
                     Console.WriteLine(a.GetProperty("Data").ToString().Replace("\\", ""));
 
+                    Console.WriteLine("========================================");
+                    Console.WriteLine("========================================");
                     printService.PrintReceiptOnNative(a.GetProperty("Data").ToString().Replace("\\", ""), 17);
                 }
 
