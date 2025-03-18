@@ -882,7 +882,7 @@ namespace XamarinFormsEnablerMobile
             string BeginningSalesInvoice = (!(begSalesResetter == "0" && begSalesInvoice == "0") && BSI == ESI ) ? "NO ACTIVITY" : BSI;
             FormatSideStringsForPrinting("Beginning Sales Invoice", BeginningSalesInvoice);
             string EndingSalesInvoice = BSI == ESI ? "NO ACTIVITY" : ESI;
-            FormatSideStringsForPrinting("Ending Sales Invoice", BeginningSalesInvoice == EndingSalesInvoice ? "NO ACTIVITY" : EndingSalesInvoice);
+            FormatSideStringsForPrinting("Ending Sales Invoice", BSI == ESI ? "NO ACTIVITY" : EndingSalesInvoice);
             FORPRINTINGARRAY.Add("");
             FormatSideStringsForPrinting("Z-Counter", zCounter);
             FORPRINTINGARRAY.Add("");
