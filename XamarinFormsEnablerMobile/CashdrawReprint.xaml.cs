@@ -54,7 +54,7 @@ namespace XamarinFormsEnablerMobile
         {
             var postData = new
             {
-                posID = main.terminalId
+                posID = main.posIDNumber
             };
             string jsonEncodedPostData = Newtonsoft.Json.JsonConvert.SerializeObject(postData);
             StringContent postDataContent = new StringContent(jsonEncodedPostData, Encoding.UTF8, "application/json");

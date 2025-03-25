@@ -36,12 +36,32 @@
                                Text="{Binding main.terminalServer}"/>
                     </StackLayout>
                 </Frame>
-                <Frame Padding="7" CornerRadius="10">
-                    <StackLayout>
-                        <Label Text="Enabler Terminal"/>
-                        <Entry WidthRequest="270" Placeholder="..." x:Name="EnablerTerminalField" HorizontalTextAlignment="Center" Text="2"/>
-                    </StackLayout>
-                </Frame>
+                <StackLayout Orientation="Horizontal" >
+                    <Frame Padding="7"
+                           CornerRadius="10"
+                           HorizontalOptions="StartAndExpand">
+                        <StackLayout>
+                            <Label Text="Enabler Terminal" />
+                            <Entry WidthRequest="135"
+                                   Placeholder="..."
+                                   x:Name="EnablerTerminalField"
+                                   HorizontalTextAlignment="Center"
+                                   Text="2" />
+                        </StackLayout>
+                    </Frame>
+                    
+                    <Frame Padding="7"
+                           CornerRadius="10" HorizontalOptions="EndAndExpand">
+                        <StackLayout>
+                            <Label Text="POS ID" />
+                            <Entry WidthRequest="135"
+                                   Placeholder="..."
+                                   x:Name="posIDField"
+                                   HorizontalTextAlignment="Center"
+                                   Text="2" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
                 <Frame Padding="7" CornerRadius="10">
                     <StackLayout>
                         <Label Text="Enabler Password"/>

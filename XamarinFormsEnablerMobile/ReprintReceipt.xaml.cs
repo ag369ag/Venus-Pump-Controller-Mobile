@@ -75,7 +75,7 @@ namespace XamarinFormsEnablerMobile
             Object searchTransactionBody = new
             {
                 dateTo = DateForReprint,
-                posID = main.terminalId
+                posID = main.posIDNumber
             };
 
             string searchTransactionBodyjson = Newtonsoft.Json.JsonConvert.SerializeObject(searchTransactionBody);
@@ -184,7 +184,7 @@ namespace XamarinFormsEnablerMobile
             var siNumObject = new
             {
                 SI_Number = siNum,
-                posID = main.terminalId
+                posID = main.posIDNumber
             };
             var siNumJson = Newtonsoft.Json.JsonConvert.SerializeObject(siNumObject);
             StringContent siNumContent = new StringContent(siNumJson, Encoding.UTF8, "application/json");
@@ -305,7 +305,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = forprint
             };
 

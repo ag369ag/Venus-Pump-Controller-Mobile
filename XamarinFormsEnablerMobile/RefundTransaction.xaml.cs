@@ -142,7 +142,7 @@ namespace XamarinFormsEnablerMobile
             Object searchTransactionBody = new
             {
                 dateTo = DateForReprint,
-                posID = main.terminalId
+                posID = main.posIDNumber
             };
             string searchTransactionBodyjson = Newtonsoft.Json.JsonConvert.SerializeObject(searchTransactionBody);
             StringContent searchTransactionBodyContent = new StringContent(searchTransactionBodyjson, Encoding.UTF8, "application/json");
@@ -294,7 +294,7 @@ namespace XamarinFormsEnablerMobile
         {
             Object data = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 transaction_number = transNum,
                 transaction_resetter_reference = resetter
             };
@@ -372,7 +372,7 @@ namespace XamarinFormsEnablerMobile
             Object data = new
             {
                 birTransNum = transNum,
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 transactionResetter = resetter
             };
             string dataString = Newtonsoft.Json.JsonConvert.SerializeObject(data);
@@ -743,7 +743,7 @@ namespace XamarinFormsEnablerMobile
                 cashierID = main.CashierData.CashierID,
                 subAccID = transaction.GetProperty("Sub_Account_ID").ToString() ?? null,
                 accountID = "",
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 taxTotal =  Math.Abs(double.Parse(transaction.GetProperty("Tax_Total").ToString())) * (-1),
                 saleTotal = Math.Abs(double.Parse( transaction.GetProperty("Sale_Total").ToString())),
                 isManual = transaction.GetProperty("isManual").ToString(),
@@ -997,7 +997,7 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine("after header");
             //AddCenterText("*** STORE COPY ***");
             DateTime dateTime = DateTime.Now;
-            AddSideStrings(dateTime.ToString("MM/dd/yyyy hh:mm tt"), "POS #" + main.terminalId.ToString());
+            AddSideStrings(dateTime.ToString("MM/dd/yyyy hh:mm tt"), "POS #" + main.posIDNumber.ToString());
             AddSideStrings(main.CashierData.CashierName.Trim(), $"Refund #: {trsORNumWithoutTRS}");
             string referenceText = "REF. INV #: ";
             int space = main.appSettings.paperWidth - (referenceNumber.Length + referenceText.Length);
@@ -1696,7 +1696,7 @@ namespace XamarinFormsEnablerMobile
             Object EjournalPost = new
             {
                 Transaction_ID = trsTransID,
-                pos_id = main.terminalId,
+                pos_id = main.posIDNumber,
                 si_number = trsORNumber,
                 data = forEJournalText
             };
@@ -1707,7 +1707,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = FORPRINTINGTEXT
             };
 

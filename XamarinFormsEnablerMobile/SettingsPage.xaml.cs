@@ -125,7 +125,7 @@ namespace XamarinFormsEnablerMobile
 
             var logSavingData = new
             {
-                posID = main.terminalId
+                posID = main.posIDNumber
             };
             string jsonSavingData = Newtonsoft.Json.JsonConvert.SerializeObject(logSavingData);
             StringContent savingContent = new StringContent(jsonSavingData, System.Text.Encoding.UTF8, "application/json");

@@ -31,6 +31,7 @@ namespace XamarinFormsEnablerMobile
         #region MainPage Public Variables
         public string terminalServer { get; set; } = "172.16.12.210";
         public int terminalId { get; set; } = 0;
+        public int posIDNumber { get; set;} = 0;
         public string terminalPassword = "";
         public string APIServer = "";
         public string userSAID = "";
@@ -750,9 +751,11 @@ namespace XamarinFormsEnablerMobile
         void GetDataFromPreferences()
         {
             string terminalIDFromPreferences = Preferences.Get("EnablerTerminal", string.Empty) ?? "0";
+            string posIDFromPreferences = Preferences.Get("posID", string.Empty) ?? "0";
             terminalServer = Preferences.Get("EnablerServer", string.Empty) ?? "";
             Console.WriteLine(terminalIDFromPreferences + " this is the terminal id");
             terminalId = (terminalIDFromPreferences == "0" || terminalIDFromPreferences == "") ? 0 : int.Parse(terminalIDFromPreferences);
+            posIDNumber = (posIDFromPreferences == "0" || posIDFromPreferences == "") ? 0 : int.Parse(posIDFromPreferences);
             terminalPassword = Preferences.Get("EnablerPassword", string.Empty) ?? null;
             APIServer = Preferences.Get("APIServer", string.Empty) ?? null;
          //   UserIDField.Text = Preferences.ContainsKey("UserID") ? Preferences.Get("UserID", string.Empty) : "";

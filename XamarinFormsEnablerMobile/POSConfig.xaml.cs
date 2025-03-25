@@ -226,7 +226,7 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGTEXT = "";
             HttpClient http = new HttpClient();
             // var hashmapBody = new { posID = Convert.ToInt32(mainPage.EnablerTerminal) };
-            var hashmapBody = new { posID = main.terminalId };
+            var hashmapBody = new { posID = main.posIDNumber };
             string jsonEncodedBody = Newtonsoft.Json.JsonConvert.SerializeObject(hashmapBody);
             StringContent postBody = new StringContent(jsonEncodedBody, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await http.PostAsync(main.routes.accumulatingSales, postBody);
@@ -318,7 +318,7 @@ namespace XamarinFormsEnablerMobile
             HttpClient http = new HttpClient();
             var hashmapBody = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 cashierID = main.CashierData.CashierID
             };
             string jsonEncodedBody = Newtonsoft.Json.JsonConvert.SerializeObject(hashmapBody);
@@ -717,8 +717,8 @@ namespace XamarinFormsEnablerMobile
         {
             FORPRINTINGARRAY.Clear();
             FORPRINTINGTEXT = "";
-            string printType = "ACCUMULATING GRAND TOTAL SALES REPORT";
-            FormatCenterStringForPrinting(printType);
+            /*string printType = "ACCUMULATING GRAND TOTAL SALES REPORT";
+            FormatCenterStringForPrinting(printType);*/
             string readingType = "Z-Reading";
             //FormatCenterStringForPrinting(readingType);
             FORPRINTINGARRAY.Add("");
@@ -727,11 +727,16 @@ namespace XamarinFormsEnablerMobile
                 FORPRINTINGARRAY.Add(s);
             }
             FORPRINTINGARRAY.Add("");
+
+            string printType = "ACCUMULATING GRAND TOTAL SALES REPORT";
+            FormatCenterStringForPrinting(printType);
+
+            FORPRINTINGARRAY.Add("");
             DateTime dateTime = DateTime.Now;
             string formattedDateTime = dateTime.ToString("MM/dd/yyyy hh:mm tt");
             FormatCenterStringForPrinting(formattedDateTime);
             FORPRINTINGARRAY.Add("");
-            string posString = "POS " + main.terminalId;
+            string posString = "POS " + main.posIDNumber;
             FormatCenterStringForPrinting(posString);
             string lineString = new string('-', main.appSettings.paperWidth);
             FORPRINTINGARRAY.Add(lineString);
@@ -915,7 +920,7 @@ namespace XamarinFormsEnablerMobile
 
             object postData = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 lastReport = lastReportDateFormat,
                 startDate = openDateDataFormat,
                 endDate = closeDateDataFormat,
@@ -944,7 +949,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = FORPRINTINGTEXT
             };
 
@@ -1319,7 +1324,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = FORPRINTINGTEXT
             };
 
@@ -1479,7 +1484,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = FORPRINTINGTEXT
             };
 

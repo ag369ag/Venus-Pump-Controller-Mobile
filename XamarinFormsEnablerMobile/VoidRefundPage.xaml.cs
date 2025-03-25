@@ -347,7 +347,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = printingText
             };
 
@@ -547,7 +547,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = printingText
             };
 

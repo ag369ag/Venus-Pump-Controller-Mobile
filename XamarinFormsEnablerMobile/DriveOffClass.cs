@@ -38,7 +38,7 @@ namespace XamarinFormsEnablerMobile
             HttpClient http = new HttpClient();
             var postData = new
             {
-                posID = main.terminalId
+                posID = main.posIDNumber
             };
             string toGetDocumentNumber = Newtonsoft.Json.JsonConvert.SerializeObject(postData);
             StringContent toGetDocumentContent = new StringContent(toGetDocumentNumber, Encoding.UTF8, "application/json");
@@ -136,7 +136,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = forPrintingString
             };
 

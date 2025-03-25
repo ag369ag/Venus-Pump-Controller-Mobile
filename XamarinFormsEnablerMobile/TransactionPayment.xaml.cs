@@ -414,7 +414,7 @@ namespace XamarinFormsEnablerMobile
             {
                 await Task.Run(() =>
                 {
-                    VoidItem(main.terminalId, main.CashierData.CashierID, selectedTransaction.GetItemID(), selectedTransaction.GetItemType(), selectedTransaction.GetItemDescription(),
+                    VoidItem(main.posIDNumber, main.CashierData.CashierID, selectedTransaction.GetItemID(), selectedTransaction.GetItemType(), selectedTransaction.GetItemDescription(),
                         selectedTransaction.GetUnitPrice(), selectedTransaction.GetQuantity(), selectedTransaction.GetTotal());
                 });
             }
@@ -446,7 +446,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     voidAllList.Add(new VoidAllModel
                     {
-                        posID = main.terminalId,
+                        posID = main.posIDNumber,
                         cashierID = main.CashierData.CashierID,
                         itemID = item.ForPaymentTransactionID,
                         itemType = item.ForPaymentIsFuel == 1 ? 2 : 14,
@@ -2153,7 +2153,7 @@ namespace XamarinFormsEnablerMobile
         async Task<int> CheckSafeDropLevel()
         {
             HttpClient http = new HttpClient();
-            var postRequest = new { mopID = 1, posID = main.terminalId };
+            var postRequest = new { mopID = 1, posID = main.posIDNumber };
             var postRequestJson = Newtonsoft.Json.JsonConvert.SerializeObject(postRequest);
             var postContent = new StringContent(postRequestJson, System.Text.Encoding.UTF8, "application/json");
             try

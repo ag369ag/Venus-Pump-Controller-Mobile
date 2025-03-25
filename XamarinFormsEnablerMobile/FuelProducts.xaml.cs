@@ -707,7 +707,7 @@ namespace XamarinFormsEnablerMobile
 
             var safedropPostContent = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 cashierID = main.CashierData.CashierID,
                 amount = Math.Abs(double.Parse(amount))
             };
@@ -804,7 +804,7 @@ namespace XamarinFormsEnablerMobile
                 cashierID = main.CashierData.CashierID,
                 subAccID = "",
                 accountID = "",
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 num = "",
                 periodID = "",
                 taxTotal = "0",
@@ -865,7 +865,7 @@ namespace XamarinFormsEnablerMobile
 
             DateTime dateTime = DateTime.Now;
             string formattedDateTime = dateTime.ToString("MM/dd/yyyy hh:mm tt");
-            string posNumberForReceipt = "POS #" + main.terminalId;
+            string posNumberForReceipt = "POS #" + main.posIDNumber;
             int spaceForDate = main.appSettings.paperWidth - (formattedDateTime.Length + posNumberForReceipt.Length);
             string dateAndPosID = formattedDateTime + new string(' ', spaceForDate) + posNumberForReceipt;
             FORPRINTINGARRAY.Add(dateAndPosID);
@@ -971,7 +971,7 @@ namespace XamarinFormsEnablerMobile
 
                 var toPrintLog = new
                 {
-                    posID = main.terminalId,
+                    posID = main.posIDNumber,
                     printedData = FORPRINTINGTEXT
                 };
 
@@ -2138,7 +2138,7 @@ namespace XamarinFormsEnablerMobile
             var logSavingData = new
             {
                 deviceID = 0,
-                deviceNumber = main.terminalId,
+                deviceNumber = main.posIDNumber,
                 deviceType = 15,
                 eventType = type,
                 eventDescription = desc

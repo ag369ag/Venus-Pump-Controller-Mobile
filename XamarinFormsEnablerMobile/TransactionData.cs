@@ -569,7 +569,7 @@ namespace XamarinFormsEnablerMobile
                 cashierID = main.CashierData.CashierID,
                 subAccID = main.userSAID ?? "",
                 accountID = "",
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 num = "",
                 periodID = "",
                 taxTotal = GetTransProductItems().Sum(a => a.GetTaxAmount()),
@@ -838,7 +838,7 @@ namespace XamarinFormsEnablerMobile
 
             DateTime dateTime = DateTime.Now;
             string formattedDateTime = dateTime.ToString("MM/dd/yyyy hh:mm tt");
-            string posNumberForReceipt = "POS #" + main.terminalId;
+            string posNumberForReceipt = "POS #" + main.posIDNumber;
 
             AddSideString(formattedDateTime, posNumberForReceipt);
 
@@ -1212,7 +1212,7 @@ namespace XamarinFormsEnablerMobile
             var toElectronicJournal = new
             {
                 Transaction_ID = transID,
-                pos_id = main.terminalId,
+                pos_id = main.posIDNumber,
                 si_number = invoiceNumber,
                 data = toEJournalString
             };
@@ -1227,7 +1227,7 @@ namespace XamarinFormsEnablerMobile
 
             var toPrintLog = new
             {
-                posID = main.terminalId,
+                posID = main.posIDNumber,
                 printedData = FORPRINTINGTEXT
             };
 

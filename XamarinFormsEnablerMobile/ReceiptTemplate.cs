@@ -28,7 +28,7 @@ namespace XamarinFormsEnablerMobile
                 Console.WriteLine("starting http client");
                 HttpClient client = new HttpClient();
                 Console.WriteLine($"terminal id {main.terminalId}");
-                object posIdentifier = new { posID = main.terminalId };
+                object posIdentifier = new { posID = main.posIDNumber };
                 string encodedposId = JsonConvert.SerializeObject(posIdentifier);
                 Console.WriteLine("this is pos identifier " + posIdentifier);
                 StringContent forpost = new StringContent(encodedposId, Encoding.UTF8, "application/json");

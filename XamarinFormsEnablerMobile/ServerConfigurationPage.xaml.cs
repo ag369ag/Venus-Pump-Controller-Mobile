@@ -63,7 +63,7 @@ namespace XamarinFormsEnablerMobile
                 EnablerTerminalField.Text == "" || EnablerTerminalField.Text == null ||
                 EnablerPasswordField.Text == "" || EnablerPasswordField.Text == null ||
                 AdminIDField.Text == "" || AdminIDField.Text == null ||
-                AdminPasswordField.Text == "" || AdminPasswordField.Text == null
+                AdminPasswordField.Text == "" || AdminPasswordField.Text == null || posIDField.Text == "" || posIDField.Text == null
                 )
             {
                 await DisplayAlert(null, "Fill all the fields", "Close");
@@ -94,6 +94,7 @@ namespace XamarinFormsEnablerMobile
             main.terminalServer = EnablerServerField.Text;
             main.terminalId = int.Parse(EnablerTerminalField.Text);
             main.terminalPassword = EnablerPasswordField.Text;
+            main.posIDNumber = int.Parse(posIDField.Text);
             Preferences.Set("EnablerServer", main.terminalServer);
             Preferences.Set("EnablerTerminal", main.terminalId.ToString());
             Preferences.Set("EnablerPassword", main.terminalPassword);
