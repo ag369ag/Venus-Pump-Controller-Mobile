@@ -564,6 +564,7 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine("first");
             customerAdd = normalCustomerDetail.GetCustomerAddess() ?? zeroRatedCustomerDetail.GetCustomerAddess();
             Console.WriteLine("Before creating payment data");
+            Console.WriteLine($"POS ID is {main.posIDNumber}");
             var PaymentData = new
             {
                 cashierID = main.CashierData.CashierID,

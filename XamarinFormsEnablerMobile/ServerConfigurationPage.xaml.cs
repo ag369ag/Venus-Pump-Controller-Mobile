@@ -97,6 +97,7 @@ namespace XamarinFormsEnablerMobile
             main.posIDNumber = int.Parse(posIDField.Text);
             Preferences.Set("EnablerServer", main.terminalServer);
             Preferences.Set("EnablerTerminal", main.terminalId.ToString());
+            Preferences.Set("posID", main.posIDNumber.ToString());
             Preferences.Set("EnablerPassword", main.terminalPassword);
             Preferences.Set("APIServer", main.APIServer);
             await DisplayAlert(null, "Settings saved", "Close");
