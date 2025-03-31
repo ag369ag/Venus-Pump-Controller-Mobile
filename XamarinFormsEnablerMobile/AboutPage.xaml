@@ -26,7 +26,14 @@
 
             </StackLayout>
 
-            <Label Text="Venus Pump Controller Mobile  V.1.0"
+            <Label Text="Venus Pump Controller"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   TextColor="DarkCyan"
+                   Margin="0,0,0,5" />
+
+            <Label Text="Mobile POS Version 1.0"
                    FontSize="26"
                    FontAttributes="Bold"
                    HorizontalTextAlignment="Center"

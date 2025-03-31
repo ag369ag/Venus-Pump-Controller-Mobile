@@ -1031,9 +1031,9 @@ namespace XamarinFormsEnablerMobile
                     VATTotal -= refundItemValue;
                     NVATTotal += refundItemValue;
                 }
-                if (item.itemDesc.ToLower().Contains("naac"))
-                {
-                    VATTotal -= refundItemValue;
+             //   if (item.itemDesc.ToLower().Contains("naac"))
+              //  {
+              //      VATTotal -= refundItemValue;
                     /*foreach (var discountTypes in main.DiscountPresetButtonList)
                     {
                         if (discountTypes.presetName != item.itemDesc)
@@ -1049,7 +1049,7 @@ namespace XamarinFormsEnablerMobile
                         VATTotal -= actualVatlessAmount;
                         VATTotal += actualAmount;
                     }*/
-                }
+              //  }
                 if (item.itemType == "52" || item.itemType == "54")
                 {
                     
@@ -1213,9 +1213,9 @@ namespace XamarinFormsEnablerMobile
             double vatableValue = Math.Round(VATTotal / 1.12, 2, MidpointRounding.AwayFromZero);
             double vatAmountValue = Math.Round(VATTotal - (VATTotal / 1.12), 2, MidpointRounding.AwayFromZero);
             
-            string VatSaleValue = taxType == "Zero Rated" ? "P0.00" : $"P{Math.Abs(vatableValue).ToString("#,##0.00")}";
-            string VatAmountValue = taxType == "Zero Rated" ? "P0.00" : $"P{Math.Abs(vatAmountValue).ToString("#,##0.00")}";
-            string VatExValue = taxType == "Zero Rated" ? "P0.00" : $"P{Math.Abs(NVATTotal).ToString("#,##0.00")}";
+            string VatSaleValue = taxType == "Zero Rated" ? "P0.00" : $"(P{Math.Abs(vatableValue).ToString("#,##0.00")})";
+            string VatAmountValue = taxType == "Zero Rated" ? "P0.00" : $"(P{Math.Abs(vatAmountValue).ToString("#,##0.00")})";
+            string VatExValue = taxType == "Zero Rated" ? "P0.00" : Math.Abs(NVATTotal) > 0 ? $"(P{Math.Abs(NVATTotal).ToString("#,##0.00")})" : "P0.00";
             string ZeroRatedValue = taxType == "Zero Rated" ? "(P" + saleTotal.ToString("#,##0.00") + ")" : "P0.00";
             Console.WriteLine("after vats");
             AddSideStrings("VATable Sales", VatSaleValue);

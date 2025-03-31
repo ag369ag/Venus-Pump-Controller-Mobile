@@ -20,16 +20,19 @@
         <StackLayout Margin="0,50,0,0"
                      VerticalOptions="CenterAndExpand"
                      HorizontalOptions="CenterAndExpand">
-            <Label Text="Venus Pump"
-                   FontSize="35"
+            <Label Text="Venus Pump Controller"
+                   FontSize="26"
                    FontAttributes="Bold"
                    TextColor="DarkCyan"
                    HorizontalTextAlignment="Center" />
-            <Label Text="Controller Mobile"
-                   FontSize="35"
+            <Label Text="Mobile POS"
+                   FontSize="26"
                    FontAttributes="Bold"
                    TextColor="DarkCyan"
                    HorizontalTextAlignment="Center" />
+            
+            
+            
             <Label x:Name="OfflineIndicator"
                    FontSize="20"
                    Text=""
