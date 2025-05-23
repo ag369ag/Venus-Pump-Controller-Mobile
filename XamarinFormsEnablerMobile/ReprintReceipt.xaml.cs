@@ -139,7 +139,7 @@ namespace XamarinFormsEnablerMobile
                 case "2": { transactionTypeString = "-SD#"; } break;
                // case "3": { transactionTypeString = "Invoice No. "; } break;
                 case "3": { transactionTypeString = "INV #"; } break;
-                case "4": { transactionTypeString = "-TR#"; } break;
+                case "4": { transactionTypeString = "TR#"; } break;
                 default: { } break;
             }
             int transNumZero = 9 - BIRTransNum.Length;
@@ -151,10 +151,11 @@ namespace XamarinFormsEnablerMobile
                 //formattedReceiptNumber = transactionTypeString + newResetter + "-" + newBIRTransNum;
                 formattedReceiptNumber = newResetter + "-" + newBIRTransNum;
             }
-            else if (transactionTypeString.Contains("INV"))
+            else if (transactionTypeString.Contains("INV") || transactionTypeString.Contains("Refund"))
             {
                 formattedReceiptNumber = transactionTypeString + newResetter + "-" + newBIRTransNum;
             }
+            
             else
             {
                 formattedReceiptNumber = newResetter + transactionTypeString + newBIRTransNum;

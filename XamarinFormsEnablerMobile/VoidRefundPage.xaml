@@ -21,8 +21,12 @@
                     </StackLayout>
                 </Frame>
                 <StackLayout HeightRequest="10"/>
-                <Button Text="Summary report" CornerRadius="10" Clicked="GetSummaryReport"/>
-                <Button Text="Full report" CornerRadius="10" Clicked="GetFullReport"/>
+                
+                <Button Text="Refund report" CornerRadius="10" Clicked="GetFullReport"/>
+                <Button Text="Void Summary report"
+                        CornerRadius="10"
+                        Clicked="GetVoidSummaryReport"/>
+                <Button Text="Void Full report" CornerRadius="10" Clicked="GetVoidFullReport"/>
             </StackLayout>
             <Button Text="Close" CornerRadius="10" Clicked="CloseVoidRefundReportPage"/>
         </StackLayout>

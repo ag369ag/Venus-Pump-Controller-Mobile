@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using static Android.Content.ClipData;
+using static System.Net.Mime.MediaTypeNames;
 using static XamarinFormsEnablerMobile.MainPage;
 
 namespace XamarinFormsEnablerMobile
@@ -735,7 +737,8 @@ namespace XamarinFormsEnablerMobile
                     }
                 }
             }
-            
+
+            Console.WriteLine("After reinstating");
             string refundItemString = Newtonsoft.Json.JsonConvert.SerializeObject(RefundItem);
 
             Object RefundContent = new
@@ -1010,6 +1013,9 @@ namespace XamarinFormsEnablerMobile
                 AddCenterText("*** ZERO RATED ***");
             }
             FORPRINTINGARRAY.Add(" ");
+
+            AddCenterText("*** Customer's Copy ***");
+            FORPRINTINGARRAY.Add("");
             AddCenterText("*** REFUND ***");
             FORPRINTINGARRAY.Add(" ");
 
@@ -1689,6 +1695,10 @@ namespace XamarinFormsEnablerMobile
 
             foreach(var item in FORPRINTINGARRAY)
             {
+                if (item.ToLower().Contains("copy"))
+                {
+                    continue;
+                }
                 FORPRINTINGTEXT += (item + "\n");
             }
 
@@ -1712,6 +1722,10 @@ namespace XamarinFormsEnablerMobile
             };
 
             await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+
+
+            FORPRINTINGTEXT = await AddStoreCopy();
+
 
             if (main.appSettings.useSocketPrinter)
             {
@@ -1739,6 +1753,43 @@ namespace XamarinFormsEnablerMobile
             }
             Search();
             
+        }
+
+        async Task<string> AddStoreCopy()
+        {
+            List<string> newPrintingArray = new List<string>();
+
+
+            foreach (string line in FORPRINTINGARRAY)
+            {
+                newPrintingArray.Add(line);
+            }
+            foreach (string line in FORPRINTINGARRAY)
+            {
+                if (line.ToLower().Contains("copy"))
+                {
+                    string strCpy = "*** Store's Copy ***";
+                    int spaceInCopy = (main.appSettings.paperWidth - strCpy.Length) / 2;
+                    string formattedString = new string(' ', spaceInCopy) + strCpy + new string(' ', spaceInCopy);
+
+                    newPrintingArray.Add(formattedString);
+                    continue;
+                }
+                newPrintingArray.Add(line);
+            }
+
+            FORPRINTINGARRAY = new List<string>();
+
+            string printString = "";
+            foreach(string line in newPrintingArray)
+            {
+                FORPRINTINGARRAY.Add(line);
+                printString += (line + "\n");
+            }
+
+
+
+            return printString;
         }
 
         void PrintToSocketPrinter(List<string> content)

@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Android.Accounts;
+using Android.App;
 using ITL.Enabler.API;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -478,6 +479,22 @@ namespace XamarinFormsEnablerMobile
                 }
                 selectedTrans.ReleaseLock();
             }
+
+            foreach (TransactionDataClass item in main.td.GetTransProductItems())
+            {
+                voidAllList.Add(new VoidAllModel
+                {
+                    posID = main.posIDNumber,
+                    cashierID = main.CashierData.CashierID,
+                    itemID = item.GetItemID(),
+                    itemType = item.GetItemType(),
+                    itemDesc = item.ForPaymentType,
+                    itemPrice = item.GetUnitPrice(),
+                    itemQty = item.GetQuantity(),
+                    itemValue = item.GetTotal()
+                });
+            }
+
             main.td.VoidAllItem();
             await Task.Run(() =>
             VoidAllItem()
@@ -2008,6 +2025,12 @@ namespace XamarinFormsEnablerMobile
         }
         async void MOPButtonClicked(object sender, EventArgs e)
         {
+            if (!(await main.BusinessDay()))
+            {
+                await DisplayAlert(main.apiRequestResult.message, null, "Close");
+                return;
+            }
+
             Button MOPButton = sender as Button;
             MOPREFNum = "";
             // Console.WriteLine(MOPButton.Text);
@@ -2059,6 +2082,8 @@ namespace XamarinFormsEnablerMobile
                     return;
                 }
             }
+
+            Console.WriteLine($"MOP RECEIPT COUNT IS {main.currentMOP.MOPReceiptCount}");
 
             Console.WriteLine(zeroRatedNameValue);
             Console.WriteLine(zeroRatedAddress);

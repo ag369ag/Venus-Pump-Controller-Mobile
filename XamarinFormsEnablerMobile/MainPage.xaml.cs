@@ -295,6 +295,7 @@ namespace XamarinFormsEnablerMobile
             public string getDocumentNumber { get; set; }
             public string savePrintedData { get; set; }
             public string apiEndpoint { get; set; }
+            public string getBusinessDay { get; set; }
         }
         public apiRoutes routes = new apiRoutes();
         #endregion
@@ -459,6 +460,7 @@ namespace XamarinFormsEnablerMobile
                 routes.apiEndpoint = APIServer;
                 routes.getDocumentNumber = APIServer + "/lookUpCtrl/getDocumentNumber";
                 routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
+                routes.getBusinessDay = APIServer + "/lookUpCtrl/getBusinessDay";
             }
             else
             {
@@ -493,6 +495,7 @@ namespace XamarinFormsEnablerMobile
                 routes.apiEndpoint = APIServer;
                 routes.getDocumentNumber = APIServer + "/lookUpCtrl/getDocumentNumber";
                 routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
+                routes.getBusinessDay = APIServer + "/lookUpCtrl/getBusinessDay";
             }
 
         }
@@ -617,10 +620,51 @@ namespace XamarinFormsEnablerMobile
 
         }
 
+        public async Task<bool> BusinessDay()
+        {
+            HttpResponseMessage getBDResponse = await http.GetAsync(routes.getBusinessDay);
+            string getBDResponseString = await getBDResponse.Content.ReadAsStringAsync();
+            JsonDocument getBDResponseJson = JsonDocument.Parse(getBDResponseString);
+            JsonElement getBDStatusCode = getBDResponseJson.RootElement.GetProperty("statusCode");
+            if (getBDStatusCode.ToString() == "0")
+            {
+                apiRequestResult.result = false;
+                apiRequestResult.message = getBDResponseJson.RootElement.GetProperty("statusDescription").ToString();
+                return false;
+            }
+            else
+            {
+                JsonElement getBDData = getBDResponseJson.RootElement.GetProperty("data");
+                Console.WriteLine(getBDData.ToString());
+
+                DateTime now = DateTime.Now;
+                int dateTimeNowInt = GetClarionDate(now);
+                int businessDate = int.Parse(getBDData.GetProperty("BusinessDate").ToString());
+                if (dateTimeNowInt < businessDate)
+                {
+                    apiRequestResult.result = false;
+                    apiRequestResult.message = "Check date and time";
+                    return false;
+                }
+
+                return true;
+
+
+            }
+        }
+
         async Task<bool> LoginUser(string username, string pass)
         {
             try
             {
+
+                bool isGood = await BusinessDay();
+                if (!isGood)
+                {
+                    return false;
+                }
+
+
                 var adminCredentials = new { number = username, password = pass };
                 var adminCredsJson = Newtonsoft.Json.JsonConvert.SerializeObject(adminCredentials);
                 StringContent body = new StringContent(adminCredsJson, Encoding.UTF8, "application/json");
@@ -694,6 +738,12 @@ namespace XamarinFormsEnablerMobile
             }
         }
 
+        public int GetClarionDate(DateTime now)
+        {
+            var date = new DateTime(1800, 12, 28, 0, 0, 0);
+            return (now - date).Days;
+        }
+
         public interface IPrintService
         {
             void Print(string message, int width);
@@ -709,13 +759,16 @@ namespace XamarinFormsEnablerMobile
         async void ContinueToLogin()
         {
             OfflineIndicator.Text = "";
-            if (UserIDField.Text == "" || UserIDField.Text == null || UserPasswordField.Text == "" || UserPasswordField == null)
+            if (UserIDField.Text == "" || UserIDField.Text == null || UserPasswordField.Text == "" || UserPasswordField.Text == null)
             {
+                loginResult = false;
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     await DisplayAlert(null, "Fill all the credentials", "Close");
-
+                    connectButton.IsEnabled = true;
+                    connectButton.Text = "Connect";
                 });
+                
                 return;
             }
             loginResult = await Task.Run(() => LoginUser(UserIDField.Text, UserPasswordField.Text));

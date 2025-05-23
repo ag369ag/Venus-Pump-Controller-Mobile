@@ -1919,8 +1919,8 @@ namespace XamarinFormsEnablerMobile
                                 MOPRef = paymentInfo.GetProperty("mopRef").ToString(),
                                 MOPIsViableForDisount = 1,
                                 //(paymentInfo.GetProperty("withDiscount").ToString() == "" || paymentInfo.GetProperty("withDiscount").ToString() == null) ? 0 : int.Parse(paymentInfo.GetProperty("withDiscount").ToString()),
-                                MOPReceiptCount = 1,
-                                //int.Parse(paymentInfo.GetProperty("mopReceiptCopyCount").ToString()),
+                                MOPReceiptCount = // 1,
+                                int.Parse(paymentInfo.GetProperty("mopReceiptCopyCount").ToString()),
                                 MOPAllowChange = int.Parse(paymentInfo.GetProperty("change").ToString())
                             });
 
@@ -1967,7 +1967,9 @@ namespace XamarinFormsEnablerMobile
 
                 //NonFuelItems.ItemsSource = NonFuels;
             }
-            catch (Exception) { }
+            catch (Exception r) {
+                Console.WriteLine($"ERROR: {r}");
+            }
             Console.WriteLine("NonFuel");
         }
         async void GetGradeInfo()

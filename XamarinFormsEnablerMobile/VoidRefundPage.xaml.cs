@@ -48,6 +48,8 @@ namespace XamarinFormsEnablerMobile
             public string RefundItemType { get; set; }
             public string RefundItemDescription { get; set; }
             public string RefundValue { get; set; }
+            public string RefundTransactionNumber { get; set; }
+            public string RefundReferenceTransactionNumber { get; set; }
         }
 
         private List<RefundItems> RefundItemList { get; set; } = new List<RefundItems>();
@@ -86,7 +88,7 @@ namespace XamarinFormsEnablerMobile
         {
             Device.BeginInvokeOnMainThread(() => Navigation.PopModalAsync(false));
         }
-        private async void GetVoidRefundReport()
+        private async void GetVoidRefundReport(bool isVoid = false)
         {
             VoidItemList.Clear();
             RefundItemList.Clear();
@@ -94,7 +96,8 @@ namespace XamarinFormsEnablerMobile
             var reportObject = new
             {
                 dateFrom = StartDate,
-                dateTo = EndDate
+                dateTo = EndDate,
+                posID = main.posIDNumber
             };
             string jsonConvertedObject = Newtonsoft.Json.JsonConvert.SerializeObject(reportObject);
             StringContent content = new StringContent(jsonConvertedObject, Encoding.UTF8, "application/json");
@@ -157,28 +160,42 @@ namespace XamarinFormsEnablerMobile
                         RefundItemType = data2.GetProperty("Item_Type").ToString(),
                         RefundItemDescription = data2.GetProperty("Item_Description").ToString(),
                         RefundValue = data2.GetProperty("Value").ToString(),
-                        RefundTransactionDateTime = refundDateTime.ToString("MM/dd/yyyy HH:mm")
+                        RefundTransactionDateTime = refundDateTime.ToString("MM/dd/yyyy HH:mm"),
+                        RefundTransactionNumber = $"Refund #{data.GetProperty("transaction_resetter").ToString().PadLeft(3, '0')}-{data.GetProperty("BIR_Trans_Number").ToString().PadLeft(9, '0')}",
+                        RefundReferenceTransactionNumber = $"Reference #{data.GetProperty("transaction_resetter_reference").ToString().PadLeft(3, '0')}-{data.GetProperty("transaction_number_reference").ToString().PadLeft(9, '0')}"
                     });
                 }
                 
             }
 
-            if(isSummary == 1)
+            if (isSummary == 1)
             {
-                FormatSummaryReport();
+                FormatSummaryReport(isVoid);
             }
             else
             {
-                FormatFullReport();
+                FormatFullReport(isVoid);
             }
         }
 
+        private void GetVoidSummaryReport(object sender, EventArgs e)
+        {
+            isSummary = 1;
+            GetVoidRefundReport(true);
+        }
+
+        private void GetVoidFullReport(object sender, EventArgs e)
+        {
+            isSummary = 0;
+            GetVoidRefundReport(true);
+        }
         private void GetSummaryReport(object sender, EventArgs e)
         {
             Console.WriteLine(StartDate);
             Console.WriteLine(EndDate);
             isSummary = 1;
             GetVoidRefundReport();
+            
         }
 
         private void GetFullReport(object sender, EventArgs e)
@@ -187,9 +204,10 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine(EndDate);
             isSummary = 0;
             GetVoidRefundReport();
+            
         }
 
-        private async void FormatFullReport()
+        private async void FormatFullReport(bool isVoid = false)
         {
             VoidItemList.OrderBy(a=>int.Parse(a.VoidEventCashierID));
             
@@ -199,133 +217,161 @@ namespace XamarinFormsEnablerMobile
             AddHeader(forPrintingArray);
             forPrintingArray.Add("");
             forPrintingArray.Add("");
-            FormatCenterString("Void & Refund Report", forPrintingArray);
+            string title = isVoid ? "Void" : "Refund";
+            FormatCenterString($"{title} Report", forPrintingArray);
             forPrintingArray.Add("");
             string line = new string('-', main.appSettings.paperWidth);
             forPrintingArray.Add(line);
             FormatSideStrings("From:", StartDate, forPrintingArray);
             FormatSideStrings("To:", EndDate, forPrintingArray);
-            //=======================================================================================
-            //                              VOIDED ITEMS BY CASHIER
-            forPrintingArray.Add(line);
-            FormatCenterString("- Voided Items by Cashier -", forPrintingArray);
+            if (isVoid)
+            {
+                //=======================================================================================
+                //                              VOIDED ITEMS BY CASHIER
+                forPrintingArray.Add(line);
+                FormatCenterString("- Voided Items by Cashier -", forPrintingArray);
             
-            foreach(var item in VoidItemList)
-            {
-                int currentCashierID = int.Parse(item.VoidEventCashierID);
+                foreach(var item in VoidItemList)
+                {
+                    int currentCashierID = int.Parse(item.VoidEventCashierID);
 
-                if(lastDate == "")
-                {
-                    forPrintingArray.Add("");
-                    FormatSideStrings(item.VoidEventDate, "", forPrintingArray);
-                }
+                    if(lastDate == "")
+                    {
+                        forPrintingArray.Add("");
+                        FormatSideStrings(item.VoidEventDate, "", forPrintingArray);
+                    }
 
-                if (lastCashierID != currentCashierID)
-                {
-                    forPrintingArray.Add(" ");
-                    FormatCenterString("Cashier: " + item.VoidEventCashierID + " " + item.VoidEventCashierName, forPrintingArray);
-                    lastCashierID = currentCashierID;
+                    if (lastCashierID != currentCashierID)
+                    {
+                        forPrintingArray.Add(" ");
+                        FormatCenterString("Cashier: " + item.VoidEventCashierID + " " + item.VoidEventCashierName, forPrintingArray);
+                        lastCashierID = currentCashierID;
+                    }
+                    double value = double.Parse(item.VoidEventItemValue);
+                    string currentDate = item.VoidEventDate;
+                    if(lastDate != currentDate && lastDate != "")
+                    {
+                        FormatSideStrings(item.VoidEventDate, "", forPrintingArray);
+                        lastDate = currentDate;
+                    }
+                    FormatSideStrings(item.VoidEventTime + " " + item.VoidEventItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
+
                 }
-                double value = double.Parse(item.VoidEventItemValue);
-                string currentDate = item.VoidEventDate;
-                if(lastDate != currentDate && lastDate != "")
+                double totalVoidValue = VoidItemList.Select(a => double.Parse(a.VoidEventItemValue)).Sum();
+                double itemCount = VoidItemList.Count();
+                forPrintingArray.Add(" ");
+                FormatSideStrings("TOTAL", itemCount.ToString() + new string(' ', 10) + "P" + totalVoidValue.ToString("#,##0.00"), forPrintingArray);
+                //======================================================================================
+                //                                  VOIDED ITEMS BY DATE
+                VoidItemList.OrderBy(a => DateTime.Parse(a.VoidEventDateTime));
+                forPrintingArray.Add(line);
+                FormatCenterString("- Voided Items by Date -", forPrintingArray);
+                lastDate = "";
+                lastCashierID = 0;
+                foreach(var item in VoidItemList)
                 {
-                    FormatSideStrings(item.VoidEventDate, "", forPrintingArray);
-                    lastDate = currentDate;
+                    string currentDate = item.VoidEventDate;
+                    int currentCashierID = int.Parse(item.VoidEventCashierID);
+                    double value = double.Parse(item.VoidEventItemValue);
+                    if (lastDate != currentDate)
+                    {
+                        forPrintingArray.Add(" ");
+                        FormatCenterString(item.VoidEventDate, forPrintingArray);
+                        lastDate = currentDate;
+                        lastCashierID = 0;
+                    }
+                    if (lastCashierID != currentCashierID)
+                    {
+                        FormatSideStrings("Cashier: " + item.VoidEventCashierID + " " + item.VoidEventCashierName, " ", forPrintingArray);
+                        lastCashierID = currentCashierID;
+                    }
+                    FormatSideStrings(item.VoidEventTime + " " + item.VoidEventItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
                 }
-                FormatSideStrings(item.VoidEventTime + " " + item.VoidEventItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
+                forPrintingArray.Add(" ");
+                FormatSideStrings("TOTAL", itemCount.ToString() + new string(' ', 10) + "P" + totalVoidValue.ToString("#,##0.00"), forPrintingArray);
 
             }
-            double totalVoidValue = VoidItemList.Select(a => double.Parse(a.VoidEventItemValue)).Sum();
-            double itemCount = VoidItemList.Count();
-            forPrintingArray.Add(" ");
-            FormatSideStrings("TOTAL", itemCount.ToString() + new string(' ', 10) + "P" + totalVoidValue.ToString("#,##0.00"), forPrintingArray);
-            //======================================================================================
-            //                                  VOIDED ITEMS BY DATE
-            VoidItemList.OrderBy(a => DateTime.Parse(a.VoidEventDateTime));
-            forPrintingArray.Add(line);
-            FormatCenterString("- Voided Items by Date -", forPrintingArray);
-            lastDate = "";
-            lastCashierID = 0;
-            foreach(var item in VoidItemList)
+            else
             {
-                string currentDate = item.VoidEventDate;
-                int currentCashierID = int.Parse(item.VoidEventCashierID);
-                double value = double.Parse(item.VoidEventItemValue);
-                if (lastDate != currentDate)
-                {
-                    forPrintingArray.Add(" ");
-                    FormatCenterString(item.VoidEventDate, forPrintingArray);
-                    lastDate = currentDate;
-                    lastCashierID = 0;
-                }
-                if (lastCashierID != currentCashierID)
-                {
-                    FormatSideStrings("Cashier: " + item.VoidEventCashierID + " " + item.VoidEventCashierName, " ", forPrintingArray);
-                    lastCashierID = currentCashierID;
-                }
-                FormatSideStrings(item.VoidEventTime + " " + item.VoidEventItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
-            }
-            forPrintingArray.Add(" ");
-            FormatSideStrings("TOTAL", itemCount.ToString() + new string(' ', 10) + "P" + totalVoidValue.ToString("#,##0.00"), forPrintingArray);
-            //========================================================================================
-            //                                   REFUND SALES BY CASHIER
-            RefundItemList.OrderBy(a => int.Parse(a.RefundCashierID));
-            forPrintingArray.Add(line);
-            FormatCenterString("- Refunded Sales by Cashier -", forPrintingArray);
+                //========================================================================================
+                //                                   REFUND SALES BY CASHIER
+                RefundItemList.OrderBy(a => int.Parse(a.RefundCashierID));
+                forPrintingArray.Add(line);
+                FormatCenterString("- Refunded Sales by Cashier -", forPrintingArray);
             
-            lastCashierID = 0;
-            lastDate = "";
-            foreach(var item in RefundItemList)
-            {
-                Console.WriteLine(item.RefundItemType + " This is item type");
-                int currentCashierID = int.Parse(item.RefundCashierID);
-                string currentDate = item.RefundTransactionDateTime;
-                double value = double.Parse(item.RefundValue);
-                if (lastCashierID != currentCashierID)
+                lastCashierID = 0;
+                lastDate = "";
+                string lastTransNumber = "";
+                foreach(var item in RefundItemList)
                 {
-                    forPrintingArray.Add(" ");
-                    FormatCenterString("Cashier: " + item.RefundCashierID + " " + item.RefundCashierName, forPrintingArray);
-                    lastCashierID = currentCashierID;
-                }
-                if (lastDate != currentDate)
-                {
-                    FormatSideStrings(currentDate + " POS: " + item.RefundPOSID, " ", forPrintingArray);
-                    lastDate = currentDate;
-                }
-                FormatSideStrings(item.RefundItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
-            }
-            double totalRefundValue = RefundItemList.Where(a => int.Parse(a.RefundItemType) == 7 || int.Parse(a.RefundItemType) == 8).Select(a => double.Parse(a.RefundValue)).Sum();
-            forPrintingArray.Add(" ");
-            FormatSideStrings("TOTAL", "P" + totalRefundValue.ToString("#,##0.00"), forPrintingArray);
+                    Console.WriteLine(item.RefundItemType + " This is item type");
+                    int currentCashierID = int.Parse(item.RefundCashierID);
+                    string currentDate = item.RefundTransactionDateTime;
+                    double value = double.Parse(item.RefundValue);
+                    if (lastCashierID != currentCashierID)
+                    {
+                        forPrintingArray.Add(" ");
+                        FormatCenterString("Cashier: " + item.RefundCashierID + " " + item.RefundCashierName, forPrintingArray);
+                        lastCashierID = currentCashierID;
+                    }
+                    if (lastDate != currentDate)
+                    {
+                        FormatSideStrings(currentDate + " POS: " + item.RefundPOSID, " ", forPrintingArray);
+                        lastDate = currentDate;
+                    }
 
-            //==========================================================================================
-            //                                       REFUND SALES BY DATE
-            RefundItemList.OrderBy(a => DateTime.Parse(a.RefundTransactionDateTime));
-            forPrintingArray.Add(line);
-            FormatCenterString("- Refunded Sales by Date -", forPrintingArray);
+                    if(lastTransNumber != item.RefundTransactionNumber)
+                    {
+                        forPrintingArray.Add("");
+                        FormatSideStrings(item.RefundTransactionNumber, "", forPrintingArray);
+                        FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArray);
+                        lastTransNumber = item.RefundTransactionNumber;
+                    }
+                    FormatSideStrings(item.RefundItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
+                }
+                double totalRefundValue = RefundItemList.Where(a => int.Parse(a.RefundItemType) == 7 || int.Parse(a.RefundItemType) == 8).Select(a => double.Parse(a.RefundValue)).Sum();
+                forPrintingArray.Add(" ");
+                FormatSideStrings("TOTAL", "P" + totalRefundValue.ToString("#,##0.00"), forPrintingArray);
+
+                //==========================================================================================
+                //                                       REFUND SALES BY DATE
+                RefundItemList.OrderBy(a => DateTime.Parse(a.RefundTransactionDateTime));
+                forPrintingArray.Add(line);
+                FormatCenterString("- Refunded Sales by Date -", forPrintingArray);
             
-            lastDate = "";
-            string lastTime = "";
-            foreach(var item in RefundItemList)
-            {
-                string currentDate = item.RefundTransactionDate;
-                double value = double.Parse(item.RefundValue);
-                if(lastDate != currentDate)
+                lastDate = "";
+                string lastTime = "";
+                lastTransNumber = "";
+                foreach (var item in RefundItemList)
                 {
-                    forPrintingArray.Add(" ");
-                    FormatCenterString(item.RefundTransactionDate, forPrintingArray);
-                    lastDate = currentDate;
+                    string currentDate = item.RefundTransactionDate;
+                    double value = double.Parse(item.RefundValue);
+                    if(lastDate != currentDate)
+                    {
+                        forPrintingArray.Add(" ");
+                        FormatCenterString(item.RefundTransactionDate, forPrintingArray);
+                        lastDate = currentDate;
+                    }
+                    if(lastTime != item.RefundTransactionTime)
+                    {
+                        FormatSideStrings(item.RefundTransactionTime + " POS: " + item.RefundPOSID + " " + item.RefundCashierName, " ", forPrintingArray);
+                        lastTime = item.RefundTransactionTime;
+                    }
+
+                    if (lastTransNumber != item.RefundTransactionNumber)
+                    {
+                        forPrintingArray.Add("");
+                        FormatSideStrings(item.RefundTransactionNumber, "", forPrintingArray);
+                        FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArray);
+                        lastTransNumber = item.RefundTransactionNumber;
+                    }
+
+                    FormatSideStrings(item.RefundItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
                 }
-                if(lastTime != item.RefundTransactionTime)
-                {
-                    FormatSideStrings(item.RefundTransactionTime + " POS: " + item.RefundPOSID + " " + item.RefundCashierName, " ", forPrintingArray);
-                    lastTime = item.RefundTransactionTime;
-                }
-                FormatSideStrings(item.RefundItemDescription, "P" + value.ToString("#,##0.00"), forPrintingArray);
+                forPrintingArray.Add(" ");
+                FormatSideStrings("TOTAL", "P" + totalRefundValue.ToString("#,##0.00"), forPrintingArray);
+
             }
-            forPrintingArray.Add(" ");
-            FormatSideStrings("TOTAL", "P" + totalRefundValue.ToString("#,##0.00"), forPrintingArray);
 
             forPrintingArray.Add(" ");
 
@@ -380,7 +426,7 @@ namespace XamarinFormsEnablerMobile
 
         }
 
-        private async void FormatSummaryReport()
+        private async void FormatSummaryReport(bool isVoid = false)
         {
             VoidItemList.OrderBy(a => int.Parse(a.VoidEventCashierID));
 
@@ -390,142 +436,175 @@ namespace XamarinFormsEnablerMobile
             AddHeader(forPrintingArraySummary);
             forPrintingArraySummary.Add(" ");
             forPrintingArraySummary.Add(" ");
-            FormatCenterString("Void & Refund Summary Report", forPrintingArraySummary);
+            string title = isVoid ? "Void" : "Refund";
+            FormatCenterString($"{title} Summary Report", forPrintingArraySummary);
             forPrintingArraySummary.Add(" ");
             string line = new string('-', main.appSettings.paperWidth);
             forPrintingArraySummary.Add(line);
             FormatSideStrings("From:", StartDate, forPrintingArraySummary);
             FormatSideStrings("To:", EndDate, forPrintingArraySummary);
-            //=======================================================================================
-            //                              VOIDED ITEMS BY CASHIER
-            forPrintingArraySummary.Add(line);
-            FormatCenterString("- Voided Items by Cashier -", forPrintingArraySummary);
-            foreach(var item in VoidItemList.OrderBy(a => int.Parse(a.VoidEventCashierID)))
+
+            if (isVoid)
             {
-                int currentCashierID = int.Parse(item.VoidEventCashierID);
-                string currentDate = item.VoidEventDate;
+                //=======================================================================================
+                //                              VOIDED ITEMS BY CASHIER
 
-                if (lastDate != currentDate)
+                forPrintingArraySummary.Add(line);
+                FormatCenterString("- Voided Items by Cashier -", forPrintingArraySummary);
+                foreach(var item in VoidItemList.OrderBy(a => int.Parse(a.VoidEventCashierID)))
                 {
-                    FormatSideStrings(currentDate, "", forPrintingArraySummary);
-                }
+                    int currentCashierID = int.Parse(item.VoidEventCashierID);
+                    string currentDate = item.VoidEventDate;
 
-                if (lastCashierID != currentCashierID)
-                {
-                    forPrintingArraySummary.Add(" ");
-                    FormatCenterString("Cashier: " + item.VoidEventCashierID + " " + item.VoidEventCashierName, forPrintingArraySummary);
-                    lastCashierID = currentCashierID;
-                }
-
-                if(lastDate != currentDate)
-                {
-                    string totalCountPerDate = VoidItemList.Where(a=>a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Count().ToString();
-                    string totalAmountPerDate = VoidItemList.Where(a=>a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Select(a=>double.Parse(a.VoidEventItemValue)).Sum().ToString("#,##0.00");
-                    int spaceBetween = 16 - (totalCountPerDate.Length + totalAmountPerDate.Length);
-                    string formattedRightSide = totalCountPerDate + new string(' ', spaceBetween) + totalAmountPerDate;
-                    //       FormatSideStrings(currentDate, formattedRightSide, forPrintingArraySummary);
-                    if (lastDate != "")
+                    if (lastDate != currentDate)
                     {
-                        FormatSideStrings("TOTAL", formattedRightSide, forPrintingArraySummary);
+                        FormatSideStrings(currentDate, "", forPrintingArraySummary);
                     }
-                    lastDate = currentDate;
-                }
-            }
-            forPrintingArraySummary.Add(" ");
-            string totalVoidCount = VoidItemList.Count().ToString();
-            string totalVoidAmount = "P" + VoidItemList.Select(a => double.Parse(a.VoidEventItemValue)).Sum().ToString("#,##0.00");
-            int spaceBetweenTotal = 16 - (totalVoidCount.Length + totalVoidAmount.Length);
-            string formattedRightSideVoidTotal = totalVoidCount + new string(' ', spaceBetweenTotal) + totalVoidAmount;
-            FormatSideStrings("TOTAL", formattedRightSideVoidTotal, forPrintingArraySummary);
-            //=========================================================================================
-            //                          VOIDED ITEM BY DATE
-            VoidItemList.OrderBy(a => DateTime.Parse(a.VoidEventDateTime));
 
-            forPrintingArraySummary.Add(line);
-            FormatCenterString("- Voided Items by Date -", forPrintingArraySummary);
-            lastDate = "";
-            lastCashierID = 0;
-            double lastTotalValue = 0;
-            foreach (var item in VoidItemList.OrderBy(a => int.Parse(a.VoidEventCashierID)))
-            {
-                string currentDate = item.VoidEventDate;
-                if(lastDate != currentDate)
-                {
-                    forPrintingArraySummary.Add(" ");
-                    FormatCenterString(currentDate, forPrintingArraySummary);
-                    lastDate = currentDate;
-                }
-                int currentCashierID = int.Parse(item.VoidEventCashierID);
-                double totalValue = VoidItemList.Where(a => a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Select(a => double.Parse(a.VoidEventItemValue)).Sum();
-                if ((lastCashierID != currentCashierID) || lastTotalValue != totalValue)
-                {
-                    string perCashierCount = VoidItemList.Where(a => a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Count().ToString();
-                    string perCashierTotal = "P" + VoidItemList.Where(a => a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Select(a => double.Parse(a.VoidEventItemValue)).Sum().ToString("#,##0.00");
-                    int spaceForRightSide = 16 - (perCashierCount.Length + perCashierTotal.Length);
-                    string formattedRightSide = perCashierCount + new string(' ', spaceForRightSide) + perCashierTotal;
-                    FormatSideStrings(item.VoidEventCashierID + " " + item.VoidEventCashierName, formattedRightSide, forPrintingArraySummary);
-                    lastCashierID = currentCashierID;
-                    lastTotalValue = totalValue;
-                }
-            }
-            forPrintingArraySummary.Add(" ");
-            FormatSideStrings("TOTAL", formattedRightSideVoidTotal, forPrintingArraySummary);
-            //======================================================================================
-            //                          REFUNDED SALES BY CASHIER
-            RefundItemList.OrderBy(a => int.Parse(a.RefundCashierID));
+                    if (lastCashierID != currentCashierID)
+                    {
+                        forPrintingArraySummary.Add(" ");
+                        FormatCenterString("Cashier: " + item.VoidEventCashierID + " " + item.VoidEventCashierName, forPrintingArraySummary);
+                        lastCashierID = currentCashierID;
+                    }
 
-            forPrintingArraySummary.Add(line);
-            FormatCenterString("- Refunded Sales by Cashier -", forPrintingArraySummary);
-            lastDate = "";
-            lastCashierID = 0;
-            foreach(var item in RefundItemList)
-            {
-                int currentCashier = int.Parse(item.RefundCashierID);
-                if(lastCashierID != currentCashier)
-                {
-                    forPrintingArraySummary.Add(" ");
-                    FormatCenterString("Cashier:" + item.RefundCashierID + " " + item.RefundCashierName, forPrintingArraySummary);
-                    lastCashierID = currentCashier;
+                    if(lastDate != currentDate)
+                    {
+                        string totalCountPerDate = VoidItemList.Where(a=>a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Count().ToString();
+                        string totalAmountPerDate = VoidItemList.Where(a=>a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Select(a=>double.Parse(a.VoidEventItemValue)).Sum().ToString("#,##0.00");
+                        int spaceBetween = 16 - (totalCountPerDate.Length + totalAmountPerDate.Length);
+                        string formattedRightSide = totalCountPerDate + new string(' ', spaceBetween) + totalAmountPerDate;
+                        //       FormatSideStrings(currentDate, formattedRightSide, forPrintingArraySummary);
+                        if (lastDate != "")
+                        {
+                            FormatSideStrings("TOTAL", formattedRightSide, forPrintingArraySummary);
+                        }
+                        lastDate = currentDate;
+                    }
                 }
-                if(lastDate != item.RefundTransactionDateTime)
-                {
-                    FormatSideStrings(item.RefundTransactionDateTime + " POS: " + item.RefundPOSID, " ", forPrintingArraySummary);
-                    lastDate = item.RefundTransactionDateTime;
-                }
-                string value = "P" + (double.Parse(item.RefundValue)).ToString("#,##0.00");
-                FormatSideStrings(item.RefundItemDescription, value, forPrintingArraySummary);
-            }
-            forPrintingArraySummary.Add(" ");
-            string totalRefundValue = "P" + RefundItemList.Where(a=> int.Parse(a.RefundItemType) == 7 || int.Parse(a.RefundItemType) == 8).Select(a => double.Parse(a.RefundValue)).Sum().ToString("#,##0.00");
-            FormatSideStrings("TOTAL", totalRefundValue, forPrintingArraySummary);
-            //======================================================================================
-            //                          REFUNDED SALES BY DATE
-            RefundItemList.OrderBy(a => DateTime.Parse(a.RefundTransactionDate));
+                forPrintingArraySummary.Add(" ");
+                string totalVoidCount = VoidItemList.Count().ToString();
+                string totalVoidAmount = "P" + VoidItemList.Select(a => double.Parse(a.VoidEventItemValue)).Sum().ToString("#,##0.00");
+                int spaceBetweenTotal = 16 - (totalVoidCount.Length + totalVoidAmount.Length);
+                string formattedRightSideVoidTotal = totalVoidCount + new string(' ', spaceBetweenTotal) + totalVoidAmount;
+                FormatSideStrings("TOTAL", formattedRightSideVoidTotal, forPrintingArraySummary);
+                //=========================================================================================
+                //                          VOIDED ITEM BY DATE
+                VoidItemList.OrderBy(a => DateTime.Parse(a.VoidEventDateTime));
 
-            forPrintingArraySummary.Add(line);
-            FormatCenterString("- Refunded Sales by Date -", forPrintingArraySummary);
-            lastCashierID = 0;
-            lastDate = "";
-            string lastDateTime = "";
-            foreach(var item in RefundItemList)
-            {
-                string currentDate = item.RefundTransactionDate;
-                if(lastDate != currentDate)
+                forPrintingArraySummary.Add(line);
+                FormatCenterString("- Voided Items by Date -", forPrintingArraySummary);
+                lastDate = "";
+                lastCashierID = 0;
+                double lastTotalValue = 0;
+                foreach (var item in VoidItemList.OrderBy(a => int.Parse(a.VoidEventCashierID)))
                 {
-                    forPrintingArraySummary.Add(" ");
-                    FormatCenterString(currentDate, forPrintingArraySummary);
-                    lastDate = currentDate;
+                    string currentDate = item.VoidEventDate;
+                    if(lastDate != currentDate)
+                    {
+                        forPrintingArraySummary.Add(" ");
+                        FormatCenterString(currentDate, forPrintingArraySummary);
+                        lastDate = currentDate;
+                    }
+                    int currentCashierID = int.Parse(item.VoidEventCashierID);
+                    double totalValue = VoidItemList.Where(a => a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Select(a => double.Parse(a.VoidEventItemValue)).Sum();
+                    if ((lastCashierID != currentCashierID) || lastTotalValue != totalValue)
+                    {
+                        string perCashierCount = VoidItemList.Where(a => a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Count().ToString();
+                        string perCashierTotal = "P" + VoidItemList.Where(a => a.VoidEventDate == currentDate && a.VoidEventCashierID == currentCashierID.ToString()).Select(a => double.Parse(a.VoidEventItemValue)).Sum().ToString("#,##0.00");
+                        int spaceForRightSide = 16 - (perCashierCount.Length + perCashierTotal.Length);
+                        string formattedRightSide = perCashierCount + new string(' ', spaceForRightSide) + perCashierTotal;
+                        FormatSideStrings(item.VoidEventCashierID + " " + item.VoidEventCashierName, formattedRightSide, forPrintingArraySummary);
+                        lastCashierID = currentCashierID;
+                        lastTotalValue = totalValue;
+                    }
                 }
-                if(lastDateTime != item.RefundTransactionDateTime)
-                {
-                    FormatSideStrings(item.RefundTransactionDateTime + " POS: " + item.RefundPOSID, " ", forPrintingArraySummary);
-                    lastDateTime = item.RefundTransactionDateTime;
-                }
-                string value = "P" + (double.Parse(item.RefundValue)).ToString("#,##0.00");
-                FormatSideStrings(item.RefundItemDescription, value, forPrintingArraySummary);
+                forPrintingArraySummary.Add(" ");
+                FormatSideStrings("TOTAL", formattedRightSideVoidTotal, forPrintingArraySummary);
+
             }
-            forPrintingArraySummary.Add(" ");
-            FormatSideStrings("TOTAL", totalRefundValue, forPrintingArraySummary);
+            else
+            {
+                //======================================================================================
+                //                          REFUNDED SALES BY CASHIER
+                RefundItemList.OrderBy(a => int.Parse(a.RefundCashierID));
+
+                forPrintingArraySummary.Add(line);
+                FormatCenterString("- Refunded Sales by Cashier -", forPrintingArraySummary);
+                lastDate = "";
+                lastCashierID = 0;
+
+                string lastTransNumber = "";
+                foreach(var item in RefundItemList)
+                {
+                    int currentCashier = int.Parse(item.RefundCashierID);
+                    if(lastCashierID != currentCashier)
+                    {
+                        forPrintingArraySummary.Add(" ");
+                        FormatCenterString("Cashier:" + item.RefundCashierID + " " + item.RefundCashierName, forPrintingArraySummary);
+                        lastCashierID = currentCashier;
+                    }
+                    if(lastDate != item.RefundTransactionDateTime)
+                    {
+                        FormatSideStrings(item.RefundTransactionDateTime + " POS: " + item.RefundPOSID, " ", forPrintingArraySummary);
+                        lastDate = item.RefundTransactionDateTime;
+                    }
+
+                    if (lastTransNumber != item.RefundTransactionNumber)
+                    {
+                        forPrintingArraySummary.Add("");
+                        FormatSideStrings(item.RefundTransactionNumber, "", forPrintingArraySummary);
+                        FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArraySummary);
+                        lastTransNumber = item.RefundTransactionNumber;
+                    }
+
+                    string value = "P" + (double.Parse(item.RefundValue)).ToString("#,##0.00");
+                    FormatSideStrings(item.RefundItemDescription, value, forPrintingArraySummary);
+                }
+                forPrintingArraySummary.Add(" ");
+                string totalRefundValue = "P" + RefundItemList.Where(a=> int.Parse(a.RefundItemType) == 7 || int.Parse(a.RefundItemType) == 8).Select(a => double.Parse(a.RefundValue)).Sum().ToString("#,##0.00");
+                FormatSideStrings("TOTAL", totalRefundValue, forPrintingArraySummary);
+                //======================================================================================
+                //                          REFUNDED SALES BY DATE
+                RefundItemList.OrderBy(a => DateTime.Parse(a.RefundTransactionDate));
+
+                forPrintingArraySummary.Add(line);
+                FormatCenterString("- Refunded Sales by Date -", forPrintingArraySummary);
+                lastCashierID = 0;
+                lastDate = "";
+                string lastDateTime = "";
+                lastTransNumber = "";
+                foreach(var item in RefundItemList)
+                {
+                    string currentDate = item.RefundTransactionDate;
+                    if(lastDate != currentDate)
+                    {
+                        forPrintingArraySummary.Add(" ");
+                        FormatCenterString(currentDate, forPrintingArraySummary);
+                        lastDate = currentDate;
+                    }
+                    if(lastDateTime != item.RefundTransactionDateTime)
+                    {
+                        FormatSideStrings(item.RefundTransactionDateTime + " POS: " + item.RefundPOSID, " ", forPrintingArraySummary);
+                        lastDateTime = item.RefundTransactionDateTime;
+                    }
+
+                    if (lastTransNumber != item.RefundTransactionNumber)
+                    {
+                        forPrintingArraySummary.Add("");
+                        FormatSideStrings(item.RefundTransactionNumber, "", forPrintingArraySummary);
+                        FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArraySummary);
+                        lastTransNumber = item.RefundTransactionNumber;
+                    }
+
+                    string value = "P" + (double.Parse(item.RefundValue)).ToString("#,##0.00");
+                    FormatSideStrings(item.RefundItemDescription, value, forPrintingArraySummary);
+                }
+                forPrintingArraySummary.Add(" ");
+                FormatSideStrings("TOTAL", totalRefundValue, forPrintingArraySummary);
+
+            }
+            
             forPrintingArraySummary.Add(" ");
 
             foreach (string item in main.footer)

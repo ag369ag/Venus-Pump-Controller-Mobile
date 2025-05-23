@@ -325,6 +325,7 @@ namespace XamarinFormsEnablerMobile
         {
             foreach (TransactionDataClass transItem in transactionsItem)
             {
+                
                 if (transItem.GetItemType() == 2)
                 {
                     ReleaseFuelTransaction(transItem);
@@ -1258,7 +1259,46 @@ namespace XamarinFormsEnablerMobile
                 {
                     return "Failed to print";
                 }
-                if (main.currentMOP.MOPReceiptCount > 1)
+                
+                if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
+                {
+                    List<string> newPrintingArray = new List<string>();
+                    foreach (string text in forPrintString)
+                    {
+                        newPrintingArray.Add(text);
+                    }
+
+                    try
+                    {
+                        if (printer == null)
+                        {
+                            return "No implementation provided for this platform";
+                        }
+                        printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
+                    }
+                    catch (Exception ex)
+                    {
+                        return "Failed to print";
+                    }
+
+                    /*for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
+                    {
+                        try
+                        {
+                            if (printer == null)
+                            {
+                                return "No implementation provided for this platform";
+                            }
+                            printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
+                        }
+                        catch (Exception ex)
+                        {
+                            return "Failed to print";
+                        }
+                    }*/
+                }
+
+                if (main.currentMOP.MOPReceiptCount > 1 && main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() <= 0)
                 {
                     List<string> newPrintingArray = new List<string>();
                     string reprintString = "*** REPRINT ***";
@@ -1291,30 +1331,6 @@ namespace XamarinFormsEnablerMobile
                         }
                     }
 
-                }
-
-                if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
-                {
-                    List<string> newPrintingArray = new List<string>();
-                    foreach (string text in forPrintString)
-                    {
-                        newPrintingArray.Add(text);
-                    }
-                    for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
-                    {
-                        try
-                        {
-                            if (printer == null)
-                            {
-                                return "No implementation provided for this platform";
-                            }
-                            printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
-                        }
-                        catch (Exception ex)
-                        {
-                            return "Failed to print";
-                        }
-                    }
                 }
 
             }
@@ -1404,12 +1420,14 @@ namespace XamarinFormsEnablerMobile
 
         private double GetTotalValueByTaxID(double taxID)
         {
-            double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
-           // double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
-            double witouthBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
+            double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID && (a.GetPresetID() != 2 && a.GetPresetID() != 4)).Sum(a => (a.GetTotal() //- Math.Abs(a.GetDiscountedValue())
+            ));
+            double withBIRFiveDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID && (a.GetPresetID() == 2 || a.GetPresetID() == 4)).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
+            // double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
+            double witouthBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
             //double amount = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
             //return transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - a.GetDiscountedValue()));
-            return withBIRDisc + witouthBIRDisc;
+            return withBIRDisc + withBIRFiveDisc + witouthBIRDisc;
             //return amount;
         }
 
