@@ -504,6 +504,7 @@ namespace XamarinFormsEnablerMobile
 
             Console.WriteLine(forecourt.IsConnected.ToString() + " is current status");
             setButtonDisableWhenClicked();
+            Console.WriteLine("After Disabling button");
             ContinueToLogin();
             //Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new FuelProducts(forecourt, trans), false));
         }
@@ -655,21 +656,28 @@ namespace XamarinFormsEnablerMobile
 
         async Task<bool> LoginUser(string username, string pass)
         {
+
+            Console.WriteLine("insert login user");
             try
             {
-
+                Console.WriteLine("HERE");
                 bool isGood = await BusinessDay();
                 if (!isGood)
                 {
                     return false;
                 }
 
+                Console.WriteLine("HERE");
 
                 var adminCredentials = new { number = username, password = pass };
                 var adminCredsJson = Newtonsoft.Json.JsonConvert.SerializeObject(adminCredentials);
+
+                Console.WriteLine($"H4ERE {adminCredsJson}");
+
                 StringContent body = new StringContent(adminCredsJson, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await http.PostAsync(routes.login, body);
                 string responseString = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseString);
                 JsonDocument responseJson = JsonDocument.Parse(responseString);
                 JsonElement statusCode = responseJson.RootElement.GetProperty("statusCode");
                 if (statusCode.ToString() != "1")
@@ -710,6 +718,7 @@ namespace XamarinFormsEnablerMobile
             }
             catch (HttpRequestException err) when (err.Message.Contains("Could not connect to the server"))
             {
+                Console.WriteLine($"Http Error: {err.Message}");
                 apiRequestResult.result = false;
                 apiRequestResult.message = "Error: Could not connect to the server";
                 OfflineIndicator.Text = "POS is offline";
@@ -717,6 +726,7 @@ namespace XamarinFormsEnablerMobile
             }
             catch (HttpRequestException err)
             {
+                Console.WriteLine($"Http Error: {err.Message}");
                 apiRequestResult.result = false;
                 apiRequestResult.message = "API Http Result Error\n" + err.Message;
                 OfflineIndicator.Text = "POS is offline";
@@ -724,6 +734,7 @@ namespace XamarinFormsEnablerMobile
             }
             catch (WebException err)
             {
+                Console.WriteLine($"Web Error: {err.Message}");
                 apiRequestResult.result = false;
                 apiRequestResult.message = "API Web Result Error\n" + err.Message;
                 OfflineIndicator.Text = "POS is offline";
@@ -731,6 +742,7 @@ namespace XamarinFormsEnablerMobile
             }
             catch (Exception err)
             {
+                Console.WriteLine($"Error: {err.Message}");
                 apiRequestResult.result = false;
                 apiRequestResult.message = "API Result Error\n" + err.Message;
                 OfflineIndicator.Text = "POS is offline";
@@ -772,6 +784,9 @@ namespace XamarinFormsEnablerMobile
                 return;
             }
             loginResult = await Task.Run(() => LoginUser(UserIDField.Text, UserPasswordField.Text));
+            Console.WriteLine($"Login result are {loginResult}");
+            Console.WriteLine($"Login result are {apiRequestResult.message}");
+            Console.WriteLine($"Login result are {apiRequestResult.result}");
             if (!loginResult)
             {
                 Device.BeginInvokeOnMainThread(async () =>
@@ -784,6 +799,7 @@ namespace XamarinFormsEnablerMobile
 
             try
             {
+                Console.WriteLine($"Connection Status: {forecourt.IsConnected}");
                 await Task.Delay(1500);
                 forecourt.ConnectAsync(terminalServer, terminalId, "", terminalPassword, true);
             }
@@ -791,11 +807,12 @@ namespace XamarinFormsEnablerMobile
             {
                 apiRequestResult.result = false;
                 apiRequestResult.message = err.Message;
-                Device.BeginInvokeOnMainThread(async () =>
+                Console.WriteLine($"Login error status: {err.Message}");
+                /*Device.BeginInvokeOnMainThread(async () =>
                 {
                     await DisplayAlert(null, err.Message.ToString(), "Close").ConfigureAwait(false);
 
-                });
+                });*/
 
                 //return false;
             }
