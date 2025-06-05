@@ -132,12 +132,14 @@ namespace XamarinFormsEnablerMobile
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            GetPrerequisiteFromAPI();
             Task.Run(() =>
             {
                 GetFromPreferences();
-                GetPrerequisiteFromAPI();
+                
                 GetPOSServerStatus();
                 GetLockedTransaction();
+                myPumpController.UpdatePumpValues();
             }).ConfigureAwait(false);
 
         }

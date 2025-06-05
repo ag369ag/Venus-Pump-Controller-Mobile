@@ -4,34 +4,123 @@
              x:Class="XamarinFormsEnablerMobile.NonFuelProducts"
              BackgroundColor="AliceBlue">
     <ContentPage.Content>
-        <StackLayout Padding="10">
-            <StackLayout x:Name="NonFuelProductView"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Frame CornerRadius="10" Padding="7"  HorizontalOptions="FillAndExpand">
-                    <Entry x:Name="NonFuelSearchBar" TextChanged="OnSearchItem"/>
-                </Frame>
-                <ListView HasUnevenRows="True" x:Name="NonFuelItems" ItemTapped="OnNonFuelFocus" >
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <Frame Padding="10" CornerRadius="10" Margin="1">
-                                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                                        <Label Text="{Binding itemDesc}" VerticalOptions="FillAndExpand" HorizontalOptions="StartAndExpand"/>
-                                        <Label Text="{Binding itemPrice}" VerticalOptions="FillAndExpand" HorizontalOptions="EndAndExpand"/>
-                                    </StackLayout>
-                                </Frame>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+        <AbsoluteLayout>
+            <StackLayout 
+                x:Name="ProductUI"
+                Padding="10"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         AbsoluteLayout.LayoutFlags="All">
+                <StackLayout x:Name="NonFuelProductView"
+                             VerticalOptions="FillAndExpand"
+                             HorizontalOptions="FillAndExpand">
+                    <Frame CornerRadius="10"
+                           Padding="7"
+                           HorizontalOptions="FillAndExpand">
+                        <Entry x:Name="NonFuelSearchBar"
+                               TextChanged="OnSearchItem" />
+                    </Frame>
+                    <ListView HasUnevenRows="True"
+                              x:Name="NonFuelItems"
+                              ItemTapped="OnNonFuelFocus">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Frame Padding="10"
+                                           CornerRadius="10"
+                                           Margin="1">
+                                        <StackLayout Orientation="Horizontal"
+                                                     HorizontalOptions="FillAndExpand">
+                                            <Label Text="{Binding itemDesc}"
+                                                   VerticalOptions="FillAndExpand"
+                                                   HorizontalOptions="StartAndExpand" />
+                                            <Label Text="{Binding itemPrice}"
+                                                   VerticalOptions="FillAndExpand"
+                                                   HorizontalOptions="EndAndExpand" />
+                                        </StackLayout>
+                                    </Frame>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
+                <Button Text="Add to transaction"
+                        Clicked="AddItemToTransaction"
+                        CornerRadius="10" />
+                <Button Text="Fuel Products"
+                        Clicked="OpenFuelProductsView"
+                        CornerRadius="10" />
+                <Button Text="Payment"
+                        Clicked="ContinueToPaymentOnClick"
+                        Padding="0"
+                        CornerRadius="10"
+                        VerticalOptions="FillAndExpand"
+                        HorizontalOptions="FillAndExpand" />
             </StackLayout>
-            <Button Text="Add to transaction" Clicked="AddItemToTransaction" CornerRadius="10"/>
-            <Button Text="Fuel Products" Clicked="OpenFuelProductsView" CornerRadius="10"/>
-            <Button Text="Payment"
-                    Clicked="ContinueToPaymentOnClick"
-                    Padding="0"
-                    CornerRadius="10"
-                    VerticalOptions="FillAndExpand"
-                    HorizontalOptions="FillAndExpand" />
-        </StackLayout>
+
+            <StackLayout 
+                x:Name="QuantityGetter"
+                IsVisible="false"
+                         AbsoluteLayout.LayoutFlags="All"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         BackgroundColor="White">
+
+                <Frame Padding="10"
+                       CornerRadius="10"
+                       BackgroundColor="AliceBlue"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="CenterAndExpand"
+                       Margin="50,0,50,0">
+
+                    <StackLayout Orientation="Vertical">
+
+                        <Label Text="Set product quantity"
+                               TextColor="ForestGreen"
+                               FontAttributes="Bold"
+                               FontSize="24"
+                               HorizontalOptions="CenterAndExpand" />
+
+                        <StackLayout HeightRequest="10" />
+
+                        <Entry 
+                            x:Name="QuantityField"
+                            Keyboard="Numeric"
+                               WidthRequest="200"
+                               Text="1"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" 
+                               HorizontalOptions="Center"
+                               FontSize="24"
+                               FontAttributes="Bold"/>
+
+                        
+
+                        <StackLayout HeightRequest="20" />
+
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="CenterAndExpand">
+
+                            <Button
+                                Clicked="ConfirmQuantityClicked"
+                                Text="Confirm"
+                                    FontSize="14"
+                                    CornerRadius="20" />
+
+                            <StackLayout WidthRequest="20" />
+
+                            <Button
+                                Clicked="CloseQuantityGetterClicked"
+                                Text="Close"
+                                    FontSize="14"
+                                    CornerRadius="20" />
+
+                        </StackLayout>
+                    </StackLayout>
+
+
+                </Frame>
+
+            </StackLayout>
+
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

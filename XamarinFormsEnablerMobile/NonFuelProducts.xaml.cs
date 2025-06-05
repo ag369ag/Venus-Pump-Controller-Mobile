@@ -59,6 +59,53 @@ namespace XamarinFormsEnablerMobile
             });
         }
 
+        void CloseQuantityGetterClicked(object sender, EventArgs e)
+        {
+            SetQuantityVisibilityToNone();
+        }
+
+        void SetQuantityVisibilityToNone()
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                QuantityField.Text = "1";
+                QuantityGetter.IsVisible = false;
+            });
+        }
+
+        void ConfirmQuantityClicked(object sender, EventArgs e)
+        {
+            string quantityString = QuantityField.Text;
+
+            if(!Regex.IsMatch(quantityString, @"^[0-9]+$"))
+            {
+                DisplayAlert("Quantity should only be numbers", null, "Close");
+                return;
+            }
+
+            int quantitySet = int.Parse(quantityString);
+
+            if(quantitySet <= 0)
+            {
+                DisplayAlert("Quantity should not be less than one", null, "Close");
+                return;
+            }
+
+            double total = quantitySet * selectedNonFuel.itemPrice;
+
+            main.td.AddTransactionItem(14, selectedNonFuel.itemID, selectedNonFuel.taxID, selectedNonFuel.itemDesc, selectedNonFuel.itemPrice, quantitySet, total, FormatDisplay(selectedNonFuel.itemPrice), FormatDisplay(quantitySet, true), FormatDisplay(total), false, false, 0, 0, 0, 0, "");
+            //main.PaymentStack.Add(forPaymentNonFuel);
+            selectedNonFuel = null;
+            NonFuelItems.SelectedItem = null;
+            NonFuelItems.Unfocus();
+            forPaymentNonFuel = null;
+            DisplayAlert("Item added to transaction", null, "Close");
+            string stringOfPaymentStack = Newtonsoft.Json.JsonConvert.SerializeObject(main.PaymentStack);
+            Preferences.Set("ForPayment", stringOfPaymentStack);
+
+            SetQuantityVisibilityToNone();
+        }
+
         void ContinueToPaymentOnClick(object sender, EventArgs e)
         {
             if (main.PaymentStack.Count <= 0 && main.td.GetTransactionItems.Count <= 0)
@@ -132,15 +179,11 @@ namespace XamarinFormsEnablerMobile
                 DisplayAlert("Select product first", null, "Close");
                 return;
             }
-            main.td.AddTransactionItem(14, selectedNonFuel.itemID, selectedNonFuel.taxID, selectedNonFuel.itemDesc, selectedNonFuel.itemPrice, 1, selectedNonFuel.itemPrice, FormatDisplay(selectedNonFuel.itemPrice), FormatDisplay(1, true), FormatDisplay(selectedNonFuel.itemPrice), false, false, 0, 0, 0, 0, "");
-            //main.PaymentStack.Add(forPaymentNonFuel);
-            selectedNonFuel = null;
-            NonFuelItems.SelectedItem = null;
-            NonFuelItems.Unfocus();
-            forPaymentNonFuel = null;
-            DisplayAlert("Item added to transaction", null, "Close");
-            string stringOfPaymentStack = Newtonsoft.Json.JsonConvert.SerializeObject(main.PaymentStack);
-            Preferences.Set("ForPayment", stringOfPaymentStack);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                QuantityGetter.IsVisible = true;
+            });
         }
     }
 }
