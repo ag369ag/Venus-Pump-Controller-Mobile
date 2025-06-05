@@ -20,9 +20,9 @@
                             <Label Text="API Server"/>
                             <Entry WidthRequest="200" Placeholder="..." x:Name="ServerField" HorizontalTextAlignment="Center" Text="172.16.12.235"/>
                         </StackLayout>
-                        <StackLayout>
+                        <StackLayout  HorizontalOptions="FillAndExpand">
                             <Label Text="API Port"/>
-                            <Entry WidthRequest="70" x:Name="ConfigurationPort" HorizontalTextAlignment="Start" Placeholder="..." Text="8700"/>
+                            <Entry  x:Name="ConfigurationPort" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Placeholder="..." Text="8700"/>
                         </StackLayout>
                     </StackLayout>
                 </Frame>

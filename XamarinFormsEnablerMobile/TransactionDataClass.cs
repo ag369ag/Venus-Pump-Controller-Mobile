@@ -67,7 +67,10 @@ namespace XamarinFormsEnablerMobile
         }
 
         public string ForPaymentType { get { return itemDescription; } }
-        public string ForPaymentFormattedVolume { get { return displayQuantity; } }
+        public string ForPaymentFormattedVolume { get { return displayQuantity; } set {
+                displayQuantity = value;
+                OnPropertyChanged();
+            } }
         public string ForPaymentFormattedUnitPrice
         {
             get { return displayUnitPrice; }
@@ -130,7 +133,8 @@ namespace XamarinFormsEnablerMobile
         public void SetQuantity(double quantity)
         {
             itemQuantity = quantity;
-            displayQuantity = ToMoneyString(Math.Abs(quantity));
+            //displayQuantity = ToMoneyString(Math.Abs(quantity));
+            ForPaymentFormattedVolume = ToMoneyString(Math.Abs(quantity));
 
             SetNewTotal(quantity, itemUnitPrice);
         }

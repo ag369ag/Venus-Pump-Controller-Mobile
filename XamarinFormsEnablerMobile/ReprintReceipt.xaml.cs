@@ -139,7 +139,7 @@ namespace XamarinFormsEnablerMobile
                 case "2": { transactionTypeString = "-SD#"; } break;
                // case "3": { transactionTypeString = "Invoice No. "; } break;
                 case "3": { transactionTypeString = "INV #"; } break;
-                case "4": { transactionTypeString = "TR#"; } break;
+                case "4": { transactionTypeString = "-TR#"; } break;
                 default: { } break;
             }
             int transNumZero = 9 - BIRTransNum.Length;

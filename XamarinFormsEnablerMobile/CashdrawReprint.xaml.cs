@@ -130,7 +130,8 @@ namespace XamarinFormsEnablerMobile
             CDrawHistory selectedHistory = history.Where(a => ("Period#: " + a.PeriodID.ToString() + " " + a.CloseDate + " by " + a.CashierName).ToLower().Trim() == button.Text.ToLower().Trim()).First();
             var postData = new
             {
-                cdrawPeriodID = selectedHistory.PeriodID
+                cdrawPeriodID = selectedHistory.PeriodID,
+                posID = main.posIDNumber
             };
             string jsonEncodedPostData = Newtonsoft.Json.JsonConvert.SerializeObject(postData);
             StringContent postDataContent = new StringContent(jsonEncodedPostData, Encoding.UTF8, "application/json");

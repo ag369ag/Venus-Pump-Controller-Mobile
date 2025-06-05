@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ITL.Enabler.API;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,12 +20,16 @@ namespace XamarinFormsEnablerMobile
         }
 
         private MainPage main;
+        private FuelProducts fuelProds;
+        private Forecourt forecourt;
         private MainPage.NonFuelProducts selectedNonFuel;
         private MainPage.ForPaymentStack forPaymentNonFuel;
-        public NonFuelProducts(MainPage mainP)
+        public NonFuelProducts(MainPage mainP, FuelProducts fproducts, Forecourt fore)
         {
             InitializeComponent();
             main = mainP;
+            fuelProds = fproducts;
+            forecourt = fore;
             NonFuelItems.ItemsSource = main.NonFuels;
         }
 
@@ -52,6 +57,19 @@ namespace XamarinFormsEnablerMobile
                     NonFuelItems.ItemsSource = main.NonFuels;
                 }
             });
+        }
+
+        void ContinueToPaymentOnClick(object sender, EventArgs e)
+        {
+            if (main.PaymentStack.Count <= 0 && main.td.GetTransactionItems.Count <= 0)
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await DisplayAlert("Add transaction first!", null, "Close");
+                });
+                return;
+            }
+            Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new TransactionPayment(main, fuelProds, forecourt), false));
         }
         void OnNonFuelFocus(object sender, ItemTappedEventArgs e) 
         {

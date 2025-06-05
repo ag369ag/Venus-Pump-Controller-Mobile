@@ -692,7 +692,7 @@ namespace XamarinFormsEnablerMobile
         }
         void OpenNonFuelView(object sender, EventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new NonFuelProducts(main), false));
+            Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new NonFuelProducts(main, this, forecourt), false));
         }
         async void SafedropButtononClicked(object sender, EventArgs e)
         {

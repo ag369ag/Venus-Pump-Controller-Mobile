@@ -26,6 +26,12 @@
             </StackLayout>
             <Button Text="Add to transaction" Clicked="AddItemToTransaction" CornerRadius="10"/>
             <Button Text="Fuel Products" Clicked="OpenFuelProductsView" CornerRadius="10"/>
+            <Button Text="Payment"
+                    Clicked="ContinueToPaymentOnClick"
+                    Padding="0"
+                    CornerRadius="10"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
