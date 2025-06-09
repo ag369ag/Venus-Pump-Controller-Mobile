@@ -32,6 +32,9 @@ namespace XamarinFormsEnablerMobile
         public string terminalServer { get; set; } = "172.16.12.210";
         public int terminalId { get; set; } = 0;
         public int posIDNumber { get; set;} = 0;
+        public int pumpStart { get; set; } = 1;
+        public int pumpEnd { get; set; } = 8;
+
         public string terminalPassword = "";
         public string APIServer = "";
         public string userSAID = "";
@@ -625,6 +628,7 @@ namespace XamarinFormsEnablerMobile
         {
             HttpResponseMessage getBDResponse = await http.GetAsync(routes.getBusinessDay);
             string getBDResponseString = await getBDResponse.Content.ReadAsStringAsync();
+            Console.WriteLine(getBDResponseString);
             JsonDocument getBDResponseJson = JsonDocument.Parse(getBDResponseString);
             JsonElement getBDStatusCode = getBDResponseJson.RootElement.GetProperty("statusCode");
             if (getBDStatusCode.ToString() == "0")
@@ -828,6 +832,8 @@ namespace XamarinFormsEnablerMobile
             posIDNumber = (posIDFromPreferences == "0" || posIDFromPreferences == "") ? 0 : int.Parse(posIDFromPreferences);
             terminalPassword = Preferences.Get("EnablerPassword", string.Empty) ?? null;
             APIServer = Preferences.Get("APIServer", string.Empty) ?? null;
+            pumpStart = Preferences.Get("pumpStart", 1);
+            pumpEnd = Preferences.Get("pumpEnd", 8);
          //   UserIDField.Text = Preferences.ContainsKey("UserID") ? Preferences.Get("UserID", string.Empty) : "";
           //  UserPasswordField.Text = Preferences.ContainsKey("UserPassword", string.Empty) ? Preferences.Get("UserPassword", string.Empty) : "";
             useLaravelAPI = Preferences.Get("useLaravelAPI", false);

@@ -20,7 +20,7 @@
                             <Label Text="API Server"/>
                             <Entry WidthRequest="200" Placeholder="..." x:Name="ServerField" HorizontalTextAlignment="Center" Text="172.16.12.235"/>
                         </StackLayout>
-                        <StackLayout  HorizontalOptions="FillAndExpand">
+                        <StackLayout  HorizontalOptions="FillAndExpand"> 
                             <Label Text="API Port"/>
                             <Entry  x:Name="ConfigurationPort" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Placeholder="..." Text="8700"/>
                         </StackLayout>
@@ -39,7 +39,7 @@
                 <StackLayout Orientation="Horizontal" >
                     <Frame Padding="7"
                            CornerRadius="10"
-                           HorizontalOptions="StartAndExpand">
+                           HorizontalOptions="FillAndExpand">
                         <StackLayout>
                             <Label Text="Enabler Terminal" />
                             <Entry WidthRequest="135"
@@ -51,7 +51,8 @@
                     </Frame>
                     
                     <Frame Padding="7"
-                           CornerRadius="10" HorizontalOptions="EndAndExpand">
+                           CornerRadius="10"
+                           HorizontalOptions="FillAndExpand">
                         <StackLayout>
                             <Label Text="POS ID" />
                             <Entry WidthRequest="135"
@@ -68,6 +69,36 @@
                         <Entry WidthRequest="270" Placeholder="..." x:Name="EnablerPasswordField" HorizontalTextAlignment="Center" IsPassword="True" Text="222222"/>
                     </StackLayout>
                 </Frame>
+
+                <StackLayout Orientation="Horizontal">
+                    <Frame Padding="7"
+                           CornerRadius="10"
+                           HorizontalOptions="FillAndExpand">
+                        <StackLayout>
+                            <Label Text="Pump Start" />
+                            <Entry MinimumWidthRequest="135"
+                                   Placeholder="..."
+                                   x:Name="PumpStartField"
+                                   HorizontalTextAlignment="Center"
+                                   Text="1"
+                                   />
+                        </StackLayout>
+                    </Frame>
+
+                    <Frame Padding="7"
+                           CornerRadius="10"
+                           HorizontalOptions="FillAndExpand">
+                        <StackLayout>
+                            <Label Text="Pump End" />
+                            <Entry MinimumWidthRequest="135"
+                                   Placeholder="..."
+                                   x:Name="PumpEndField"
+                                   HorizontalTextAlignment="Center"
+                                   Text="8" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+                
                 <Frame Padding="7" CornerRadius="10">
                     <StackLayout>
                         <Label Text="Admin ID"/>

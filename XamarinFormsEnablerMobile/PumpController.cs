@@ -68,6 +68,8 @@ namespace XamarinFormsEnablerMobile
                 {
                     foreach (Pump pump in forecourt.Pumps)
                     {
+                        if (!(pump.Number >= main.pumpStart && pump.Number <= main.pumpEnd))
+                            continue;
                         List<string> currentTransactionData = GetCurrentTransactionValues(pump);
                         Color stackColor = (pump.TransactionStack.Count > 0 || pump.CurrentTransaction != null) ? Color.Green : Color.AliceBlue;
                         pumpObservableCollection.Add(new PumpDataClass(pump.Id, pump.Name, $"P{pump.Id}", "nozzle.png", pump.TransactionStack.Count, currentTransactionData[0], currentTransactionData[1], currentTransactionData[2], currentTransactionData[3], stackColor));

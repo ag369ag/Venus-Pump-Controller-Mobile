@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using XamarinFormsEnablerMobile.Functions;
 using Xamarin.Essentials;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace XamarinFormsEnablerMobile
 {
@@ -18,6 +19,7 @@ namespace XamarinFormsEnablerMobile
     public partial class ServerConfigurationPage : ContentPage
     {
         public MainPage main { get; set; } = null;
+        string temporaryAPIServer = "";
         protected override bool OnBackButtonPressed()
         {
             return false;
@@ -35,7 +37,27 @@ namespace XamarinFormsEnablerMobile
             {
                 APISwitch.IsToggled = false;
             }
+            SetInitialValue();
             BindingContext = this;
+        }
+
+
+        public void SetInitialValue()
+        {
+            Console.WriteLine("SETTING INITIAL VALUES");
+            foreach (string text in main.APIServer.Split('/'))
+            {
+            Console.WriteLine(text);
+
+            }
+            string rawServer = main.APIServer.Split('/')[2];
+            Console.WriteLine(rawServer);
+            ServerField.Text = rawServer.Split(':')[0];
+            ConfigurationPort.Text = rawServer.Split(':')[1];
+            EnablerTerminalField.Text = main.terminalId.ToString();
+            posIDField.Text = main.posIDNumber.ToString();
+            PumpStartField.Text = main.pumpStart.ToString();
+            PumpEndField.Text = main.pumpEnd.ToString();
         }
 
         void SetAPIType(object sender, EventArgs e)
@@ -71,30 +93,47 @@ namespace XamarinFormsEnablerMobile
             }
             string apiIP = ServerField.Text;
             string apiPort = ConfigurationPort.Text;
+            
             if(main.useLaravelAPI)
             {
-                main.APIServer = "http://" + apiIP + ":" + apiPort + "/api";
+                temporaryAPIServer = "http://" + apiIP + ":" + apiPort + "/api/login";
             }
             else
             {
-                main.APIServer = "http://" + apiIP + ":" + apiPort + "/enablerAPI";
+                temporaryAPIServer = "http://" + apiIP + ":" + apiPort + "/enablerAPI/cashierCtrl/login";
             }
             Console.WriteLine("Before configuration");
-            main.SetAPIRoutes();
+            
 
             bool result = await Task.Run(() => SaveServerConfiguration(AdminIDField.Text, AdminPasswordField.Text));
 
             if (!result)
             {
-                await DisplayAlert(null, main.apiRequestResult.message + " test", "Close");
+                await DisplayAlert(null, main.apiRequestResult.message, "Close");
                 return;
             }
 
-           
+            if(main.useLaravelAPI)
+            {
+                temporaryAPIServer = "http://" + apiIP + ":" + apiPort + "/api";
+            }
+            else
+            {
+                temporaryAPIServer = "http://" + apiIP + ":" + apiPort + "/enablerAPI";
+            }
+            main.APIServer = temporaryAPIServer;
+            main.SetAPIRoutes();
+
+            Console.WriteLine(main.routes.nonFuelProduct);
+
             main.terminalServer = EnablerServerField.Text;
             main.terminalId = int.Parse(EnablerTerminalField.Text);
             main.terminalPassword = EnablerPasswordField.Text;
             main.posIDNumber = int.Parse(posIDField.Text);
+            main.pumpStart = int.Parse(PumpStartField.Text);
+            main.pumpEnd = int.Parse(PumpEndField.Text);
+            Preferences.Set("pumpStart", main.pumpStart);
+            Preferences.Set("pumpEnd", main.pumpEnd);
             Preferences.Set("EnablerServer", main.terminalServer);
             Preferences.Set("EnablerTerminal", main.terminalId.ToString());
             Preferences.Set("posID", main.posIDNumber.ToString());
@@ -118,7 +157,7 @@ namespace XamarinFormsEnablerMobile
                 var adminCredsJson = Newtonsoft.Json.JsonConvert.SerializeObject(adminCredentials);
                 var body = new StringContent(adminCredsJson, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.PostAsync(new Uri(main.routes.login), body);
+                HttpResponseMessage response = await client.PostAsync(new Uri(temporaryAPIServer), body);
                 //Console.WriteLine(response.StatusCode);
                 string responseString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(responseString + " This is response string");
@@ -168,5 +207,7 @@ namespace XamarinFormsEnablerMobile
                 return false;
             }
         }
+
+        
     }
 }

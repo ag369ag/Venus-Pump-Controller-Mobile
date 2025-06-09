@@ -57,6 +57,11 @@ namespace XamarinFormsEnablerMobile.Droid
             };
             socket.Send(cutter.ToArray());
 
+            string openDrawer = Convert.ToChar(27) + "p" + Convert.ToChar(0) + Convert.ToChar(25) + Convert.ToChar(250);
+            char[] openArray = openDrawer.ToCharArray();
+            byte[] openByteArray = Encoding.UTF8.GetBytes(openArray);
+            socket.Send(openByteArray);
+
             /* string cut = Convert.ToChar(29) + "V" + Convert.ToChar(65) + Convert.ToChar(0);
              char[] cutArray = cut.ToCharArray();
              byte[] cutCommand = Encoding.UTF8.GetBytes(cutArray);
