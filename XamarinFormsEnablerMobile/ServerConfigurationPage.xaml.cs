@@ -50,10 +50,14 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine(text);
 
             }
-            string rawServer = main.APIServer.Split('/')[2];
-            Console.WriteLine(rawServer);
-            ServerField.Text = rawServer.Split(':')[0];
-            ConfigurationPort.Text = rawServer.Split(':')[1];
+            if(!string.IsNullOrEmpty(main.APIServer))
+            {
+                string rawServer = main.APIServer.Split('/')[2];
+                Console.WriteLine(rawServer);
+                ServerField.Text = rawServer.Split(':')[0];
+                ConfigurationPort.Text = rawServer.Split(':')[1];
+            }
+
             EnablerTerminalField.Text = main.terminalId.ToString();
             posIDField.Text = main.posIDNumber.ToString();
             PumpStartField.Text = main.pumpStart.ToString();
@@ -103,9 +107,11 @@ namespace XamarinFormsEnablerMobile
                 temporaryAPIServer = "http://" + apiIP + ":" + apiPort + "/enablerAPI/cashierCtrl/login";
             }
             Console.WriteLine("Before configuration");
-            
 
-            bool result = await Task.Run(() => SaveServerConfiguration(AdminIDField.Text, AdminPasswordField.Text));
+            string num = AdminIDField.Text;
+            string pass = AdminPasswordField.Text;
+
+            bool result = await Task.Run(() => SaveServerConfiguration(num, pass));
 
             if (!result)
             {
@@ -151,14 +157,18 @@ namespace XamarinFormsEnablerMobile
         {
             try
             {
+                
                 Console.WriteLine(main.APIServer);
                 Console.WriteLine(main.routes.login);
                 var adminCredentials = new { number = username, password = pass };
                 var adminCredsJson = Newtonsoft.Json.JsonConvert.SerializeObject(adminCredentials);
+                Console.WriteLine(adminCredsJson);
                 var body = new StringContent(adminCredsJson, Encoding.UTF8, "application/json");
                 HttpClient client = new HttpClient();
                 HttpResponseMessage response = await client.PostAsync(new Uri(temporaryAPIServer), body);
                 //Console.WriteLine(response.StatusCode);
+                Console.WriteLine(username);
+                Console.WriteLine(pass);
                 string responseString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine(responseString + " This is response string");
                 JsonDocument responseJson = JsonDocument.Parse(responseString);

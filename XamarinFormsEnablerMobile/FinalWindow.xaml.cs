@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using static Android.Content.ClipData;
-using static Android.Icu.Text.TimeZoneFormat;
+//using static Android.Icu.Text.TimeZoneFormat;
 
 namespace XamarinFormsEnablerMobile
 {

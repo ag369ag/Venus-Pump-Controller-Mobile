@@ -6,10 +6,11 @@
     <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
     <Platforms>AnyCPU;x64</Platforms>
     <Configurations>Debug;Release;TESTING</Configurations>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>portable</DebugType>
+    <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
@@ -28,7 +29,7 @@
       <HintPath>..\..\..\..\..\..\..\ITL.Enabler.API_pcl.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Android">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\ReferenceAssemblies\Microsoft\Framework\MonoAndroid\v13.0\Mono.Android.dll</HintPath>
+      <HintPath>..\XamarinFormsEnablerMobile.Android\libs\Mono.Android.dll</HintPath>
     </Reference>
   </ItemGroup>
 

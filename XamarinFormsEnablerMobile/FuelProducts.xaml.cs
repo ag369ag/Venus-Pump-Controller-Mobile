@@ -10,7 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using Android.Net.Eap;
+//using Android.Net.Eap;
 using ITL.Enabler.API;
 using Java.Nio.Channels;
 using Newtonsoft.Json;
@@ -35,6 +35,7 @@ namespace XamarinFormsEnablerMobile
         private MainPage main;
         public int selectedPumpID;
 
+        
         
 
         private bool isLoggedOut = false;
@@ -102,6 +103,11 @@ namespace XamarinFormsEnablerMobile
 
             myPumpController = new PumpController(forecourt, mainP);
             transactions = new TransactionData(main);
+
+            main.appSettings.pumpGridSpanCount = Preferences.Get("GridSpanCount", 2);
+            myPumpController.GridItemSpan = main.appSettings.pumpGridSpanCount;
+            
+
             BindingContext = this;
             //pumpdataclass = myPumpController.GetPumpCollection();
 
@@ -127,7 +133,23 @@ namespace XamarinFormsEnablerMobile
             Connectivity.ConnectivityChanged += new EventHandler<ConnectivityChangedEventArgs>(InternetConnectionChange);
 
             GetEventTypes();
+
         }
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+            if(width > height)
+            {
+                //main.GridSpanCount = 4;
+                myPumpController.GridItemSpan = main.appSettings.pumpGridSpanCount;
+            }
+            else
+            {
+                myPumpController.GridItemSpan = 2;
+            }
+        }
+
 
         protected override void OnAppearing()
         {
@@ -2016,6 +2038,8 @@ namespace XamarinFormsEnablerMobile
             main.appSettings.requireAttendant = Preferences.Get("requireAttendant", false);
             main.appSettings.isQuickTransaction = Preferences.Get("quickTransaction", false);
             main.appSettings.requireTapping = Preferences.Get("requireTapping", false);
+            
+
 
             if (Preferences.ContainsKey("ForPayment"))
             {

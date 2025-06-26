@@ -37,6 +37,9 @@ namespace XamarinFormsEnablerMobile
             get { return pumpTransactionsObservableCollection; }
         }
 
+        private int gridSpanCount = 2;
+        public int GridItemSpan { get { return gridSpanCount; } set { gridSpanCount = value; OnPropertyChanged(); } }
+
         public PumpController(Forecourt forecourt, MainPage main)
         {
             this.forecourt = forecourt;

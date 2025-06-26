@@ -54,9 +54,24 @@ namespace XamarinFormsEnablerMobile
         
         void SetPaperWidth(object sender, TextChangedEventArgs e)
         {
+            if (string.IsNullOrEmpty(e.NewTextValue))
+            {
+                return;
+            }
             int newPageWidth = int.Parse(e.NewTextValue);
             main.appSettings.paperWidth = newPageWidth;
             Preferences.Set("pageWidth", newPageWidth.ToString());
+        }
+
+        void SetPumpGridCount(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.NewTextValue))
+            {
+                return;
+            }
+            int newPumpGridCount = int.Parse(e.NewTextValue);
+            main.appSettings.pumpGridSpanCount = newPumpGridCount;
+            Preferences.Set("GridSpanCount", newPumpGridCount);
         }
 
         void SetRequireVehicleStatus(object sender, ToggledEventArgs e)

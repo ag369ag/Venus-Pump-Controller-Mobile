@@ -5,11 +5,14 @@
              BackgroundColor="AliceBlue">
     <ContentPage.Content>
         <AbsoluteLayout>
-            <StackLayout Padding="10"
+            <StackLayout 
+                
+                Padding="10"
                          HorizontalOptions="FillAndExpand"
                          VerticalOptions="FillAndExpand"
                          AbsoluteLayout.LayoutBounds="1,1,1,1"
                          AbsoluteLayout.LayoutFlags="All">
+                
                 <!-- ====================================================Transactions =============================================================== -->
                 <StackLayout x:Name="Transactions">
                     <Frame Padding="0"
@@ -178,6 +181,7 @@
                         </StackLayout>
                     </Frame>
                     <!-- ================================================================================================================================= -->
+                    <StackLayout >
                     <StackLayout x:Name="VoidAndBackButton">
                         <ScrollView Orientation="Horizontal">
                             <StackLayout Orientation="Horizontal">
@@ -255,6 +259,7 @@
                             </ScrollView>
                         </Frame>
                     </Frame>
+                    </StackLayout>
                 </StackLayout>
 
                 <!-- ========================================================= Customer field ================================================================== -->

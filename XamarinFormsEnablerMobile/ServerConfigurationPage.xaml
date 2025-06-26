@@ -16,13 +16,13 @@
                 </Frame>
                 <Frame Padding="7" CornerRadius="10">
                     <StackLayout Orientation="Horizontal">
-                        <StackLayout>
+                        <StackLayout HorizontalOptions="FillAndExpand">
                             <Label Text="API Server"/>
-                            <Entry WidthRequest="200" Placeholder="..." x:Name="ServerField" HorizontalTextAlignment="Center" Text="172.16.12.235"/>
+                            <Entry MinimumWidthRequest="200" Placeholder="..." x:Name="ServerField" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand" />
                         </StackLayout>
                         <StackLayout  HorizontalOptions="FillAndExpand"> 
                             <Label Text="API Port"/>
-                            <Entry  x:Name="ConfigurationPort" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Placeholder="..." Text="8700"/>
+                            <Entry  x:Name="ConfigurationPort" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Placeholder="..."  />
                         </StackLayout>
                     </StackLayout>
                 </Frame>
@@ -46,7 +46,7 @@
                                    Placeholder="..."
                                    x:Name="EnablerTerminalField"
                                    HorizontalTextAlignment="Center"
-                                   Text="2" />
+                                    />
                         </StackLayout>
                     </Frame>
                     
@@ -59,14 +59,14 @@
                                    Placeholder="..."
                                    x:Name="posIDField"
                                    HorizontalTextAlignment="Center"
-                                   Text="2" />
+                                    />
                         </StackLayout>
                     </Frame>
                 </StackLayout>
                 <Frame Padding="7" CornerRadius="10">
                     <StackLayout>
                         <Label Text="Enabler Password"/>
-                        <Entry WidthRequest="270" Placeholder="..." x:Name="EnablerPasswordField" HorizontalTextAlignment="Center" IsPassword="True" Text="222222"/>
+                        <Entry WidthRequest="270" Placeholder="..." x:Name="EnablerPasswordField" HorizontalTextAlignment="Center" IsPassword="True" />
                     </StackLayout>
                 </Frame>
 
@@ -102,13 +102,13 @@
                 <Frame Padding="7" CornerRadius="10">
                     <StackLayout>
                         <Label Text="Admin ID"/>
-                        <Entry WidthRequest="270" Placeholder="..." x:Name="AdminIDField" HorizontalTextAlignment="Center" Text="1"/>
+                        <Entry WidthRequest="270" Placeholder="..." x:Name="AdminIDField" HorizontalTextAlignment="Center"/>
                     </StackLayout>
                 </Frame>
                 <Frame Padding="7" CornerRadius="10">
                     <StackLayout>
                         <Label Text="Admin Password"/>
-                        <Entry WidthRequest="270" Placeholder="..." x:Name="AdminPasswordField" HorizontalTextAlignment="Center" IsPassword="True" Text="1"/>
+                        <Entry WidthRequest="270" Placeholder="..." x:Name="AdminPasswordField" HorizontalTextAlignment="Center" IsPassword="True"/>
                     </StackLayout>
                 </Frame>
                 <Button Text="Save" Clicked="EnablerConfigurationButtonOnClick" CornerRadius="10"/>

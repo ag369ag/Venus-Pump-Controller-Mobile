@@ -11,7 +11,7 @@ using ITL.Enabler.API;
 using Xamarin.Forms;
 using XamarinFormsEnablerMobile.Functions;
 using System.Collections.ObjectModel;
-using Android.Net.Eap;
+//using Android.Net.Eap;
 using Xamarin.Essentials;
 using Plugin.DeviceInfo;
 
@@ -43,6 +43,7 @@ namespace XamarinFormsEnablerMobile
         public string userSAPlateNumber = "";
         public string userSAPONum = "";
         public string deviceID = "";
+       
         
         public bool useLaravelAPI;
         public List<string> footer = new List<string>();
@@ -834,14 +835,15 @@ namespace XamarinFormsEnablerMobile
             APIServer = Preferences.Get("APIServer", string.Empty) ?? null;
             pumpStart = Preferences.Get("pumpStart", 1);
             pumpEnd = Preferences.Get("pumpEnd", 8);
+            
          //   UserIDField.Text = Preferences.ContainsKey("UserID") ? Preferences.Get("UserID", string.Empty) : "";
           //  UserPasswordField.Text = Preferences.ContainsKey("UserPassword", string.Empty) ? Preferences.Get("UserPassword", string.Empty) : "";
             useLaravelAPI = Preferences.Get("useLaravelAPI", false);
             Console.WriteLine("Enter conditions");
-            Console.WriteLine(terminalId != 0);
-            Console.WriteLine(terminalServer != null);
-            Console.WriteLine(terminalPassword != null);
-            Console.WriteLine(APIServer != null);
+            Console.WriteLine(terminalId);
+            Console.WriteLine(terminalServer);
+            Console.WriteLine(terminalPassword);
+            Console.WriteLine(APIServer);
             Console.WriteLine((UserIDField.Text == "" || UserIDField.Text == null));
             Console.WriteLine((UserPasswordField.Text == "" || UserPasswordField == null));
             Console.WriteLine("End of conditions");

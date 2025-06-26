@@ -72,7 +72,7 @@
                                             >
                                 <CollectionView.ItemsLayout>
                                     <GridItemsLayout Orientation="Vertical"
-                                                     Span="2"
+                                                     Span="{Binding myPumpController.GridItemSpan}"
                                                      VerticalItemSpacing="6"
                                                      HorizontalItemSpacing="6" />
                                 </CollectionView.ItemsLayout>

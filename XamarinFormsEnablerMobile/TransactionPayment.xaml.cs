@@ -9,16 +9,16 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Android.Accounts;
-using Android.App;
+/*using Android.Accounts;
+using Android.App;*/
 using ITL.Enabler.API;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
-using static Android.Content.ClipData;
+/*using static Android.Content.ClipData;
 using static Android.Icu.Text.TimeZoneFormat;
-using static Android.Provider.Telephony;
+using static Android.Provider.Telephony;*/
 using static XamarinFormsEnablerMobile.MainPage;
 
 namespace XamarinFormsEnablerMobile
@@ -124,6 +124,19 @@ namespace XamarinFormsEnablerMobile
             main.td.ClearSoloParent();
 
             main.td.GetTransactionItems.CollectionChanged += TransactionItemListener;
+        }
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+            if (width > height)
+            {
+                Transactions.Orientation = StackOrientation.Horizontal;
+            }
+            else
+            {
+                Transactions.Orientation = StackOrientation.Vertical;
+            }
         }
 
         protected override void OnAppearing()

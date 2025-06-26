@@ -1,5 +1,5 @@
 using Android.App;
 using Xamarin.Forms.Xaml;
 
-[assembly: Application(UsesCleartextTraffic = true)]
+//[assembly: Application(UsesClearTextTraffic = true)]
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]

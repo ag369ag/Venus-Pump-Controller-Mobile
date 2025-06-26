@@ -22,6 +22,15 @@
                                    Text="{Binding main.appSettings.paperWidth}"/>
                         </StackLayout>
                     </Frame>
+                    <Frame CornerRadius="10" Padding="10" HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                            <Label Text="Pump Column" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                            <Entry WidthRequest="50"
+                                   TextChanged="SetPumpGridCount"
+                                   Keyboard="Numeric"
+                                   Text="{Binding main.appSettings.pumpGridSpanCount}"/>
+                        </StackLayout>
+                    </Frame>
                     <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
                         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
                             <Label Text="Require vehicle" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>

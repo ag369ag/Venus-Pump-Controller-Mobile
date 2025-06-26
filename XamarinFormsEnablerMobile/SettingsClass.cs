@@ -19,6 +19,7 @@ namespace XamarinFormsEnablerMobile
         private bool quickTransaction;
         private int printerPort;
         private string printerIP;
+        private int gridSpanCount;
         public string enablerServer { get { return server; } set { server = value; OnPropertyChanged(); } }
         public bool useSocketPrinter { get { return useSocket; } set {  useSocket = value; OnPropertyChanged(); } }
         public int paperWidth { get { return width; } set { width = value; OnPropertyChanged(); } }
@@ -28,6 +29,8 @@ namespace XamarinFormsEnablerMobile
         public bool isQuickTransaction { get { return quickTransaction; } set {  quickTransaction = value; OnPropertyChanged(); } }
         public int printerPortValue { get { return printerPort; } set {  printerPort = value; OnPropertyChanged(); } }
         public string printerIPValue { get { return printerIP; } set { printerIP = value; OnPropertyChanged(); } }
+
+        public int pumpGridSpanCount { get { return gridSpanCount; } set { gridSpanCount = value; OnPropertyChanged(); } }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

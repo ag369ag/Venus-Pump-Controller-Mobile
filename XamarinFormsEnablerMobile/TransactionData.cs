@@ -1,4 +1,4 @@
-﻿using Android.Icu.Number;
+﻿//using Android.Icu.Number;
 using ITL.Enabler.API;
 using System;
 using System.Collections.Generic;
