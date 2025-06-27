@@ -104,7 +104,7 @@ namespace XamarinFormsEnablerMobile
             myPumpController = new PumpController(forecourt, mainP);
             transactions = new TransactionData(main);
 
-            main.appSettings.pumpGridSpanCount = Preferences.Get("GridSpanCount", 2);
+            main.appSettings.pumpGridSpanCount = Preferences.Get("GridSpanCount", 6);
             myPumpController.GridItemSpan = main.appSettings.pumpGridSpanCount;
             
 
@@ -1422,6 +1422,13 @@ namespace XamarinFormsEnablerMobile
         {
             StackLayout stack = sender as StackLayout;
             PumpDataClass pumps = myPumpController.pumpCollectionObs.Where(a => a.pumpPName == stack.AutomationId).FirstOrDefault();
+
+            if (forecourt.Pumps[pumps.GetPumpNumber()].State == PumpState.Calling)
+            {
+                forecourt.Pumps[pumps.GetPumpNumber()].AuthoriseNoLimits("AllAuthorise", "", -1);
+                return;
+            }
+
             PumpIdentifier.Text = $"Pump Number {pumps.GetPumpNumber()}";
             main.tappedPumpID = pumps.GetPumpNumber();
             myPumpController.GetTransactionStacks();

@@ -181,10 +181,10 @@
                         </StackLayout>
                     </Frame>
                     <!-- ================================================================================================================================= -->
-                    <StackLayout >
-                    <StackLayout x:Name="VoidAndBackButton">
-                        <ScrollView Orientation="Horizontal">
-                            <StackLayout Orientation="Horizontal">
+                    <StackLayout HorizontalOptions="FillAndExpand">
+                        <StackLayout x:Name="VoidAndBackButton" HorizontalOptions="FillAndExpand">
+                            <ScrollView Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
                                 <Button Text="Void"
                                         Clicked="VoidButtonOnClicked"
                                         VerticalOptions="FillAndExpand"

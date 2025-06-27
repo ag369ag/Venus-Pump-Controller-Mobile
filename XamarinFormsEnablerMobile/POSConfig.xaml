@@ -29,7 +29,7 @@
                                 VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand"
                                 Clicked="GetAccumulatingSales" />
-                        <Button Text="CashDraw Report"
+                        <Button Text="Close CashDraw"
                                 CornerRadius="10"
                                 VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand"
@@ -58,7 +58,7 @@
                                 VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand"
                                 Clicked="RefundButtonOnClicked" />
-                        <Button Text="Reprint CashDraw"
+                        <Button Text="Print CashDraw"
                                 CornerRadius="10"
                                 VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand"
