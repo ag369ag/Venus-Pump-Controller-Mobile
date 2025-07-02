@@ -1,19 +1,17 @@
-﻿using System;
+﻿using ITL.Enabler.API;
+using Plugin.DeviceInfo;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Net.Http;
+using System.Collections.ObjectModel;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ITL.Enabler.API;
-using Xamarin.Forms;
-using XamarinFormsEnablerMobile.Functions;
-using System.Collections.ObjectModel;
 //using Android.Net.Eap;
 using Xamarin.Essentials;
-using Plugin.DeviceInfo;
+using Xamarin.Forms;
+using XamarinFormsEnablerMobile.Functions;
 
 namespace XamarinFormsEnablerMobile
 {
@@ -44,6 +42,7 @@ namespace XamarinFormsEnablerMobile
         public string userSAPONum = "";
         public string deviceID = "";
        
+        public ShowProgressUI progressUI { get; set; }
         
         public bool useLaravelAPI;
         public List<string> footer = new List<string>();
@@ -307,6 +306,7 @@ namespace XamarinFormsEnablerMobile
         public MainPage()
         {
             InitializeComponent();
+            progressUI = DependencyService.Get<ShowProgressUI>();
             forecourt = Variables.forecourt;
             APIservice = new API_Service(this);
             td = new TransactionData(this);
@@ -505,7 +505,7 @@ namespace XamarinFormsEnablerMobile
         }
         void ConnectButtonOnClicked(object sender, EventArgs e)
         {
-
+            progressUI.ShowProgressIndicator();
             Console.WriteLine(forecourt.IsConnected.ToString() + " is current status");
             setButtonDisableWhenClicked();
             Console.WriteLine("After Disabling button");
@@ -523,11 +523,19 @@ namespace XamarinFormsEnablerMobile
             {
                 Preferences.Set("UserID", UserIDField.Text);
                 Preferences.Set("UserPassword", UserPasswordField.Text);
-                Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new FuelProducts(forecourt, this), false));
-                loginResult = false;
+                try
+                {
+                    Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new FuelProducts(forecourt, this), false));
+                    loginResult = false;
+                }
+                catch
+                {
+                    loginResult = false;
+                }
             }
             else
             {
+                progressUI.CloseProgressBar();
                 loginResult = false;
                 Device.BeginInvokeOnMainThread(async () =>
                 {
@@ -669,6 +677,7 @@ namespace XamarinFormsEnablerMobile
                 bool isGood = await BusinessDay();
                 if (!isGood)
                 {
+                    
                     return false;
                 }
 
@@ -689,6 +698,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     apiRequestResult.result = false;
                     apiRequestResult.message = "Wrong credentials";
+                    progressUI.CloseProgressBar();
                     return false;
                 }
                 JsonElement cashierData = responseJson.RootElement.GetProperty("Cashier");
@@ -773,11 +783,25 @@ namespace XamarinFormsEnablerMobile
             void PrintToSocketPrinter(string ip, int port, List<string> content);
         }
 
+        public interface ShowProgressUI
+        {
+            void ShowProgressIndicator();
+            void CloseProgressBar();
+            
+
+        }
+
+        public void PrintToImin(string message, int fontSize)
+        {
+            
+        }
+
         async void ContinueToLogin()
         {
             OfflineIndicator.Text = "";
             if (UserIDField.Text == "" || UserIDField.Text == null || UserPasswordField.Text == "" || UserPasswordField.Text == null)
             {
+                progressUI.CloseProgressBar();
                 loginResult = false;
                 Device.BeginInvokeOnMainThread(async () =>
                 {
@@ -794,6 +818,7 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine($"Login result are {apiRequestResult.result}");
             if (!loginResult)
             {
+                progressUI.CloseProgressBar();
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     await DisplayAlert(null, apiRequestResult.message, "Close");
@@ -810,6 +835,7 @@ namespace XamarinFormsEnablerMobile
             }
             catch (EnablerException err)
             {
+                progressUI.CloseProgressBar();
                 apiRequestResult.result = false;
                 apiRequestResult.message = err.Message;
                 Console.WriteLine($"Login error status: {err.Message}");
@@ -855,6 +881,7 @@ namespace XamarinFormsEnablerMobile
         public interface PrintBluetooth
         {
             void PrintReceiptBT(string receiptData, int paperLength);
+            void TestIMINPrint(string receipt);
         }
 
         public void setButtonDisableWhenClicked()

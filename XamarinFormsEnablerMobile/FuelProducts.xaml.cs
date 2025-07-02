@@ -101,6 +101,7 @@ namespace XamarinFormsEnablerMobile
             forecourt = fore;
             main = mainP;
 
+            
             myPumpController = new PumpController(forecourt, mainP);
             transactions = new TransactionData(main);
 
@@ -133,6 +134,7 @@ namespace XamarinFormsEnablerMobile
             Connectivity.ConnectivityChanged += new EventHandler<ConnectivityChangedEventArgs>(InternetConnectionChange);
 
             GetEventTypes();
+            GetPrerequisiteFromAPI();
 
         }
 
@@ -154,7 +156,7 @@ namespace XamarinFormsEnablerMobile
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            GetPrerequisiteFromAPI();
+           
             Task.Run(() =>
             {
                 GetFromPreferences();
@@ -1853,6 +1855,7 @@ namespace XamarinFormsEnablerMobile
                 }
             }
             catch (Exception) { }
+            main.progressUI.CloseProgressBar();
         }
         async void GetEventTypes()
         {
@@ -2045,6 +2048,7 @@ namespace XamarinFormsEnablerMobile
             main.appSettings.requireAttendant = Preferences.Get("requireAttendant", false);
             main.appSettings.isQuickTransaction = Preferences.Get("quickTransaction", false);
             main.appSettings.requireTapping = Preferences.Get("requireTapping", false);
+            main.appSettings.useIminPrinter = Preferences.Get("useIminPrinter", false);
             
 
 

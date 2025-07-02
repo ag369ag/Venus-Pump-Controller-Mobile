@@ -34,24 +34,41 @@ namespace XamarinFormsEnablerMobile
         void SetSocketPrinterStatus(object sender, ToggledEventArgs e)
         {
             //Switch socketSwitch = sender as Switch;
-            if(e.Value)
+            if (e.Value)
             {
                 main.appSettings.useSocketPrinter = true;
+                main.appSettings.useIminPrinter = false;
             }
             else
             {
                 main.appSettings.useSocketPrinter = false;
             }
-            Preferences.Set("useSocketPrinter", main.appSettings.useSocketPrinter.ToString());
+            Preferences.Set("useIminPrinter", main.appSettings.useIminPrinter);
+            Preferences.Set("useSocketPrinter", main.appSettings.useSocketPrinter);
+        }
+
+        void SetIminPrinterStatus(object sender, ToggledEventArgs e)
+        {
+            if (e.Value)
+            {
+                main.appSettings.useIminPrinter = true;
+                main.appSettings.useSocketPrinter = false;
+            }
+            else
+            {
+                main.appSettings.useIminPrinter = false;
+            }
+            Preferences.Set("useIminPrinter", main.appSettings.useIminPrinter);
+            Preferences.Set("useSocketPrinter", main.appSettings.useSocketPrinter);
         }
 
         void BackToPOSConfig(object sender, EventArgs e) { Device.BeginInvokeOnMainThread(() => Navigation.PopModalAsync(true)); }
 
         void SetUpLastState()
         {
-           
+
         }
-        
+
         void SetPaperWidth(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(e.NewTextValue))
@@ -93,12 +110,12 @@ namespace XamarinFormsEnablerMobile
             {
                 main.appSettings.isQuickTransaction = false;
             }
-            
+
             Preferences.Set("requireAttendant", main.appSettings.requireAttendant);
         }
 
         void SetQuickTransactionStatus(object sender, ToggledEventArgs e)
-        { 
+        {
             //Switch quickTransactionSwitch = sender as Switch;
             main.appSettings.isQuickTransaction = e.Value;
             if (main.appSettings.isQuickTransaction)
@@ -106,7 +123,7 @@ namespace XamarinFormsEnablerMobile
                 //main.appSettings.isQuickTransaction = 1;
                 main.appSettings.requireAttendant = false;
                 main.appSettings.requireVehicle = false;
-               // main.appSettings.isQuickTransaction = true;
+                // main.appSettings.isQuickTransaction = true;
                 /*Device.BeginInvokeOnMainThread(() =>
                 {
                     RequireAttendantSwitch.IsToggled = false;
@@ -114,14 +131,14 @@ namespace XamarinFormsEnablerMobile
                 });*/
                 Preferences.Set("requireAttendant", false);
                 Preferences.Set("requireVehicle", false);
-                Console.WriteLine(main.appSettings.requireAttendant.ToString());
-                Console.WriteLine(main.appSettings.requireVehicle.ToString());
+                Console.WriteLine(main.appSettings.requireAttendant);
+                Console.WriteLine(main.appSettings.requireVehicle);
             }
             else
             {
                 //main.appSettings.isQuickTransaction = false;
             }
-            
+
             Preferences.Set("quickTransaction", main.appSettings.isQuickTransaction);
 
         }
@@ -136,7 +153,7 @@ namespace XamarinFormsEnablerMobile
         {
 
             var printService = DependencyService.Get<IPrintService>();
-            
+
 
             var logSavingData = new
             {
@@ -145,13 +162,13 @@ namespace XamarinFormsEnablerMobile
             string jsonSavingData = Newtonsoft.Json.JsonConvert.SerializeObject(logSavingData);
             StringContent savingContent = new StringContent(jsonSavingData, System.Text.Encoding.UTF8, "application/json");
             HttpClient http = new HttpClient();
-            HttpResponseMessage response = await http.PostAsync(new Uri("http://172.16.12.235:8700/enablerAPI/VJournalCtrl/getDataFromPrintLog"), savingContent);
+            HttpResponseMessage response = await http.PostAsync(new Uri($"{main.routes.apiEndpoint}/enablerAPI/VJournalCtrl/getDataFromPrintLog"), savingContent);
             string responseMessage = await response.Content.ReadAsStringAsync();
             JsonDocument jsonParsedResponse = JsonDocument.Parse(responseMessage);
             string statusCode = jsonParsedResponse.RootElement.GetProperty("statusCode").ToString();
             if (statusCode.Equals("1"))
             {
-                foreach(var a in jsonParsedResponse.RootElement.GetProperty("data").EnumerateArray())
+                foreach (var a in jsonParsedResponse.RootElement.GetProperty("data").EnumerateArray())
                 {
                     Console.WriteLine(a.GetProperty("Data").ToString().Replace("\\", ""));
 

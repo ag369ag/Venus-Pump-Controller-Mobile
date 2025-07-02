@@ -105,8 +105,8 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ITL.Enabler.API_pcl">
-      <HintPath>libs\ITL.Enabler.API_pcl.dll</HintPath>
+    <Reference Include="IminPrinterLibs">
+      <HintPath>libs\IminPrinterLibs.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="System" />
@@ -142,6 +142,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShowProgressClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">
@@ -210,6 +211,7 @@
     <AndroidResource Include="Resources\drawable\settings_icon.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="libs\IminLibV2.dll" />
     <Content Include="libs\ITL.Enabler.API_pcl.dll" />
     <AndroidResource Include="Resources\drawable\company_logo.png" />
     <AndroidResource Include="Resources\drawable\splash.png" />

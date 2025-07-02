@@ -20,8 +20,10 @@ namespace XamarinFormsEnablerMobile
         private int printerPort;
         private string printerIP;
         private int gridSpanCount;
+        private bool useIMINprinter;
         public string enablerServer { get { return server; } set { server = value; OnPropertyChanged(); } }
         public bool useSocketPrinter { get { return useSocket; } set {  useSocket = value; OnPropertyChanged(); } }
+        public bool useIminPrinter { get { return useIMINprinter; } set { useIMINprinter = value; OnPropertyChanged(); } }
         public int paperWidth { get { return width; } set { width = value; OnPropertyChanged(); } }
         public bool requireVehicle { get { return vehicle; } set { vehicle = value; OnPropertyChanged(); } }
         public bool requireAttendant { get { return attendant; } set {  attendant = value; OnPropertyChanged(); } }

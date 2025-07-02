@@ -4,12 +4,14 @@
              x:Class="XamarinFormsEnablerMobile.MainPage"
              Visual="Material">
     <ScrollView VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  Orientation="Vertical">
+
         <StackLayout BackgroundColor="AliceBlue"
              VerticalOptions="FillAndExpand"
              HorizontalOptions="FillAndExpand"
              Padding="20"
              x:Name="mainPageStackLayout"
              Orientation="Vertical">
+            
             <Button CornerRadius="100"
             Padding="0"
             WidthRequest="50"

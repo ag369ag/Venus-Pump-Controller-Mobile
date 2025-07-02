@@ -58,20 +58,24 @@ namespace XamarinFormsEnablerMobile
         }
         private async void ProceedToPrinting(object sender, EventArgs e)
         {
+            main.progressUI.ShowProgressIndicator();
             if (main.appSettings.requireVehicle && (selectedVehicleTypeID == "" || selectedVehicleTypeID == null))
             {
+                main.progressUI.CloseProgressBar();
                 await DisplayAlert("Select vehicle first", null, "Close");
                 return;
             }
 
             if (main.appSettings.requireAttendant && (selectedAttendantID == "" || selectedAttendantID == null))
             {
+                main.progressUI.CloseProgressBar();
                 await DisplayAlert("Select attendant first", null, "Close");
                 return;
             }
 
             if (main.appSettings.useSocketPrinter && (main.appSettings.printerIPValue == "" || main.appSettings.printerIPValue == null))
             {
+                main.progressUI.CloseProgressBar();
                 await DisplayAlert("Set up socket printer first", null, "Close");
                 return;
             }
@@ -104,6 +108,7 @@ namespace XamarinFormsEnablerMobile
             //string result = "not";
             string result = await main.td.AddTransactionToDB(selectedVehicleTypeID, selectedAttendantID);
 
+            main.progressUI.CloseProgressBar();
             if (!result.Contains("Success"))
             {
                 await DisplayAlert(result, null, "Close");
@@ -233,6 +238,7 @@ namespace XamarinFormsEnablerMobile
             // transactions.ClearPaymentList();
             // PaymentStacks.Clear();
             // transactions.PrintReceipt();
+
             main.td.SetInitialTransactionValue();
 
             Device.BeginInvokeOnMainThread(()=>Navigation.PopModalAsync(false));

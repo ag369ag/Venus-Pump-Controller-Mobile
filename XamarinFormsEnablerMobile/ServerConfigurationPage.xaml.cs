@@ -115,6 +115,7 @@ namespace XamarinFormsEnablerMobile
 
             if (!result)
             {
+                main.progressUI.CloseProgressBar();
                 await DisplayAlert(null, main.apiRequestResult.message, "Close");
                 return;
             }
@@ -145,6 +146,7 @@ namespace XamarinFormsEnablerMobile
             Preferences.Set("posID", main.posIDNumber.ToString());
             Preferences.Set("EnablerPassword", main.terminalPassword);
             Preferences.Set("APIServer", main.APIServer);
+            main.progressUI.CloseProgressBar();
             await DisplayAlert(null, "Settings saved", "Close");
         }
 
@@ -157,7 +159,7 @@ namespace XamarinFormsEnablerMobile
         {
             try
             {
-                
+                main.progressUI.ShowProgressIndicator();   
                 Console.WriteLine(main.APIServer);
                 Console.WriteLine(main.routes.login);
                 var adminCredentials = new { number = username, password = pass };
@@ -178,6 +180,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     main.apiRequestResult.result = false;
                     main.apiRequestResult.message = "Wrong credentials";
+                   
                     return false;
                 }
                 JsonElement data = responseJson.RootElement.GetProperty("data");
@@ -187,6 +190,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         main.apiRequestResult.result = false;
                         main.apiRequestResult.message = "This user is not admin";
+                        
                         return false;
                     }
                 }

@@ -1259,7 +1259,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     return "Failed to print";
                 }
-                
+
                 if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
                 {
                     List<string> newPrintingArray = new List<string>();
@@ -1297,76 +1297,62 @@ namespace XamarinFormsEnablerMobile
                         }
                     }*/
                 }
-
-                if (main.currentMOP.MOPReceiptCount > 1 && main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() <= 0)
+                else
                 {
-                    List<string> newPrintingArray = new List<string>();
-                    string reprintString = "*** REPRINT ***";
-                    int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
-                    string formattedReprintString = new string(' ', currentSpace) + reprintString + new string(' ', currentSpace);
-                    newPrintingArray.Add(formattedReprintString);
-                    foreach (string text in forPrintString)
+                    if (main.currentMOP.MOPReceiptCount > 1 && main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() <= 0)
                     {
-                        newPrintingArray.Add(text);
-                        string lineCut = new string('-', main.appSettings.paperWidth);
-                        if (text == lineCut)
+                        List<string> newPrintingArray = new List<string>();
+                        string reprintString = "*** REPRINT ***";
+                        int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
+                        string formattedReprintString = new string(' ', currentSpace) + reprintString + new string(' ', currentSpace);
+                        newPrintingArray.Add(formattedReprintString);
+                        foreach (string text in forPrintString)
                         {
-                            newPrintingArray.Add(formattedReprintString);
-                        }
-                    }
-                    for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
-                    {
-                        try
-                        {
-                            if (printer == null)
+                            newPrintingArray.Add(text);
+                            string lineCut = new string('-', main.appSettings.paperWidth);
+                            if (text == lineCut)
                             {
-                                return "No implementation provided for this platform";
-
+                                newPrintingArray.Add(formattedReprintString);
                             }
-                            printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
                         }
-                        catch (Exception ex)
+                        for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
                         {
-                            return "Failed to print";
+                            try
+                            {
+                                if (printer == null)
+                                {
+                                    return "No implementation provided for this platform";
+
+                                }
+                                printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
+                            }
+                            catch (Exception ex)
+                            {
+                                return "Failed to print";
+                            }
                         }
+
                     }
 
                 }
 
+
+            }
+            else if (main.appSettings.useIminPrinter)
+            {
+                var btPrintService = DependencyService.Get<PrintBluetooth>();
+                btPrintService.PrintReceiptBT(FORPRINTINGTEXT, main.appSettings.paperWidth);
+               // btPrintService.TestIMINPrint(FORPRINTINGTEXT);
+
+              /*  var printService = DependencyService.Get<IPrintService>();
+                printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);*/
             }
             else
             {
                 var printService = DependencyService.Get<IPrintService>();
                 printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
                 //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
-                if (main.currentMOP.MOPReceiptCount > 1)
-                {
-                    List<string> newPrintingArray = new List<string>();
-                    string newPrintingText = "";
-                    string reprintString = "*** REPRINT ***";
-                    int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
-                    string formattedReprintString = new string(' ', currentSpace) + reprintString + new string(' ', currentSpace);
-                    newPrintingArray.Add(formattedReprintString);
-                    foreach (string text in forPrintString)
-                    {
-                        newPrintingArray.Add(text);
-                        string lineCut = new string('-', main.appSettings.paperWidth);
-                        if (text == lineCut)
-                        {
-                            newPrintingArray.Add(formattedReprintString);
-                        }
-                    }
-                    foreach (string text in newPrintingArray)
-                    {
-                        string perText = text + "\n";
-                        newPrintingText += perText;
-                    }
-                    for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
-                    {
-                        printService.PrintReceiptOnNative(newPrintingText, 15);
-                        //printService.Print(newPrintingText, main.appSettings.paperWidth);
-                    }
-                }
+                
                 if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
                 {
                     List<string> newPrintingArray = new List<string>();
@@ -1386,6 +1372,39 @@ namespace XamarinFormsEnablerMobile
                         //printService.Print(newPrintingText, main.appSettings.paperWidth);
                     }
                 }
+                else
+                {
+                    if (main.currentMOP.MOPReceiptCount > 1)
+                    {
+                        List<string> newPrintingArray = new List<string>();
+                        string newPrintingText = "";
+                        string reprintString = "*** REPRINT ***";
+                        int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
+                        string formattedReprintString = new string(' ', currentSpace) + reprintString + new string(' ', currentSpace);
+                        newPrintingArray.Add(formattedReprintString);
+                        foreach (string text in forPrintString)
+                        {
+                            newPrintingArray.Add(text);
+                            string lineCut = new string('-', main.appSettings.paperWidth);
+                            if (text == lineCut)
+                            {
+                                newPrintingArray.Add(formattedReprintString);
+                            }
+                        }
+                        foreach (string text in newPrintingArray)
+                        {
+                            string perText = text + "\n";
+                            newPrintingText += perText;
+                        }
+                        for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
+                        {
+                            printService.PrintReceiptOnNative(newPrintingText, 15);
+                            //printService.Print(newPrintingText, main.appSettings.paperWidth);
+                        }
+                    }
+                }
+
+                
             }
 
             foreach(TransactionDataClass fuelItem in GetTransactionItems.Where(a=>a.GetItemType() == 2))

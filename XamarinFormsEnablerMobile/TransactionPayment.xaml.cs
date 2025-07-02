@@ -2038,8 +2038,10 @@ namespace XamarinFormsEnablerMobile
         }
         async void MOPButtonClicked(object sender, EventArgs e)
         {
+            main.progressUI.ShowProgressIndicator();
             if (!(await main.BusinessDay()))
             {
+                main.progressUI.CloseProgressBar();
                 await DisplayAlert(main.apiRequestResult.message, null, "Close");
                 return;
             }
@@ -2064,10 +2066,12 @@ namespace XamarinFormsEnablerMobile
                 }
             }*/
 
+
             Console.WriteLine("checking for discount");
             if (main.PaymentStack.Where(a => a.ForPaymentDiscountButton == 1).Count() > 0
                 && main.currentMOP.MOPIsViableForDisount == 0)
             {
+                main.progressUI.CloseProgressBar();
                 await DisplayAlert("This payment is not viable for discounted transaction", null, "Close");
                 return;
             }
@@ -2076,6 +2080,7 @@ namespace XamarinFormsEnablerMobile
             string inputtedValue = (PaymentValue.Text == "" || PaymentValue.Text == null) ? "0" : PaymentValue.Text;
             if (main.currentMOP.MOPPartialTender == "0" && subTotal > double.Parse(inputtedValue))
             {
+                main.progressUI.CloseProgressBar();
                 bool continueFinal = await DisplayAlert("This payment is not viable for partial payment. Would you like to continue?", null, "Confirm", "Cancel");
                 if (!continueFinal)
                 {
@@ -2091,6 +2096,7 @@ namespace XamarinFormsEnablerMobile
             {
                 if (!main.currentMOP.MOPType.ToLower().Trim().Contains("gift"))
                 {
+                    main.progressUI.CloseProgressBar();
                     await DisplayAlert("This kind of payment cannot give change.", null, "Close");
                     return;
                 }
@@ -2115,10 +2121,12 @@ namespace XamarinFormsEnablerMobile
                             Console.WriteLine("Data : " + data);
                             if (data == 1)
                             {
+                                main.progressUI.CloseProgressBar();
                                 await DisplayAlert(null, "Warning! Safedrop should be done soon", "Okay");
                             }
                             else if (data == 2)
                             {
+                                main.progressUI.CloseProgressBar();
                                 await DisplayAlert(null, "Transaction is not available. Make safedrop transaction first", "Okay");
                                 return;
                             }
@@ -2127,6 +2135,7 @@ namespace XamarinFormsEnablerMobile
 
                             }
 
+                            main.progressUI.CloseProgressBar();
 
                             //if (this.PaymentValue.Text == "" || this.PaymentValue.Text == "0" || double.Parse(PaymentValue.Text) > main.td.NewSubtotal || double.Parse(PaymentValue.Text) == subTotal)
                             if (this.PaymentValue.Text == "" || this.PaymentValue.Text == "0" || double.Parse(PaymentValue.Text) > main.td.ComputeSubtotal() || double.Parse(PaymentValue.Text) == main.td.ComputeSubtotal())
@@ -2141,10 +2150,12 @@ namespace XamarinFormsEnablerMobile
                         }
                         else if (SelectedPaymentType == "INHOUSE")
                         {
+                            main.progressUI.CloseProgressBar();
                             Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new InhouseField(main, this), false));
                         }
                         else
                         {
+                            main.progressUI.CloseProgressBar();
                             paymentMethod();
                         }
 
@@ -2152,6 +2163,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case "1":
                     {
+                        main.progressUI.CloseProgressBar();
                         payment();
                         /*if (this.PaymentValue.Text == "" || this.PaymentValue.Text == "0" || double.Parse(this.PaymentValue.Text) == subTotal)
                         {
@@ -2165,6 +2177,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case "2":
                     {
+                        main.progressUI.CloseProgressBar();
                         if (this.PaymentValue.Text == "" || this.PaymentValue.Text == null)
                         {
                             await DisplayAlert(null, "Enter amount before continuing", "Close");
@@ -2176,6 +2189,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case "3":
                     {
+                        main.progressUI.CloseProgressBar();
                         ShowMOPREF3Fields();
                         showClientFieldDialog();
                     }
@@ -2335,6 +2349,7 @@ namespace XamarinFormsEnablerMobile
 
         async void payment()
         {
+            
 
             Console.WriteLine($"FINAL PAYMENT IS {SelectedPaymentType}");
 

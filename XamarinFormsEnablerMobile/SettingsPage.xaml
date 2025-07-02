@@ -12,6 +12,12 @@
                             <Switch IsToggled="{Binding  main.appSettings.useSocketPrinter}" x:Name="SocketPrinterSwitch" Toggled="SetSocketPrinterStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
                         </StackLayout>
                     </Frame>
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                            <Label Text="Imin Printer" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                            <Switch IsToggled="{Binding  main.appSettings.useIminPrinter}" x:Name="IminPrinterSwitch" Toggled="SetIminPrinterStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                        </StackLayout>
+                    </Frame>
                     <StackLayout HeightRequest="10"/>
                     <Frame CornerRadius="10" Padding="10" HorizontalOptions="FillAndExpand">
                         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
