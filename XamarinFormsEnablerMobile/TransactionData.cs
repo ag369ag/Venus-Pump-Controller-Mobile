@@ -387,6 +387,12 @@ namespace XamarinFormsEnablerMobile
 
                     }
                     break;
+                case 7:
+                    {
+                        discountValue = (baseValue / 100) * discount.presetValue;
+                        //discountValue = transItem.ApplyNAAC(discount);
+                    }
+                    break;
                 default:
                     {
                         discountValue = transItem.GetNonBIRDiscValue(discount);

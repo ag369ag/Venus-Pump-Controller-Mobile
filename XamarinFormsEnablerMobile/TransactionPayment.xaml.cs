@@ -768,7 +768,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     ConfirmSoloParentInformation();
                 }
-                if (selectedPresetID == 6)
+                if (selectedPresetID == 6 || selectedPresetID == 9)
                 {
                     ConfirmNAACInformation();
                 }
@@ -1443,7 +1443,7 @@ namespace XamarinFormsEnablerMobile
                         presetItemID = int.Parse(presetItem.GetProperty("Item_ID").ToString() ?? "0"),
                         presetStartDate = presetItem.GetProperty("start_date").ToString() ?? "",
                         presetEndtDate = presetItem.GetProperty("end_date").ToString() ?? "",
-                        isBIRDisc = presetID < 8
+                        isBIRDisc = (presetID < 8 || presetID == 9)
                     });
                     Console.WriteLine(presetItem.GetProperty("preset_name").ToString());
                 }
@@ -1656,12 +1656,12 @@ namespace XamarinFormsEnablerMobile
                 }
             }
 
-
-
             Console.WriteLine(selectedDiscountType);
             Console.WriteLine(selectedDiscountValue);
 
             Console.WriteLine(discountButtonText + " before confirmation");
+
+            Console.WriteLine(selectedPresetID);
             switch (selectedDiscountType)
             {
                 case 1:
@@ -1735,7 +1735,7 @@ namespace XamarinFormsEnablerMobile
                                 }
                                 ShowSoloParentDiscountField();
                             }
-                            if (selectedPresetID == 6)
+                            if (selectedPresetID == 9)
                             {
                                 ShowNationalAthlete_CoachDiscountField();
                             }
