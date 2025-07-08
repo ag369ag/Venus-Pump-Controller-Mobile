@@ -48,11 +48,8 @@ namespace XamarinFormsEnablerMobile.Droid
                 BluetoothDevice currentDevice = null;
                 foreach (BluetoothDevice device in pairedDevices)
                 {
-                    Toast.MakeText(Android.App.Application.Context, "BLUETOOTH SOCKET IS CONNECTED", ToastLength.Short).Show();
-                    System.Console.WriteLine(device.Name);
                     if (device.Name.ToLower().Contains("inner"))
                     {
-                        System.Console.WriteLine("DEVICE WITH INNER IN NAME IS DETECTED");
                         currentDevice = device;
 
                         Toast.MakeText(Android.App.Application.Context, "DEVICE WITH INNER IN NAME IS DETECTED", ToastLength.Long).Show();

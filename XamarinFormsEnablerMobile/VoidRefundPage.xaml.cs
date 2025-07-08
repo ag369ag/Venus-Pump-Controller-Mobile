@@ -416,6 +416,15 @@ namespace XamarinFormsEnablerMobile
                     DisplayAlert("Failed to print", ex.Message, "Close");
                 }
             }
+            else if (main.appSettings.useIminPrinter)
+            {
+                var btPrintService = DependencyService.Get<PrintBluetooth>();
+                btPrintService.PrintReceiptBT(printingText, main.appSettings.paperWidth);
+                // btPrintService.TestIMINPrint(FORPRINTINGTEXT);
+
+                /*  var printService = DependencyService.Get<IPrintService>();
+                  printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);*/
+            }
             else
             {
                
@@ -649,6 +658,15 @@ namespace XamarinFormsEnablerMobile
                 {
                     DisplayAlert("Failed to print", ex.Message, "Close");
                 }
+            }
+            else if (main.appSettings.useIminPrinter)
+            {
+                var btPrintService = DependencyService.Get<PrintBluetooth>();
+                btPrintService.PrintReceiptBT(printingText, main.appSettings.paperWidth);
+                // btPrintService.TestIMINPrint(FORPRINTINGTEXT);
+
+                /*  var printService = DependencyService.Get<IPrintService>();
+                  printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);*/
             }
             else
             {

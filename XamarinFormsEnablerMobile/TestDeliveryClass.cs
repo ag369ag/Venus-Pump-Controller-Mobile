@@ -133,6 +133,15 @@ namespace XamarinFormsEnablerMobile
                 var printer = DependencyService.Get<IPrintingSocket>();
                 printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, forPrinting);
             }
+            else if (main.appSettings.useIminPrinter)
+            {
+                var btPrintService = DependencyService.Get<PrintBluetooth>();
+                btPrintService.PrintReceiptBT(forPrintingString, main.appSettings.paperWidth);
+                // btPrintService.TestIMINPrint(FORPRINTINGTEXT);
+
+                /*  var printService = DependencyService.Get<IPrintService>();
+                  printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);*/
+            }
             else
             {
                 var printingService = DependencyService.Get<MainPage.IPrintService>();
