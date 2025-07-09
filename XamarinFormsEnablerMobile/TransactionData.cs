@@ -939,7 +939,7 @@ namespace XamarinFormsEnablerMobile
                             break;
                         case 2:
                             {
-                                leftSide = $"    {Math.Abs(transItem.GetQuantity()).ToString("#,##0.00")} x P{transItem.GetDiscountValue().ToString("#,##0.00")}";
+                                leftSide = $"    {Math.Abs(transItem.GetQuantity()/transItem.GetDiscountedValue()).ToString("#,##0.00")} x P{transItem.GetDiscountValue().ToString("#,##0.00")}";
                             }
                             break;
                         case 3:
@@ -1071,6 +1071,13 @@ namespace XamarinFormsEnablerMobile
 
             Console.WriteLine("after naac");
 
+            if(transactionsItem.Where(a=>a.GetItemType() == 52 && a.GetPresetID() > 9).Count() > 0)
+            {
+                AddSideString($"Total Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
+                AddCenterString("");
+            }
+
+
             if (GetInhouseData() != null)
             {
                 AddSideString("Total Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
@@ -1186,7 +1193,7 @@ namespace XamarinFormsEnablerMobile
 
                 toLogReceipt.Add(line);
             }*/
-
+            string lineCut = new string('-', main.appSettings.paperWidth);
             if (hasBIRDIsc)
             {
 
@@ -1195,7 +1202,7 @@ namespace XamarinFormsEnablerMobile
                     newForPrintString.Add(line);
                 }
 
-                string lineCut = new string('-', main.appSettings.paperWidth);
+                
                 newForPrintString.Add(lineCut);
                 newForPrintString.Add(" ");
 
@@ -1287,7 +1294,18 @@ namespace XamarinFormsEnablerMobile
                     {
                         return "No implementation provided for this platform";
                     }
-                    printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, forPrintString);
+                    List<string> forPrintStringFirst = new List<string>();
+                    foreach(string lineString in forPrintString)
+                    {
+                        if(lineString == lineCut)
+                        {
+                            printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, forPrintStringFirst);
+                            forPrintStringFirst = new List<string>();
+                            continue;
+                        }
+                        forPrintStringFirst.Add(lineString);
+                    }
+                    //printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, forPrintStringFirst);
                 }
                 catch (Exception ex)
                 {
@@ -1380,7 +1398,7 @@ namespace XamarinFormsEnablerMobile
                         {
                             FORPRINTINGTEXT += $"{text}\n";
                             newPrintingArray.Add(text);
-                            string lineCut = new string('-', main.appSettings.paperWidth);
+                            //string lineCut = new string('-', main.appSettings.paperWidth);
                            /* if (text == lineCut)
                             {
                                 FORPRINTINGTEXT += $"{formattedReprintString}\n";
@@ -1463,7 +1481,7 @@ namespace XamarinFormsEnablerMobile
                         foreach (string text in forPrintString)
                         {
                             newPrintingArray.Add(text);
-                            string lineCut = new string('-', main.appSettings.paperWidth);
+                            //string lineCut = new string('-', main.appSettings.paperWidth);
                             if (text == lineCut)
                             {
                                 newPrintingArray.Add(formattedReprintString);
