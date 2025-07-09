@@ -243,7 +243,7 @@ namespace XamarinFormsEnablerMobile
 
             double baseValue = itemUnitPrice / 1.12;
             double discValue = (baseValue / 100) * discount.presetValue;
-            SetDiscountedValue(discValue * -1);
+            SetDiscountedValue((discValue * itemQuantity) * -1);
             RemoveTax();
             if (discount.presetValue == 5)
             {

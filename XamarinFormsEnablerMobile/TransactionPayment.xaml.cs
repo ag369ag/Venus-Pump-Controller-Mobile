@@ -568,7 +568,15 @@ namespace XamarinFormsEnablerMobile
                     DisplayAlert("Quantity should not contain decimal value", null, "Close");
                     return;
                 }
+                
                 double quantity = string.IsNullOrEmpty(quantityString) ? 1 : double.Parse(quantityString);
+
+                if(quantity < 1)
+                {
+                    DisplayAlert("Quantity should not be lower than 1", null, "Close");
+                    return;
+                }
+
                 selectedTransaction.SetQuantity(quantity);
                 main.td.UpdateSubtotal();
 
@@ -1146,6 +1154,12 @@ namespace XamarinFormsEnablerMobile
                 || string.IsNullOrEmpty(solPChildDOB) || string.IsNullOrEmpty(solPChildAge))
             {
                 await DisplayAlert(null, "Fill all the field", "Close");
+                return;
+            }
+
+            if(decimal.Parse(solPChildAge) < 1)
+            {
+                await DisplayAlert(null, "Child age should not be less than 1.", "Close");
                 return;
             }
 
@@ -2091,6 +2105,14 @@ namespace XamarinFormsEnablerMobile
 
             string inputString = (PaymentValue.Text == "" || PaymentValue.Text == null) ? "0" : PaymentValue.Text;
             double inputDouble = double.Parse(inputString);
+
+            /*if(inputDouble < 1)
+            {
+                main.progressUI.CloseProgressBar();
+                await DisplayAlert("Payment amount should not be less than 1.", null, "Close");
+                return;
+            }*/
+
             Console.WriteLine("checking for change");
             if (inputDouble > main.td.ComputeSubtotal() && main.currentMOP.MOPAllowChange == 0)
             {

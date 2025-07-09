@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using static Android.Content.ClipData;
+using static System.Net.Mime.MediaTypeNames;
 using static XamarinFormsEnablerMobile.MainPage;
 
 namespace XamarinFormsEnablerMobile
@@ -351,14 +352,14 @@ namespace XamarinFormsEnablerMobile
             {
                 case 1:
                     {
-                        discountValue = (baseValue / 100) * discount.presetValue;
+                        discountValue = (((baseValue / 100) * discount.presetValue) * transItem.GetQuantity());
                         isSCPWDMoVDiscounted = true;
                         //discountValue = transItem.ApplySCPWD(discount);
                     }
                     break;
                 case 2:
                     {
-                        discountValue = (baseValue / 100) * discount.presetValue;
+                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
                         isSCPWDMoVDiscounted = true;
                         //discountValue = transItem.ApplySCPWD(discount);
                     }
@@ -366,19 +367,19 @@ namespace XamarinFormsEnablerMobile
                 case 3:
                     {
                         baseValue = transItem.GetUnitPrice();
-                        discountValue = (baseValue / 100) * discount.presetValue;
+                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
                         //discountValue = transItem.ApplySoloParent(discount);
                     }
                     break;
                 case 4:
                     {
-                        discountValue = (baseValue / 100) * discount.presetValue;
+                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
                         //discountValue = transItem.ApplyNAAC(discount);
                     }
                     break;
                 case 5:
                     {
-                        discountValue = (baseValue / 100) * discount.presetValue;
+                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
                         isSCPWDMoVDiscounted = true;
                     }
                     break;
@@ -389,7 +390,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case 7:
                     {
-                        discountValue = (baseValue / 100) * discount.presetValue;
+                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
                         //discountValue = transItem.ApplyNAAC(discount);
                     }
                     break;
@@ -899,7 +900,13 @@ namespace XamarinFormsEnablerMobile
                     string productTaxType = transItem.GetOrigTaxID() == 1 ? "VAT" : transItem.GetOrigTaxID() == 2 ? "NVAT" : "ZeroRated";
 
                     string secondLine = $"  {transItem.GetQuantity().ToString("#,##0.00")} x {transItem.GetOrigUnitPrice().ToString("#,##0.00")} {productTaxType}";
-                    AddSideString(secondLine, transItem.GetOrigUnitPrice().ToString("#,##0.00"));
+                    string amountString = transItem.GetOrigTotal().ToString("#,##0.00");
+                    if(transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
+                    {
+                        //amountString = (transItem.GetTotal() - Math.Abs(transItem.GetDiscountedValue())).ToString("#,##0.00");
+                        amountString = transItem.GetOrigTotal().ToString("#,##0.00");
+                    }
+                    AddSideString(secondLine, amountString);
 
                     if ((transItem.GetIsDiscounted && transItem.IsBIRDiscount() && (transItem.GetPresetID() != 2 && transItem.GetPresetID() != 4 && transItem.GetPresetID() != 5)) || transItem.GetTaxID() == 3)
                     {
@@ -910,6 +917,10 @@ namespace XamarinFormsEnablerMobile
                     }
 
                     itemPrice = transItem.GetTotal();
+                    if (transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
+                    {
+                        itemPrice = transItem.GetOrigTotal();
+                    }
                 }
 
                 if (transItem.GetItemType() == 52 || transItem.GetItemType() == 54)
@@ -920,6 +931,10 @@ namespace XamarinFormsEnablerMobile
                         case 1:
                             {
                                 leftSide = $"    {transItem.GetDiscountValue()}% x P{itemPrice.ToString("#,##0.00")}";
+                                if(transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
+                                {
+                                    leftSide = $"    {transItem.GetDiscountValue()}% x P{(itemPrice/1.12).ToString("#,##0.00")}";
+                                }
                             }
                             break;
                         case 2:
@@ -1250,6 +1265,19 @@ namespace XamarinFormsEnablerMobile
             string EJournalResponse = await ToEJournalResponse.Content.ReadAsStringAsync();
             Console.WriteLine(EJournalResponse);*/
 
+            // GETTING RECEIPT COUNT BASED ON MOP
+            //=========================================================================
+            List<TransactionDataClass> mops = transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).ToList();
+            byte receiptCount = 1;
+            foreach (TransactionDataClass mop in mops)
+            {
+                byte rctCount = Convert.ToByte(main.MOP.Where(a => a.MOPId == mop.GetItemID().ToString()).First().MOPReceiptCount);
+                if (rctCount > 1)
+                    receiptCount = rctCount;
+            }
+            //=========================================================================
+
+
             if (main.appSettings.useSocketPrinter)
             {
                 var printer = DependencyService.Get<IPrintingSocket>();
@@ -1266,7 +1294,7 @@ namespace XamarinFormsEnablerMobile
                     return "Failed to print";
                 }
 
-                if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
+                /*if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
                 {
                     List<string> newPrintingArray = new List<string>();
                     foreach (string text in forPrintString)
@@ -1287,25 +1315,12 @@ namespace XamarinFormsEnablerMobile
                         return "Failed to print";
                     }
 
-                    /*for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
-                    {
-                        try
-                        {
-                            if (printer == null)
-                            {
-                                return "No implementation provided for this platform";
-                            }
-                            printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
-                        }
-                        catch (Exception ex)
-                        {
-                            return "Failed to print";
-                        }
-                    }*/
+                   
                 }
                 else
-                {
-                    if (main.currentMOP.MOPReceiptCount > 1 && main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() <= 0)
+                {*/
+                    //if (main.currentMOP.MOPReceiptCount > 1 && main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() <= 0)
+                    if (receiptCount > 1)
                     {
                         List<string> newPrintingArray = new List<string>();
                         string reprintString = "*** REPRINT ***";
@@ -1315,15 +1330,13 @@ namespace XamarinFormsEnablerMobile
                         foreach (string text in forPrintString)
                         {
                             newPrintingArray.Add(text);
-                            string lineCut = new string('-', main.appSettings.paperWidth);
+                            /*string lineCut = new string('-', main.appSettings.paperWidth);
                             if (text == lineCut)
                             {
                                 newPrintingArray.Add(formattedReprintString);
-                            }
+                            }*/
                         }
-                        for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
-                        {
-                            try
+                        try
                             {
                                 if (printer == null)
                                 {
@@ -1336,18 +1349,76 @@ namespace XamarinFormsEnablerMobile
                             {
                                 return "Failed to print";
                             }
+                        
+
                         }
+                   
 
-                    }
-
-                }
+               // }
 
 
             }
             else if (main.appSettings.useIminPrinter)
             {
-                var btPrintService = DependencyService.Get<PrintBluetooth>();
-                btPrintService.PrintReceiptBT(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                if (hasBIRDIsc)
+                {
+                    var btPrintService = DependencyService.Get<PrintBluetooth>();
+                    btPrintService.PrintReceiptBT(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                }
+                else
+                {
+                    if (receiptCount > 1)
+                    {
+                       
+                        List<string> newPrintingArray = new List<string>();
+                        string reprintString = "*** REPRINT ***";
+                        int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
+                        string formattedReprintString = new string(' ', currentSpace) + reprintString + new string(' ', currentSpace);
+                        FORPRINTINGTEXT += $"{formattedReprintString}\n";
+                        newPrintingArray.Add(formattedReprintString);
+                        foreach (string text in forPrintString)
+                        {
+                            FORPRINTINGTEXT += $"{text}\n";
+                            newPrintingArray.Add(text);
+                            string lineCut = new string('-', main.appSettings.paperWidth);
+                           /* if (text == lineCut)
+                            {
+                                FORPRINTINGTEXT += $"{formattedReprintString}\n";
+                                newPrintingArray.Add(formattedReprintString);
+                            }*/
+                        }
+                        try
+                        {
+                            var btPrintService = DependencyService.Get<PrintBluetooth>();
+                            btPrintService.PrintReceiptBT(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                        }
+                        catch (Exception ex)
+                        {
+                            return "Failed to print";
+                        }
+                        /*for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
+                        {
+
+                        }*/
+
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var btPrintService = DependencyService.Get<PrintBluetooth>();
+                            btPrintService.PrintReceiptBT(FORPRINTINGTEXT, main.appSettings.paperWidth);
+                        }
+                        catch (Exception ex)
+                        {
+                            return "Failed to print";
+                        }
+                    }
+                }
+                
+
+                
+
                // btPrintService.TestIMINPrint(FORPRINTINGTEXT);
 
               /*  var printService = DependencyService.Get<IPrintService>();
@@ -1356,7 +1427,7 @@ namespace XamarinFormsEnablerMobile
             else
             {
                 var printService = DependencyService.Get<IPrintService>();
-                printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
+               // printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
                 //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
                 
                 if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
@@ -1372,15 +1443,16 @@ namespace XamarinFormsEnablerMobile
                         string perText = text + "\n";
                         newPrintingText += perText;
                     }
-                    for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
+                    
+                    printService.PrintReceiptOnNative(newPrintingText, 15);
+                    /*for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
                     {
-                        printService.PrintReceiptOnNative(newPrintingText, 15);
                         //printService.Print(newPrintingText, main.appSettings.paperWidth);
-                    }
+                    }*/
                 }
                 else
                 {
-                    if (main.currentMOP.MOPReceiptCount > 1)
+                    if (receiptCount > 1)
                     {
                         List<string> newPrintingArray = new List<string>();
                         string newPrintingText = "";
@@ -1402,11 +1474,15 @@ namespace XamarinFormsEnablerMobile
                             string perText = text + "\n";
                             newPrintingText += perText;
                         }
-                        for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
-                        {
+                        /*for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
+                        {*/
                             printService.PrintReceiptOnNative(newPrintingText, 15);
                             //printService.Print(newPrintingText, main.appSettings.paperWidth);
-                        }
+                        //}
+                    }
+                    else
+                    {
+                        printService.PrintReceiptOnNative(FORPRINTINGTEXT, 15);
                     }
                 }
 
