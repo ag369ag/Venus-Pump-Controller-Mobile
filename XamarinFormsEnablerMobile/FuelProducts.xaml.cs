@@ -757,6 +757,18 @@ namespace XamarinFormsEnablerMobile
             int amountInt = Convert.ToInt32(amountDouble);
             Console.WriteLine(amount);
 
+            if(amountInt < 1)
+            {
+                await DisplayAlert(null, "Amount should not be less than 1.", "Close");
+                return;
+            }
+
+            if((amountDouble - amountInt) > 0)
+            {
+                await DisplayAlert(null, "Amount should not have decimal amount.", "Close");
+                return;
+            }
+
             List<object> blankList = new List<object>();
             string blankString = Newtonsoft.Json.JsonConvert.SerializeObject(blankList);
 

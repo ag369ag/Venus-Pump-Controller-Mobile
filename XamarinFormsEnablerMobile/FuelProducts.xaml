@@ -61,7 +61,7 @@
                     <StackLayout HorizontalOptions="FillAndExpand"
                                  VerticalOptions="FillAndExpand">
                         <Grid HorizontalOptions="FillAndExpand"
-                              VerticalOptions="FillAndExpand">
+                              VerticalOptions="FillAndExpand" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
@@ -73,8 +73,8 @@
                                 <CollectionView.ItemsLayout>
                                     <GridItemsLayout Orientation="Vertical"
                                                      Span="{Binding myPumpController.GridItemSpan}"
-                                                     VerticalItemSpacing="6"
-                                                     HorizontalItemSpacing="6" />
+                                                     VerticalItemSpacing="10"
+                                                     HorizontalItemSpacing="10" />
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>

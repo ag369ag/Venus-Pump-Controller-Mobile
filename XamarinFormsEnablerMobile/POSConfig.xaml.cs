@@ -1222,6 +1222,7 @@ namespace XamarinFormsEnablerMobile
             FormatCenterStringForPrinting("*** REPRINT ***");
             FormatCenterStringForPrinting($"Reprint Date: {formattedDate}");
             FORPRINTINGARRAY.Add(" ");
+            FormatCenterStringForPrinting($"POS {main.posIDNumber}");
             FormatCenterStringForPrinting("Open: " + openDateDetail);
             FormatCenterStringForPrinting("Close: " + closeDateDetail);
             FormatCenterStringForPrinting("Closed by: " + cashierNameDetail);
@@ -1337,7 +1338,7 @@ namespace XamarinFormsEnablerMobile
                 printedData = FORPRINTINGTEXT
             };
 
-            await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
+           // await main.APIservice.APIQuery(toPrintLog, main.routes.savePrintedData);
 
             if (main.appSettings.useSocketPrinter)
             {
@@ -1389,6 +1390,7 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add(" ");
             /*FormatCenterStringForPrinting("X-Reading");
             FORPRINTINGARRAY.Add(" ");*/
+            FormatCenterStringForPrinting($"POS {main.posIDNumber}");
             FormatCenterStringForPrinting("Open: " + openDateDetail);
             FormatCenterStringForPrinting("Close: " + closeDateDetail);
             FormatCenterStringForPrinting("Closed by: " + cashierNameDetail);
