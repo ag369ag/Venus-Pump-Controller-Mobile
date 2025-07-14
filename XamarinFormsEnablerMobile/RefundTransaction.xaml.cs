@@ -1089,7 +1089,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         amount = (Math.Abs(double.Parse(item.itemValue)) * 1.12).ToString();
                     }
-                    string itemValue = "(P" + string.Format("{0:f02}", double.Parse(amount)) + ")";
+                    string itemValue = "-P" + string.Format("{0:f02}", double.Parse(amount));
                     FORPRINTINGARRAY.Add(item.itemDesc);
                     string left = "  " + item.itemQTY + " X P" + string.Format("{0:f02}", double.Parse(amount));
                     int itemInfoSpace = (main.appSettings.paperWidth - (left.Length + taxType.Length + itemValue.Length)) / 2;
@@ -1106,7 +1106,7 @@ namespace XamarinFormsEnablerMobile
                         Console.WriteLine(item.originalAmount + " OriginalItem");
                         double price = double.Parse(item.itemDBPrice);
                         //string newDiscountVal = "(P" + string.Format("{0:f02}", (price - (price / 1.12))) + ")";
-                        string newDiscountVal = "(P" + string.Format("{0:f02}", ((price * 1.12) - price)) + ")";
+                        string newDiscountVal = "P" + string.Format("{0:f02}", ((price * 1.12) - price));
                         AddSideStrings(lessVat, newDiscountVal);
                     }
                 }
@@ -1122,9 +1122,9 @@ namespace XamarinFormsEnablerMobile
                                 if(refundDiscount.presetId == 8)
                                 {
                                     string DiscountString = "   " + refundDiscount.presetValue.ToString() + "x P" + (toBeDiscountedTotal * (-1)).ToString();
-                                    AddSideStrings(DiscountString, "(P" + item.itemValue.ToString() +")");
+                                    AddSideStrings(DiscountString, "P" + item.itemValue.ToString());
                                 }
-                                if(refundDiscount.presetId == 1 || refundDiscount.presetId == 2 || refundDiscount.presetId == 3 || refundDiscount.presetId == 4 || refundDiscount.presetId == 5 || refundDiscount.presetId == 6)
+                                if(refundDiscount.presetId == 1 || refundDiscount.presetId == 2 || refundDiscount.presetId == 3 || refundDiscount.presetId == 4 || refundDiscount.presetId == 5 || refundDiscount.presetId == 6 || refundDiscount.presetId == 9)
                                 {
                                     if(refundDiscount.presetValue == 20)
                                     {
@@ -1133,7 +1133,7 @@ namespace XamarinFormsEnablerMobile
                                         Console.WriteLine(toBeDiscountedTotal);
                                         Console.WriteLine(vatValue);
                                         string lessVATstring = " Less VAT 12%";
-                                        AddSideStrings(lessVATstring, "(P" + string.Format("{0:f02}",vatValue) + ")");
+                                        AddSideStrings(lessVATstring, "P" + string.Format("{0:f02}",vatValue));
                                         if (refundDiscount.presetName.ToLower().Contains("naac"))
                                         {
                                             toBeDiscountedTotal = toBeDiscountedTotal/1.12;
@@ -1141,7 +1141,7 @@ namespace XamarinFormsEnablerMobile
                                     }
                                     
                                     string DiscountString = "   " + refundDiscount.presetValue.ToString() + "% x P" + (toBeDiscountedTotal * (-1)).ToString();
-                                    AddSideStrings(DiscountString, "(P" + string.Format("{0:f02}", (double.Parse(item.itemValue))) + ")");
+                                    AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", (double.Parse(item.itemValue))));
                                 }
 
                             }; break;
@@ -1149,12 +1149,12 @@ namespace XamarinFormsEnablerMobile
                             {
                                 string DiscountString = "  " + toBeDiscountedUnitPrice.ToString() + " x P" + (Math.Abs(double.Parse(item.itemPrice))).ToString();
                                 //string DiscountString = "  " + item.itemQTY + " x P" + toBeDiscountedUnitPrice.ToString();
-                                AddSideStrings(DiscountString, "(P" + (double.Parse(item.itemValue)).ToString() + ")");
+                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString() );
                             }; break;
                         case 3:
                             {
                                 string DiscountString = "   -1 x P" + refundDiscount.presetValue.ToString();
-                                AddSideStrings(DiscountString, "(P" + (double.Parse(item.itemValue)).ToString() + ")");
+                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString());
                             }; break;
                         default:  {  }; break;
                     }
@@ -1170,21 +1170,21 @@ namespace XamarinFormsEnablerMobile
                             {
                                 int convertedToIntPrice = Convert.ToInt32(itemItemPrice);
                                 string DiscountString = "   " + convertedToIntPrice + "% x P" + (toBeDiscountedTotal * (-1)).ToString();
-                                AddSideStrings(DiscountString, "(P" + string.Format("{0:f02}", (double.Parse(item.itemValue))) + ")");
+                                AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", (double.Parse(item.itemValue))) );
                             }; break;
 
                         case 2:
                             {
                                 string DiscountString = "  " + toBeDiscountedUnitPrice.ToString() + " x P" + itemItemPrice;
                                 //string DiscountString = "  " + item.itemQTY + " x P" + toBeDiscountedUnitPrice.ToString();
-                                AddSideStrings(DiscountString, "(P" + (double.Parse(item.itemValue)).ToString() + ")");
+                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString());
                             }; break;
                         
                         case 3:
                             {
                                // string itemItemPrice = 
                                 string DiscountString = "   -1 x P" + item.itemPrice;
-                                AddSideStrings(DiscountString, "(P" + (double.Parse(item.itemValue)).ToString() + ")");
+                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString() );
                             }; break;
                         
                         default: { }; break;
@@ -1196,12 +1196,12 @@ namespace XamarinFormsEnablerMobile
             double saleTotal = totalSale;
             Console.WriteLine("after products");
             FORPRINTINGARRAY.Add(" ");
-            AddSideStrings("Sales Total", "(P" + string.Format("{0:f02}", saleTotal) + ")");
+            AddSideStrings("Sales Total", "-P" + string.Format("{0:f02}", saleTotal) );
             if(RefundItem.Where(a=>a.itemType == "7" || a.itemType == "8").Count()>0)
             {
                 foreach(var item in RefundItem.Where(a=>a.itemType == "7" || a.itemType == "8"))
                 {
-                    string itemValue = "(P" + string.Format("{0:f02}", (0 - double.Parse(item.itemValue))) + ")";
+                    string itemValue = "-P" + string.Format("{0:f02}", (0 - double.Parse(item.itemValue))) ;
                     AddSideStrings(item.itemDesc, itemValue);
                 }
             }
@@ -1209,20 +1209,20 @@ namespace XamarinFormsEnablerMobile
             if(RefundItem.Where(a=>a.itemType == "10").Count()>0)
             {
                 Item change = RefundItem.Where(a => a.itemType == "10").First();
-                AddSideStrings(change.itemDesc, "(P" + (0 - double.Parse(change.itemValue)).ToString() + ")");
+                AddSideStrings(change.itemDesc, "P" + (0 - double.Parse(change.itemValue)).ToString() );
             }
             
             FORPRINTINGARRAY.Add(" ");
-            AddSideStrings("TOTAL INVOICE", "(P" + string.Format("{0:f02}", saleTotal) + ")");
+            AddSideStrings("TOTAL INVOICE", "-P" + string.Format("{0:f02}", saleTotal) );
             FORPRINTINGARRAY.Add(" ");
             Console.WriteLine("before vats");
             double vatableValue = Math.Round(VATTotal / 1.12, 2, MidpointRounding.AwayFromZero);
             double vatAmountValue = Math.Round(VATTotal - (VATTotal / 1.12), 2, MidpointRounding.AwayFromZero);
             
-            string VatSaleValue = taxType == "Zero Rated" ? "P0.00" : $"(P{Math.Abs(vatableValue).ToString("#,##0.00")})";
-            string VatAmountValue = taxType == "Zero Rated" ? "P0.00" : $"(P{Math.Abs(vatAmountValue).ToString("#,##0.00")})";
-            string VatExValue = taxType == "Zero Rated" ? "P0.00" : Math.Abs(NVATTotal) > 0 ? $"(P{Math.Abs(NVATTotal).ToString("#,##0.00")})" : "P0.00";
-            string ZeroRatedValue = taxType == "Zero Rated" ? "(P" + saleTotal.ToString("#,##0.00") + ")" : "P0.00";
+            string VatSaleValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatableValue).ToString("#,##0.00")}";
+            string VatAmountValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatAmountValue).ToString("#,##0.00")}";
+            string VatExValue = taxType == "Zero Rated" ? "P0.00" : Math.Abs(NVATTotal) > 0 ? $"-P{Math.Abs(NVATTotal).ToString("#,##0.00")}" : "P0.00";
+            string ZeroRatedValue = taxType == "Zero Rated" ? "-P" + saleTotal.ToString("#,##0.00") : "P0.00";
             Console.WriteLine("after vats");
             AddSideStrings("VATable Sales", VatSaleValue);
             AddSideStrings("VAT Amount", VatAmountValue);

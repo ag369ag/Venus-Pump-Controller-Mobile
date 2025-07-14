@@ -242,7 +242,7 @@ namespace XamarinFormsEnablerMobile
             SetPresetID(discount.presetId);
 
             double baseValue = itemUnitPrice / 1.12;
-            double discValue = (baseValue / 100) * discount.presetValue;
+            double discValue = ((baseValue / 100) * discount.presetValue) * itemQuantity;
             SetDiscountedValue((discValue * itemQuantity) * -1);
             RemoveTax();
             if (discount.presetValue == 5)
@@ -269,7 +269,7 @@ namespace XamarinFormsEnablerMobile
             SetPresetID(discount.presetId);
 
             double baseValue = itemUnitPrice;
-            double discValue = (baseValue / 100) * discount.presetValue;
+            double discValue = ((baseValue / 100) * discount.presetValue) * itemQuantity;
             SetDiscountedValue(discValue);
             OnPropertyChanged();
             //SetUnitPrice(baseValue);
@@ -278,7 +278,7 @@ namespace XamarinFormsEnablerMobile
 
         public void ApplyNAAC(MainPage.DiscountPresetsClass discount)
         {
-            SetNewTaxID(2);
+            //SetNewTaxID(1);
             SetIsDiscounted(true);
             SetIsBIRDiscount(true);
             SetDiscountType(discount.presetDiscountType);
@@ -286,14 +286,18 @@ namespace XamarinFormsEnablerMobile
             SetPresetID(discount.presetId);
 
             double baseValue = itemUnitPrice / 1.12;
-            double discValue = (baseValue / 100) * discount.presetValue;
+            double discValue = ((baseValue / 100) * discount.presetValue) * itemQuantity;
+            
+            // NAAC WITH TAX ID 1
             double removedTaxValue = itemUnitPrice - baseValue;
-            // With naac discount double returnedNAACTax = (baseValue - discValue) + removedTaxValue;
-
-            SetDiscountedValue(discValue);
-            //RemoveTax();
-            SetUnitPrice(baseValue);
+            double returnedNAACTax = (baseValue - discValue) + removedTaxValue;
+            SetUnitPrice(returnedNAACTax);
             //SetUnitPrice(removedTaxValue);
+
+            //NAAC WITH TAX ID 2
+
+            //SetUnitPrice(baseValue);
+            SetDiscountedValue(discValue);
             OnPropertyChanged();
         }
 

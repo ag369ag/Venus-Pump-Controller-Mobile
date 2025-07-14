@@ -336,6 +336,10 @@ namespace XamarinFormsEnablerMobile
 
                     if(int.Parse(item.RefundItemType) == 2 || int.Parse(item.RefundItemType) == 14)
                     {
+                        if(itemDesc != item.RefundItemDescription && Math.Abs(lastItemValue) > 0)
+                        {
+                            FormatSideStrings(itemDesc, "-P" + (lastItemValue).ToString("#,##0.00") , forPrintingArray);
+                        }
                         itemDesc = item.RefundItemDescription;
                         lastItemValue = value;
                         continue;
@@ -343,7 +347,7 @@ namespace XamarinFormsEnablerMobile
 
                     if (int.Parse(item.RefundItemType) == 52 || int.Parse(item.RefundItemType) == 54)
                     {
-                        FormatSideStrings(itemDesc, "(P" + (lastItemValue - value).ToString("#,##0.00")+")", forPrintingArray);
+                        FormatSideStrings(itemDesc, "-P" + (lastItemValue - value).ToString("#,##0.00"), forPrintingArray);
                         lastItemValue = 0;
                     }
 
@@ -351,18 +355,18 @@ namespace XamarinFormsEnablerMobile
                     {
                         if(lastItemValue > 0)
                         {
-                            FormatSideStrings(itemDesc, "(P" + (lastItemValue).ToString("#,##0.00")+")", forPrintingArray);
+                            FormatSideStrings(itemDesc, "-P" + (lastItemValue).ToString("#,##0.00"), forPrintingArray);
                             lastItemValue = 0;
 
                         }
-                        FormatSideStrings(item.RefundItemDescription, "(P" + value.ToString("#,##0.00")+")", forPrintingArray);
+                        FormatSideStrings(item.RefundItemDescription, "-P" + value.ToString("#,##0.00"), forPrintingArray);
 
                     }
 
                 }
                 double totalRefundValue = RefundItemList.Where(a => int.Parse(a.RefundItemType) == 7 || int.Parse(a.RefundItemType) == 8).Select(a => double.Parse(a.RefundValue)).Sum();
                 forPrintingArray.Add(" ");
-                FormatSideStrings("TOTAL", "(P" + totalRefundValue.ToString("#,##0.00") +")", forPrintingArray);
+                FormatSideStrings("TOTAL", "-P" + totalRefundValue.ToString("#,##0.00") , forPrintingArray);
 
                 //==========================================================================================
                 //                                       REFUND SALES BY DATE
@@ -402,7 +406,7 @@ namespace XamarinFormsEnablerMobile
 
                     if(item.RefundItemType == "2" || item.RefundItemType == "14")
                     {
-                        FormatSideStrings(item.RefundItemDescription, "(P" + value.ToString("#,##0.00")+")", forPrintingArray);
+                        FormatSideStrings(item.RefundItemDescription, "-P" + value.ToString("#,##0.00"), forPrintingArray);
                     }
                     
                     if(item.RefundItemType == "52" || item.RefundItemType == "54")
@@ -412,12 +416,12 @@ namespace XamarinFormsEnablerMobile
 
                     if (item.RefundItemType == "7" || item.RefundItemType == "8")
                     {
-                        FormatSideStrings(item.RefundItemDescription, "(P" + value.ToString("#,##0.00") + ")", forPrintingArray);
+                        FormatSideStrings(item.RefundItemDescription, "-P" + value.ToString("#,##0.00") , forPrintingArray);
                     }
 
                 }
                 forPrintingArray.Add(" ");
-                FormatSideStrings("TOTAL", "(P" + totalRefundValue.ToString("#,##0.00") + ")", forPrintingArray);
+                FormatSideStrings("TOTAL", "-P" + totalRefundValue.ToString("#,##0.00"), forPrintingArray);
 
             }
 

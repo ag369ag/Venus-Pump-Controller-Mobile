@@ -379,7 +379,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case 5:
                     {
-                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
+                        discountValue = (((baseValue / 100) * discount.presetValue) * transItem.GetQuantity());
                         isSCPWDMoVDiscounted = true;
                     }
                     break;
@@ -445,7 +445,7 @@ namespace XamarinFormsEnablerMobile
            // {
             //=======================
                 AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
-
+            Console.WriteLine("After adding discount item");
             //}    
             OnPropertyChanged();
         }
@@ -460,7 +460,12 @@ namespace XamarinFormsEnablerMobile
 
         public double ComputeSubtotal()
         {
-            return transactionsItem.Where(a => a.GetItemType() != 7 && a.GetItemType() != 8 && a.GetItemType() != 10).Sum(a => a.GetTotal()) - transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Sum(a => a.GetTotal());
+            double totalItemValue = transactionsItem.Where(a => a.GetItemType() != 7 && a.GetItemType() != 8 && a.GetItemType() != 10).Sum(a => a.GetTotal());
+            double totalMOPValue = transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Sum(a => a.GetTotal());
+            // double withoutNAACTax1 = transactionsItem.Where(a => a.GetItemType() != 7 && a.GetItemType() != 8 && a.GetItemType() != 10).Sum(a => a.GetTotal()) - transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Sum(a => a.GetTotal());
+
+            double unpaidValue = totalItemValue - totalMOPValue;
+            return unpaidValue;
         }
 
         public void RemoveFinalPayment()
@@ -912,12 +917,12 @@ namespace XamarinFormsEnablerMobile
                     {
                         string lessVatString = " Less VAT 12%";
                         //string originalAmount = $"(P{(transItem.GetOrigUnitPrice() * transItem.GetQuantity()).ToString("#,##0.00")})";
-                        string originalAmount = $"(P{(transItem.GetOrigTotal() - (transItem.GetOrigTotal() / 1.12)).ToString("#,##0.00")})";
+                        string originalAmount = $"-P{(transItem.GetOrigTotal() - (transItem.GetOrigTotal() / 1.12)).ToString("#,##0.00")}";
                         AddSideString(lessVatString, originalAmount);
                     }
 
                     itemPrice = transItem.GetTotal();
-                    if (transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
+                    if (transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4 || transItem.GetPresetID() == 6)
                     {
                         itemPrice = transItem.GetOrigTotal();
                     }
@@ -935,6 +940,12 @@ namespace XamarinFormsEnablerMobile
                                 {
                                     leftSide = $"    {transItem.GetDiscountValue()}% x P{(itemPrice/1.12).ToString("#,##0.00")}";
                                 }
+
+                                if(transItem.GetPresetID() == 6)
+                                {
+                                    leftSide = $"    {transItem.GetDiscountValue()}% x P{(itemPrice / 1.12).ToString("#,##0.00")}";
+                                }
+
                             }
                             break;
                         case 2:
@@ -954,7 +965,7 @@ namespace XamarinFormsEnablerMobile
                             break;
                     }
 
-                    AddSideString(leftSide, $"({FormatReceiptMoneyValue(transItem.GetTotal())})");
+                    AddSideString(leftSide, $"-{FormatReceiptMoneyValue(transItem.GetTotal())}");
                 }
 
 
@@ -963,6 +974,14 @@ namespace XamarinFormsEnablerMobile
             AddCenterString("");
 
             double saleTotal = transactionsItem.Where(a => a.GetItemType() == 2 || a.GetItemType() == 14 || a.GetItemType() == 52 || a.GetItemType() == 54).Sum(a => a.GetTotal());
+            if(transactionsItem.Where(a=>a.GetPresetID() == 6).Count() > 0)
+            {
+                double totalAMT = transactionsItem.Where(a => a.GetPresetID() == 6).Sum(a => a.GetTotal());
+                saleTotal -= totalAMT;
+
+                double newTotal = transactionsItem.Where(a => a.GetPresetID() == 6 && a.GetItemType() == 14).Sum(a => a.GetOrigTotal());
+                saleTotal += newTotal;
+            }
 
             AddSideString("Sale Total", FormatReceiptMoneyValue(saleTotal));
 
@@ -976,7 +995,7 @@ namespace XamarinFormsEnablerMobile
                 //FormatSideString(transItem.GetItemDescription(), $"P{Math.Abs(transItem.GetTotal()).ToString("#,##0.00")}");
                 if (transItem.GetItemType().Equals(10))
                 {
-                    AddSideString(transItem.GetItemDescription(), $"({FormatReceiptMoneyValue(transItem.GetTotal())})");
+                    AddSideString(transItem.GetItemDescription(), $"-{FormatReceiptMoneyValue(transItem.GetTotal())}");
                 }
                 else
                 {
@@ -1017,7 +1036,7 @@ namespace XamarinFormsEnablerMobile
             {
                 string discType = GetSCPWDDetails().First().CheckMoV() ? "Medal of Valor" : GetSCPWDDetails().First().GetCustomerType() ? "Senior Citizen" : "PWD";
 
-                AddSideString($"Total {discType} Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
+                AddSideString($"Total {discType} Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
 
                 foreach (SeniorPWDMoVCustomerDetailsClass scData in GetSCPWDDetails())
                 {
@@ -1036,7 +1055,7 @@ namespace XamarinFormsEnablerMobile
 
             if (GetSoloParentDetails().Count > 0)
             {
-                AddSideString("Total Solo Parent Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
+                AddSideString("Total Solo Parent Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}-");
 
                 AddCenterString("");
 
@@ -1056,7 +1075,7 @@ namespace XamarinFormsEnablerMobile
 
             if (GetNAACDetails().Count > 0)
             {
-                AddSideString("Total Athlete/Coach Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
+                AddSideString("Total Athlete/Coach Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
 
                 AddCenterString("");
 
@@ -1073,14 +1092,14 @@ namespace XamarinFormsEnablerMobile
 
             if(transactionsItem.Where(a=>a.GetItemType() == 52 && a.GetPresetID() > 9).Count() > 0)
             {
-                AddSideString($"Total Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
+                AddSideString($"Total Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
                 AddCenterString("");
             }
 
 
             if (GetInhouseData() != null)
             {
-                AddSideString("Total Discount", $"({FormatReceiptMoneyValue(totalDiscountAmount)})");
+                AddSideString("Total Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
 
                 AddCenterString("");
                 string firstPartAccountName = GetInhouseData().GetAccountName();
@@ -1539,14 +1558,31 @@ namespace XamarinFormsEnablerMobile
 
         private double GetTotalValueByTaxID(double taxID)
         {
-            double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID && (a.GetPresetID() != 2 && a.GetPresetID() != 4)).Sum(a => (a.GetTotal() //- Math.Abs(a.GetDiscountedValue())
+            double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID && (a.GetPresetID() != 2 && a.GetPresetID() != 4 && a.GetPresetID() != 6)).Sum(a => (a.GetTotal() //- Math.Abs(a.GetDiscountedValue())
             ));
             double withBIRFiveDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID && (a.GetPresetID() == 2 || a.GetPresetID() == 4)).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
             // double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
             double witouthBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
             //double amount = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
             //return transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - a.GetDiscountedValue()));
-            return withBIRDisc + withBIRFiveDisc + witouthBIRDisc;
+
+            // NAAC WITH TAX ID 1
+            double withNAACVat = 0;
+            if(taxID == 1)
+            {
+               withNAACVat = transactionsItem.Where(a => a.GetItemType() == 14 && a.GetPresetID() == 6).Sum(a => a.GetOrigTotal());
+            }
+            // NAAC WITH TAX ID 2
+            if(taxID == 2)
+            {
+                withNAACVat = transactionsItem.Where(a => a.GetItemType() == 14 && a.GetPresetID() == 9).Sum(a => a.GetTotal());
+            }
+            // double withNAACVatEx = transactionsItem.Where(a => a.GetItemType() == 14 && a.GetPresetID() == 6).Sum(a => a.GetTotal());
+
+
+
+
+            return withBIRDisc + withBIRFiveDisc + witouthBIRDisc + withNAACVat;
             //return amount;
         }
 

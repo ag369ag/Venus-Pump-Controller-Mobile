@@ -812,7 +812,16 @@ namespace XamarinFormsEnablerMobile
                 
                 return;
             }
-            loginResult = await Task.Run(() => LoginUser(UserIDField.Text, UserPasswordField.Text));
+            loginResult = false;
+            try
+            {
+                loginResult = await Task.Run(() => LoginUser(UserIDField.Text, UserPasswordField.Text));
+            }
+            catch (Exception ex) 
+            {
+                loginResult = false;
+                DisplayAlert("", ex.Message, "Close");
+            }
             Console.WriteLine($"Login result are {loginResult}");
             Console.WriteLine($"Login result are {apiRequestResult.message}");
             Console.WriteLine($"Login result are {apiRequestResult.result}");
