@@ -502,7 +502,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     taxAmount = item.GetTaxAmount();
                 }
-                int isTaxEx = item.GetTaxID() == 1 ? 0 : 1;
+                int isTaxEx = (item.GetTaxID() == 1 || item.GetTaxID() == 0) ? 0 : 1;
                 int isZero = isZeroRatedTransaction ? 1 : 0;
                 string scpwdDiscounted = isSCPWDMoVDiscounted && (item.GetItemType() == 52) ? "2" : "";
                 int depID = item.GetItemType() == 2 ? 1 : item.GetItemType() == 14 ? 2 : 0;

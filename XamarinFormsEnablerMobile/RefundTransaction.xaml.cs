@@ -1141,6 +1141,7 @@ namespace XamarinFormsEnablerMobile
                                         double vatValue = 0 - (toBeDiscountedTotal - LessVATvalue);
                                         Console.WriteLine(toBeDiscountedTotal);
                                         Console.WriteLine(vatValue);
+
                                         string lessVATstring = " Less VAT 12%";
                                         AddSideStrings(lessVATstring, "P" + string.Format("{0:f02}",vatValue));
                                         if (refundDiscount.presetName.ToLower().Contains("naac"))
@@ -1149,7 +1150,7 @@ namespace XamarinFormsEnablerMobile
                                         }
                                     }
                                     
-                                    string DiscountString = "   " + refundDiscount.presetValue.ToString() + "% x P" + (toBeDiscountedTotal * (-1)).ToString();
+                                    string DiscountString = "   " + refundDiscount.presetValue.ToString() + "% x P" + (toBeDiscountedTotal * (-1)).ToString("#,##0.00");
                                     AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", double.Parse(item.itemValue)));
                                 }
 
