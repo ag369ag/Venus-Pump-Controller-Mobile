@@ -1037,10 +1037,14 @@ namespace XamarinFormsEnablerMobile
                     VATTotal -= refundItemValue;
                     NVATTotal += refundItemValue;
                 }
-             //   if (item.itemDesc.ToLower().Contains("naac"))
-              //  {
-              //      VATTotal -= refundItemValue;
-                    /*foreach (var discountTypes in main.DiscountPresetButtonList)
+
+
+                //=============================================================================================
+                // FOR NAAC VATABLE
+                if (item.itemDesc.ToLower().Contains("naac"))
+               {
+                   VATTotal -= refundItemValue;
+                    foreach (var discountTypes in main.DiscountPresetButtonList)
                     {
                         if (discountTypes.presetName != item.itemDesc)
                         {
@@ -1051,11 +1055,15 @@ namespace XamarinFormsEnablerMobile
 
                         double actualVatlessAmount = (refundItemValue / Convert.ToInt32(beforeDouble)) * 100;
                         double actualAmount = (actualVatlessAmount * 1.12);
-                        VATTotal -= refundItemValue;
+                        //VATTotal -= refundItemValue;
                         VATTotal -= actualVatlessAmount;
                         VATTotal += actualAmount;
-                    }*/
-              //  }
+                    }
+                }
+                //=============================================================================================
+
+                
+
                 if (item.itemType == "52" || item.itemType == "54")
                 {
                     
@@ -1070,7 +1078,8 @@ namespace XamarinFormsEnablerMobile
                         VATTotal += (refundItemValue * 2);
                         VATTotal -= refundItemValue;
                     }
-                    
+
+
                 }
 
                 else
@@ -1141,7 +1150,7 @@ namespace XamarinFormsEnablerMobile
                                     }
                                     
                                     string DiscountString = "   " + refundDiscount.presetValue.ToString() + "% x P" + (toBeDiscountedTotal * (-1)).ToString();
-                                    AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", (double.Parse(item.itemValue))));
+                                    AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", double.Parse(item.itemValue)));
                                 }
 
                             }; break;
@@ -1695,6 +1704,7 @@ namespace XamarinFormsEnablerMobile
 
             foreach(var item in FORPRINTINGARRAY)
             {
+                Console.WriteLine(item);
                 if (item.ToLower().Contains("copy"))
                 {
                     continue;

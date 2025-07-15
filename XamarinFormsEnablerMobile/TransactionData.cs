@@ -974,14 +974,14 @@ namespace XamarinFormsEnablerMobile
             AddCenterString("");
 
             double saleTotal = transactionsItem.Where(a => a.GetItemType() == 2 || a.GetItemType() == 14 || a.GetItemType() == 52 || a.GetItemType() == 54).Sum(a => a.GetTotal());
-            if(transactionsItem.Where(a=>a.GetPresetID() == 6).Count() > 0)
+            /*if(transactionsItem.Where(a=>a.GetPresetID() == 6).Count() > 0)
             {
                 double totalAMT = transactionsItem.Where(a => a.GetPresetID() == 6).Sum(a => a.GetTotal());
                 saleTotal -= totalAMT;
 
                 double newTotal = transactionsItem.Where(a => a.GetPresetID() == 6 && a.GetItemType() == 14).Sum(a => a.GetOrigTotal());
                 saleTotal += newTotal;
-            }
+            }*/
 
             AddSideString("Sale Total", FormatReceiptMoneyValue(saleTotal));
 

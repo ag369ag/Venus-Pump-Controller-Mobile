@@ -288,15 +288,17 @@ namespace XamarinFormsEnablerMobile
             double baseValue = itemUnitPrice / 1.12;
             double discValue = ((baseValue / 100) * discount.presetValue) * itemQuantity;
             
+            //====================================================================
             // NAAC WITH TAX ID 1
-            double removedTaxValue = itemUnitPrice - baseValue;
-            double returnedNAACTax = (baseValue - discValue) + removedTaxValue;
-            SetUnitPrice(returnedNAACTax);
+            //double removedTaxValue = itemUnitPrice - baseValue;
+            //double returnedNAACTax = (baseValue - discValue) + removedTaxValue;
+            //SetUnitPrice(returnedNAACTax);
             //SetUnitPrice(removedTaxValue);
+            //====================================================================
 
             //NAAC WITH TAX ID 2
 
-            //SetUnitPrice(baseValue);
+            SetUnitPrice(baseValue);
             SetDiscountedValue(discValue);
             OnPropertyChanged();
         }

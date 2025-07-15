@@ -439,6 +439,7 @@ namespace XamarinFormsEnablerMobile
             string printingText = "";
             foreach (string text in forPrintingArray)
             {
+                Console.WriteLine(text);
                 string withNextLine = text + "\n";
                 printingText += withNextLine;
             }
