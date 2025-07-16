@@ -1442,9 +1442,9 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add(" ");
             if (DepartmentDiscounts != null)
             {
-                FormatThreeColumnForPrinting(DepartmentDiscounts.Department, DepartmentDiscounts.Quantity.ToString("0.000"), DepartmentDiscounts.Total.ToString("#,##0.00"));
+                FormatThreeColumnForPrinting(DepartmentDiscounts.Department, DepartmentDiscounts.Quantity.ToString("0.000"), "-" + DepartmentDiscounts.Total.ToString("#,##0.00"));
                 FORPRINTINGARRAY.Add(" ");
-                FormatThreeColumnForPrinting("TOTAL", DepartmentDiscounts.Quantity.ToString("0.000"), DepartmentDiscounts.Total.ToString("#,##0.00"));
+                FormatThreeColumnForPrinting("TOTAL", DepartmentDiscounts.Quantity.ToString("0.000"), "-" + DepartmentDiscounts.Total.ToString("#,##0.00"));
             }
             else
             {
@@ -1457,9 +1457,9 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add(" ");
             if (DepartmentRefunds != null)
             {
-                FormatThreeColumnForPrinting(DepartmentRefunds.Department, DepartmentRefunds.Quantity.ToString("0.000"), DepartmentRefunds.Total.ToString("#,##0.00"));
+                FormatThreeColumnForPrinting(DepartmentRefunds.Department, DepartmentRefunds.Quantity.ToString("0.000"), "-" + DepartmentRefunds.Total.ToString("#,##0.00"));
                 FORPRINTINGARRAY.Add(" ");
-                FormatThreeColumnForPrinting("TOTAL", DepartmentRefunds.Quantity.ToString("0.000"), DepartmentRefunds.Total.ToString("#,##0.00"));
+                FormatThreeColumnForPrinting("TOTAL", DepartmentRefunds.Quantity.ToString("0.000"), "-" + DepartmentRefunds.Total.ToString("#,##0.00"));
             }
             else
             {

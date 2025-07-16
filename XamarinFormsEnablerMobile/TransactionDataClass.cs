@@ -298,7 +298,7 @@ namespace XamarinFormsEnablerMobile
 
             //NAAC WITH TAX ID 2
 
-            SetUnitPrice(baseValue);
+            //SetUnitPrice(baseValue);
             SetDiscountedValue(discValue);
             OnPropertyChanged();
         }

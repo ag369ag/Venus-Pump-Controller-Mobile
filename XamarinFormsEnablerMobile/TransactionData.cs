@@ -208,7 +208,7 @@ namespace XamarinFormsEnablerMobile
         public void AddTransactionItem(int itemType, int itemID, int itemTaxID, string itemDescription, double itemUnitPrice, double itemQuantity, double itemTotal, string displayUnitPrice, string displayQuantity, string displayTotal,
            bool isDiscounted, bool isBIRDiscount, int discountType, double discountValue, double discountedValue, int presetID, string gcNumber, string pumpID = "", int discountedItemIndex = 999)
         {
-            TransactionDataClass newItem = new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemUnitPrice, itemTotal, gcNumber, itemTotal.ToString(), pumpID);
+            TransactionDataClass newItem = new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemTotal / itemQuantity, itemTotal/itemQuantity, gcNumber, itemTotal.ToString(), pumpID);
             if (discountedItemIndex.Equals(999))
             {
                 transactionsItem.Add(newItem);

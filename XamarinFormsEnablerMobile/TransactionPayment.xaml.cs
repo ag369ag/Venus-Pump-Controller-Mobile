@@ -672,6 +672,12 @@ namespace XamarinFormsEnablerMobile
             {
                 return;
             }*/
+
+            if (selectedTransaction.GetQuantity() > 1 && selectedTransaction.GetItemType() == 14)
+            {
+                return;
+            }
+
             GetDiscounts();
 
         }
