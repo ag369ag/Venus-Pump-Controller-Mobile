@@ -163,7 +163,8 @@ namespace XamarinFormsEnablerMobile
                         RefundItemDescription = data2.GetProperty("Item_Description").ToString(),
                         RefundValue = data2.GetProperty("Value").ToString(),
                         RefundTransactionDateTime = refundDateTime.ToString("MM/dd/yyyy HH:mm"),
-                        RefundTransactionNumber = $"Refund #{data.GetProperty("transaction_resetter").ToString().PadLeft(3, '0')}-{data.GetProperty("BIR_Trans_Number").ToString().PadLeft(9, '0')}",
+                       // RefundTransactionNumber = $"Refund #{data.GetProperty("transaction_resetter").ToString().PadLeft(3, '0')}-{data.GetProperty("BIR_Trans_Number").ToString().PadLeft(9, '0')}",
+                        RefundTransactionNumber = $"TRS#: {data.GetProperty("transaction_resetter").ToString().PadLeft(3, '0')}-{data.GetProperty("BIR_Trans_Number").ToString().PadLeft(9, '0')}",
                         RefundReferenceTransactionNumber = $"Reference #{data.GetProperty("transaction_resetter_reference").ToString().PadLeft(3, '0')}-{data.GetProperty("transaction_number_reference").ToString().PadLeft(9, '0')}"
                     });
                 }
@@ -330,7 +331,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         forPrintingArray.Add("");
                         FormatSideStrings(item.RefundTransactionNumber, "", forPrintingArray);
-                        FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArray);
+                        //FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArray);
                         lastTransNumber = item.RefundTransactionNumber;
                     }
 
@@ -400,7 +401,7 @@ namespace XamarinFormsEnablerMobile
                     {
                         forPrintingArray.Add("");
                         FormatSideStrings(item.RefundTransactionNumber, "", forPrintingArray);
-                        FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArray);
+                        //FormatSideStrings(item.RefundReferenceTransactionNumber, "", forPrintingArray);
                         lastTransNumber = item.RefundTransactionNumber;
                     }
 

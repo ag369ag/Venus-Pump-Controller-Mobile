@@ -162,7 +162,7 @@ namespace XamarinFormsEnablerMobile
             string jsonSavingData = Newtonsoft.Json.JsonConvert.SerializeObject(logSavingData);
             StringContent savingContent = new StringContent(jsonSavingData, System.Text.Encoding.UTF8, "application/json");
             HttpClient http = new HttpClient();
-            HttpResponseMessage response = await http.PostAsync(new Uri($"{main.routes.apiEndpoint}/enablerAPI/VJournalCtrl/getDataFromPrintLog"), savingContent);
+            HttpResponseMessage response = await http.PostAsync(new Uri($"{main.routes.apiEndpoint}/VJournalCtrl/getDataFromPrintLog"), savingContent);
             string responseMessage = await response.Content.ReadAsStringAsync();
             JsonDocument jsonParsedResponse = JsonDocument.Parse(responseMessage);
             string statusCode = jsonParsedResponse.RootElement.GetProperty("statusCode").ToString();
@@ -174,7 +174,8 @@ namespace XamarinFormsEnablerMobile
 
                     Console.WriteLine("========================================");
                     Console.WriteLine("========================================");
-                    printService.PrintReceiptOnNative(a.GetProperty("Data").ToString().Replace("\\", ""), 17);
+                    //printService.PrintReceiptOnNative(a.GetProperty("Data").ToString().Replace("\\", ""), 17);
+                    printService.PrintReceiptOnNative(a.GetProperty("Data").ToString(), 17);
                 }
 
             }
