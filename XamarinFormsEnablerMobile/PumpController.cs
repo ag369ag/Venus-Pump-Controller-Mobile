@@ -45,8 +45,11 @@ namespace XamarinFormsEnablerMobile
             this.forecourt = forecourt;
             this.main = main;
 
-            forecourt.Pumps.OnStatusChange += new EventHandler<PumpStatusEventArgs>(PumpStatusChanged);
-            forecourt.Pumps.OnFuellingProgress += new EventHandler<FuellingProgressEventArgs>(PumpFuelling);
+            if (main.appSettings.EnableFuels)
+            {
+                forecourt.Pumps.OnStatusChange += new EventHandler<PumpStatusEventArgs>(PumpStatusChanged);
+                forecourt.Pumps.OnFuellingProgress += new EventHandler<FuellingProgressEventArgs>(PumpFuelling);
+            }
 
             //GetPump();
             //GetTransactionStacks();

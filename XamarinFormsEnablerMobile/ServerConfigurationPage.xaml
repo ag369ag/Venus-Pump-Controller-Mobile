@@ -26,7 +26,15 @@
                         </StackLayout>
                     </StackLayout>
                 </Frame>
-                <Frame Padding="7" CornerRadius="10">
+
+                <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                        <Label Text="Use Fuel Products" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                        <Switch IsToggled="{Binding  main.appSettings.EnableFuels}" x:Name="EnableFuelsSwitch" Toggled="SetTempUseFuels" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Padding="7" CornerRadius="10" IsVisible="{Binding  main.appSettings.EnableFuels}">
                     <StackLayout>
                         <Label Text="Enabler Server"/>
                         <Entry WidthRequest="270"
@@ -39,8 +47,8 @@
                 <StackLayout Orientation="Horizontal" >
                     <Frame Padding="7"
                            CornerRadius="10"
-                           HorizontalOptions="FillAndExpand">
-                        <StackLayout>
+                           HorizontalOptions="FillAndExpand" IsVisible="{Binding  main.appSettings.EnableFuels}">
+                        <StackLayout  >
                             <Label Text="Enabler Terminal" />
                             <Entry WidthRequest="135"
                                    Placeholder="..."
@@ -63,14 +71,14 @@
                         </StackLayout>
                     </Frame>
                 </StackLayout>
-                <Frame Padding="7" CornerRadius="10">
+                <Frame Padding="7" CornerRadius="10" IsVisible="{Binding  main.appSettings.EnableFuels}">
                     <StackLayout>
                         <Label Text="Enabler Password"/>
                         <Entry WidthRequest="270" Placeholder="..." x:Name="EnablerPasswordField" HorizontalTextAlignment="Center" IsPassword="True" />
                     </StackLayout>
                 </Frame>
 
-                <StackLayout Orientation="Horizontal">
+                <StackLayout Orientation="Horizontal"  IsVisible="{Binding  main.appSettings.EnableFuels}">
                     <Frame Padding="7"
                            CornerRadius="10"
                            HorizontalOptions="FillAndExpand">

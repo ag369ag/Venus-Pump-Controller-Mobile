@@ -19,7 +19,7 @@ namespace XamarinFormsEnablerMobile
     public partial class FinalWindow : ContentPage
     {
 
-        MainPage main;
+        public MainPage main { get; set; } = null;
         TransactionPayment transactions;
         string selectedVehicle = "";
         string selectedVehicleTypeID = "";
@@ -32,6 +32,7 @@ namespace XamarinFormsEnablerMobile
             transactions = transactionsP;
             transactions.attendantName = "";
 
+            BindingContext = this;
         }
 
         protected override void OnAppearing()

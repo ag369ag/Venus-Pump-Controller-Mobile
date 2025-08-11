@@ -619,7 +619,8 @@ namespace XamarinFormsEnablerMobile
                 pwdData = newPWDData,
                 spData = SoloParentData,
                 naacData = NAACData,
-                movData = MoVData
+                movData = MoVData,
+                serviceAmount = 0
             };
             Console.WriteLine("After creating object");
 

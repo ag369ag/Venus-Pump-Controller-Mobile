@@ -37,19 +37,19 @@
                                    Text="{Binding main.appSettings.pumpGridSpanCount}"/>
                         </StackLayout>
                     </Frame>
-                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand"  IsVisible="{Binding main.appSettings.EnableFuels}">
                         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
                             <Label Text="Require vehicle" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
                             <Switch IsToggled="{Binding main.appSettings.requireVehicle}" x:Name="RequireVehicleSwitch" Toggled="SetRequireVehicleStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
                         </StackLayout>
-                    </Frame>  
-                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                    </Frame>
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand"  IsVisible="{Binding main.appSettings.EnableFuels}">
                         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
                             <Label Text="Require attendant" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
                             <Switch IsToggled="{Binding main.appSettings.requireAttendant}" x:Name="RequireAttendantSwitch" Toggled="SetRequireAttendantStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
                         </StackLayout>
                     </Frame>
-                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                    <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand"  IsVisible="{Binding main.appSettings.EnableFuels}">
                         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
                             <Label Text="Quick transaction" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
                             <Switch IsToggled="{Binding main.appSettings.isQuickTransaction}" x:Name="quickTransactionSwitch" Toggled="SetQuickTransactionStatus" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
@@ -58,7 +58,7 @@
                     <Frame CornerRadius="10"
                            Padding="10"
                            VerticalOptions="Start"
-                           HorizontalOptions="FillAndExpand">
+                           HorizontalOptions="FillAndExpand"  IsVisible="{Binding main.appSettings.EnableFuels}">
                         <StackLayout Orientation="Horizontal"
                                      HorizontalOptions="FillAndExpand"
                                      VerticalOptions="Center">

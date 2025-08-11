@@ -10,12 +10,12 @@
                          AbsoluteLayout.LayoutBounds="1,1,1,1"
                          AbsoluteLayout.LayoutFlags="All"
                          x:Name="MainView">
-                <Label Text="Venus Pump Controller Mobile Version 1.0" HorizontalOptions="CenterAndExpand" FontAttributes="Bold"/>
+                <Label Text="Venus Pump Controller Mobile Version 1.0" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
                 <Frame Padding="3"
                        CornerRadius="3">
                     <StackLayout Orientation="Horizontal">
                         <StackLayout Orientation="Horizontal"
-                                     HorizontalOptions="StartAndExpand">
+                                     HorizontalOptions="StartAndExpand" IsVisible="{Binding main.appSettings.EnableFuels}">
                             <Label Text="Pump Server: " />
                             <Frame Padding="3,0,3,3"
                                    BackgroundColor="Green"
@@ -32,7 +32,7 @@
                             </Frame>
                             
                         </StackLayout>
-                        <StackLayout Orientation="Horizontal">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                             <Label Text="POS Server:" />
                             <Frame Padding="3,0,3,3"
                                    BackgroundColor="Green"
@@ -58,7 +58,8 @@
                        BorderColor="Transparent"
                        Margin="0,0,0,10"
                        CornerRadius="10"
-                       Padding="0">
+                       Padding="0"
+                       IsVisible="{Binding main.appSettings.EnableFuels}">
                     <StackLayout HorizontalOptions="FillAndExpand"
                                  VerticalOptions="FillAndExpand">
                         <Grid HorizontalOptions="FillAndExpand"
@@ -126,9 +127,11 @@
                 </Frame>
 
                 <StackLayout x:Name="MainScreenButtons"
-                             Orientation="Vertical">
+                             Orientation="Vertical"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="FillAndExpand" >
 
-                    <StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Horizontal" IsVisible="{Binding main.appSettings.EnableFuels}">
 
                         <Button Text="All auth"
                                 Clicked="AuthAllButtonOnClicked"
@@ -146,7 +149,7 @@
 
                     </StackLayout>
 
-                    <StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
                         <Button Text="Products"
                                 Clicked="OpenNonFuelView"
                                 Padding="0"
@@ -158,10 +161,11 @@
                                 Padding="0"
                                 CornerRadius="10"
                                 VerticalOptions="FillAndExpand"
-                                HorizontalOptions="FillAndExpand" />
+                                HorizontalOptions="FillAndExpand" 
+                                IsVisible="{Binding main.appSettings.EnableFuels}"/>
                     </StackLayout>
 
-                    <StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
                         <Button Text="Safedrop"
                                 Clicked="SafedropButtononClicked"
                                 Padding="0"
@@ -176,7 +180,7 @@
                                 HorizontalOptions="FillAndExpand" />
                     </StackLayout>
 
-                    <StackLayout Orientation="Horizontal">
+                    <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
                         <Button Text="About"
                                 Clicked="AboutButtonClicked"
                                 Padding="0"

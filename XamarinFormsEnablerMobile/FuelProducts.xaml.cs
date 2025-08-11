@@ -32,7 +32,7 @@ namespace XamarinFormsEnablerMobile
         // private TransactionFunctions trans;
         private Pump selectedPump;
         private TransactionPayment trans;
-        private MainPage main;
+        public MainPage main { get; set; } = null;
         public int selectedPumpID;
 
         
@@ -106,13 +106,17 @@ namespace XamarinFormsEnablerMobile
             transactions = new TransactionData(main);
 
             main.appSettings.pumpGridSpanCount = Preferences.Get("GridSpanCount", 6);
+            main.appSettings.EnableFuels = Preferences.Get("enableFuels", true);
             myPumpController.GridItemSpan = main.appSettings.pumpGridSpanCount;
-            
 
-            BindingContext = this;
+            Console.WriteLine($"Enable fuels is {main.appSettings.EnableFuels}");
+
             //pumpdataclass = myPumpController.GetPumpCollection();
 
-            myPumpController.GetPump();
+            if (main.appSettings.EnableFuels)
+            {
+                myPumpController.GetPump();
+            }
             //myPumpController.GetTransactionStacks();
 
             // COMMENTED FOR UI TESTING
@@ -120,10 +124,13 @@ namespace XamarinFormsEnablerMobile
             //forecourt.Pumps.OnStatusChange += new EventHandler<PumpStatusEventArgs>(PumpStatusChange);
             //forecourt.Pumps.OnFuellingProgress += new EventHandler<FuellingProgressEventArgs>(PumpFuellingChanges);
             //============================================================
+            
+            if (main.appSettings.EnableFuels)
+            {
+                forecourt.OnServerEvent += ConnectionStatusChecker;
 
-            forecourt.OnServerEvent += ConnectionStatusChecker;
-
-            pumpList.CollectionChanged += updatePumpList;
+                pumpList.CollectionChanged += updatePumpList;
+            }
             //HideFastTransactionButton();
             //SetIndividualPumpFunctionOff();
 
@@ -135,6 +142,8 @@ namespace XamarinFormsEnablerMobile
 
             GetEventTypes();
             GetPrerequisiteFromAPI();
+
+            BindingContext = this;
 
         }
 
@@ -160,10 +169,12 @@ namespace XamarinFormsEnablerMobile
             Task.Run(() =>
             {
                 GetFromPreferences();
-                
                 GetPOSServerStatus();
-                GetLockedTransaction();
-                myPumpController.UpdatePumpValues();
+                if (main.appSettings.EnableFuels)
+                {
+                    GetLockedTransaction();
+                    myPumpController.UpdatePumpValues();
+                }
             }).ConfigureAwait(false);
 
         }
@@ -251,43 +262,58 @@ namespace XamarinFormsEnablerMobile
 
         private async void GetPOSServerStatus()
         {
-            while (forecourt.IsConnected)
+            if (main.appSettings.EnableFuels)
             {
-                await Task.Delay(3000);
-                try
+                while (forecourt.IsConnected)
                 {
-                    HttpClient http = new HttpClient();
-                    //http.Timeout.Add(TimeSpan.FromSeconds(1));
-                    using (var cts = new CancellationTokenSource())
-                    {
-                        cts.CancelAfter(TimeSpan.FromSeconds(2));
-                        HttpResponseMessage status = await http.GetAsync(main.routes.apiEndpoint, cts.Token);
-                        string result = await status.Content.ReadAsStringAsync();
-                        //Console.WriteLine(result);
-                        if (!(string.IsNullOrEmpty(result)))
-                        {
-                            Device.BeginInvokeOnMainThread(() =>
-                            {
-                                POSServerStatus.BackgroundColor = Color.Green;
-                                POSServerIconStatus.Text = "\u2714";
-                            });
-                        }
+                    await Task.Delay(3000);
+                    ConnectToAPIServer();
+                }
 
+            }
+            else
+            {
+                while (true)
+                {
+                    ConnectToAPIServer();
+                    await Task.Delay(3000);
+                }
+            }
+
+        }
+
+        private async void ConnectToAPIServer()
+        {
+            try
+            {
+                HttpClient http = new HttpClient();
+                //http.Timeout.Add(TimeSpan.FromSeconds(1));
+                using (var cts = new CancellationTokenSource())
+                {
+                    cts.CancelAfter(TimeSpan.FromSeconds(2));
+                    HttpResponseMessage status = await http.GetAsync(main.routes.nonFuelProduct, cts.Token);
+                    string result = await status.Content.ReadAsStringAsync();
+                    Console.WriteLine(result);
+                    if (!(string.IsNullOrEmpty(result)))
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            POSServerStatus.BackgroundColor = Color.Green;
+                            POSServerIconStatus.Text = "\u2714";
+                        });
                     }
 
                 }
-                catch
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        POSServerStatus.BackgroundColor = Color.Red;
-                        POSServerIconStatus.Text = "\u2718";
-                    });
-                }
-
 
             }
-
+            catch
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    POSServerStatus.BackgroundColor = Color.Red;
+                    POSServerIconStatus.Text = "\u2718";
+                });
+            }
         }
 
         private async void reconnectToEnabler()
@@ -2061,6 +2087,7 @@ namespace XamarinFormsEnablerMobile
         void GetFromPreferences()
         {
             Console.WriteLine("GETTING FROM PREFERENCES");
+            Console.WriteLine($"Enable fuels is {main.appSettings.EnableFuels}");
             main.appSettings.paperWidth = (Preferences.Get("paperWidth", string.Empty) == "" || Preferences.Get("paperWidth", string.Empty) == null) ? 42 : int.Parse(Preferences.Get("paperWidth", string.Empty));
             main.appSettings.useSocketPrinter = Preferences.Get("useSocketPrinter", false);
             main.appSettings.printerIPValue= Preferences.Get("socketPrinterIP", string.Empty) ?? "";
@@ -2070,7 +2097,6 @@ namespace XamarinFormsEnablerMobile
             main.appSettings.isQuickTransaction = Preferences.Get("quickTransaction", false);
             main.appSettings.requireTapping = Preferences.Get("requireTapping", false);
             main.appSettings.useIminPrinter = Preferences.Get("useIminPrinter", false);
-            
 
 
             if (Preferences.ContainsKey("ForPayment"))

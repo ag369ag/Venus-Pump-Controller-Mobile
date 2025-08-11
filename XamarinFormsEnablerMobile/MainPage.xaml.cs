@@ -307,13 +307,19 @@ namespace XamarinFormsEnablerMobile
         {
             InitializeComponent();
             progressUI = DependencyService.Get<ShowProgressUI>();
-            forecourt = Variables.forecourt;
+            appSettings = new SettingsClass();
+
+            appSettings.EnableFuels = Preferences.Get("enableFuels", true);
+
             APIservice = new API_Service(this);
             td = new TransactionData(this);
-
-            appSettings = new SettingsClass();
-           
-            forecourt.OnConnectAsyncResult += new EventHandler<ConnectCompletedEventArgs>(ConnectionResult);
+            
+            forecourt = Variables.forecourt;
+            if (appSettings.EnableFuels)
+            {
+                forecourt.OnConnectAsyncResult += new EventHandler<ConnectCompletedEventArgs>(ConnectionResult);
+            }
+            
             //forecourt.ON += new EventHandler<MessageReceivedEventArgs>(ConnectionStatusChecker);
         }
 
@@ -364,7 +370,10 @@ namespace XamarinFormsEnablerMobile
                 CheckConnection();
                 SaveLogMain("logoff");
             });*/
-
+            if(!appSettings.EnableFuels)
+            {
+                return;
+            }
             MessagingCenter.Subscribe<object>(this, "AppDestroyed", (sender) =>
             {
                 forecourt.Disconnect("Ta!");
@@ -839,8 +848,25 @@ namespace XamarinFormsEnablerMobile
             try
             {
                 Console.WriteLine($"Connection Status: {forecourt.IsConnected}");
-                await Task.Delay(1500);
-                forecourt.ConnectAsync(terminalServer, terminalId, "", terminalPassword, true);
+                if (appSettings.EnableFuels)
+                {
+                    await Task.Delay(1500);
+                    forecourt.ConnectAsync(terminalServer, terminalId, "", terminalPassword, true);
+                }
+                else
+                {
+                    Preferences.Set("UserID", UserIDField.Text);
+                    Preferences.Set("UserPassword", UserPasswordField.Text);
+                    try
+                    {
+                        Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new FuelProducts(forecourt, this), false));
+                        loginResult = false;
+                    }
+                    catch
+                    {
+                        loginResult = false;
+                    }
+                }
             }
             catch (EnablerException err)
             {
@@ -863,6 +889,7 @@ namespace XamarinFormsEnablerMobile
             string terminalIDFromPreferences = Preferences.Get("EnablerTerminal", string.Empty) ?? "0";
             string posIDFromPreferences = Preferences.Get("posID", string.Empty) ?? "0";
             terminalServer = Preferences.Get("EnablerServer", string.Empty) ?? "";
+            
             Console.WriteLine(terminalIDFromPreferences + " this is the terminal id");
             terminalId = (terminalIDFromPreferences == "0" || terminalIDFromPreferences == "") ? 0 : int.Parse(terminalIDFromPreferences);
             posIDNumber = (posIDFromPreferences == "0" || posIDFromPreferences == "") ? 0 : int.Parse(posIDFromPreferences);

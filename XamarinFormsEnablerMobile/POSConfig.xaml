@@ -83,13 +83,16 @@
                          HorizontalOptions="FillAndExpand"
                          VerticalOptions="FillAndExpand"
                          AbsoluteLayout.LayoutFlags="All"
-                         AbsoluteLayout.LayoutBounds="1,1,1,1">
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         >
                 <Frame HorizontalOptions="FillAndExpand"
                        VerticalOptions="CenterAndExpand"
                        Margin="50,0,50,0"
                        Padding="10"
                        CornerRadius="10"
-                       BackgroundColor="AliceBlue">
+                       BackgroundColor="AliceBlue"
+                       
+                       >
 
                     <StackLayout Orientation="Vertical">
 

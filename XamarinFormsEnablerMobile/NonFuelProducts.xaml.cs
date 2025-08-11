@@ -19,7 +19,7 @@ namespace XamarinFormsEnablerMobile
             return false;
         }
 
-        private MainPage main;
+        private MainPage main { get; set; } = null;
         private FuelProducts fuelProds;
         private Forecourt forecourt;
         private MainPage.NonFuelProducts selectedNonFuel;
@@ -31,6 +31,15 @@ namespace XamarinFormsEnablerMobile
             fuelProds = fproducts;
             forecourt = fore;
             NonFuelItems.ItemsSource = main.NonFuels;
+
+            if (main.appSettings.EnableFuels)
+            {
+                fuelProductsButton.Text = "Fuel products";
+            }
+            else
+            {
+                fuelProductsButton.Text = "Menu";
+            }
         }
 
         void OnSearchItem(object sender, TextChangedEventArgs e)

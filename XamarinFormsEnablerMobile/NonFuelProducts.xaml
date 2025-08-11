@@ -48,7 +48,7 @@
                         CornerRadius="10" />
                 <Button Text="Fuel Products"
                         Clicked="OpenFuelProductsView"
-                        CornerRadius="10" />
+                        CornerRadius="10" x:Name="fuelProductsButton" />
                 <Button Text="Payment"
                         Clicked="ContinueToPaymentOnClick"
                         Padding="0"

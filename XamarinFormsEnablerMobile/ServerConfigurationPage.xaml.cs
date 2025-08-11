@@ -20,6 +20,9 @@ namespace XamarinFormsEnablerMobile
     {
         public MainPage main { get; set; } = null;
         string temporaryAPIServer = "";
+
+        public bool tempEnableFuels = false;
+        public bool saved = false;
         protected override bool OnBackButtonPressed()
         {
             return false;
@@ -29,6 +32,7 @@ namespace XamarinFormsEnablerMobile
             InitializeComponent();
             main = mainPage;
             Serial.Text = "Device ID: " + main.deviceID ;
+            tempEnableFuels = main.appSettings.EnableFuels ;
             if (main.useLaravelAPI)
             {
                 APISwitch.IsToggled = true;
@@ -64,6 +68,11 @@ namespace XamarinFormsEnablerMobile
             PumpEndField.Text = main.pumpEnd.ToString();
         }
 
+        public void SetTempUseFuels(object sender, ToggledEventArgs e)
+        {
+            main.appSettings.EnableFuels = EnableFuelsSwitch.IsToggled;
+        }
+
         void SetAPIType(object sender, EventArgs e)
         {
             Switch apiSwitch = (Switch)sender;
@@ -82,14 +91,19 @@ namespace XamarinFormsEnablerMobile
 
         async void EnablerConfigurationButtonOnClick(object sender, EventArgs e)
         {
+            saved = false;
             Console.WriteLine("update server");
-            if (ServerField.Text == "" || ServerField.Text == null ||
+            if (((ServerField.Text == "" || ServerField.Text == null ||
                 ConfigurationPort.Text == "" || ConfigurationPort.Text == null ||
                 EnablerServerField.Text == "" || EnablerServerField.Text == null ||
                 EnablerTerminalField.Text == "" || EnablerTerminalField.Text == null ||
                 EnablerPasswordField.Text == "" || EnablerPasswordField.Text == null ||
                 AdminIDField.Text == "" || AdminIDField.Text == null ||
-                AdminPasswordField.Text == "" || AdminPasswordField.Text == null || posIDField.Text == "" || posIDField.Text == null
+                AdminPasswordField.Text == "" || AdminPasswordField.Text == null || posIDField.Text == "" || posIDField.Text == null) && main.appSettings.EnableFuels )
+                || !main.appSettings.EnableFuels && 
+                (ServerField.Text == "" || ServerField.Text == null ||
+                ConfigurationPort.Text == "" || ConfigurationPort.Text == null || AdminIDField.Text == "" || AdminIDField.Text == null ||
+                AdminPasswordField.Text == "" || AdminPasswordField.Text == null || posIDField.Text == "" || posIDField.Text == null)
                 )
             {
                 await DisplayAlert(null, "Fill all the fields", "Close");
@@ -139,6 +153,7 @@ namespace XamarinFormsEnablerMobile
             main.posIDNumber = int.Parse(posIDField.Text);
             main.pumpStart = int.Parse(PumpStartField.Text);
             main.pumpEnd = int.Parse(PumpEndField.Text);
+            main.appSettings.EnableFuels = EnableFuelsSwitch.IsToggled;
             Preferences.Set("pumpStart", main.pumpStart);
             Preferences.Set("pumpEnd", main.pumpEnd);
             Preferences.Set("EnablerServer", main.terminalServer);
@@ -146,12 +161,18 @@ namespace XamarinFormsEnablerMobile
             Preferences.Set("posID", main.posIDNumber.ToString());
             Preferences.Set("EnablerPassword", main.terminalPassword);
             Preferences.Set("APIServer", main.APIServer);
+            Preferences.Set("enableFuels", main.appSettings.EnableFuels);
             main.progressUI.CloseProgressBar();
+            saved = true;
             await DisplayAlert(null, "Settings saved", "Close");
         }
 
         void BackToLoginPage(object sender, EventArgs e)
         {
+            if (!saved)
+            {
+                main.appSettings.EnableFuels = tempEnableFuels;
+            }
             Device.BeginInvokeOnMainThread(()=>Navigation.PopModalAsync(false));
         }
 

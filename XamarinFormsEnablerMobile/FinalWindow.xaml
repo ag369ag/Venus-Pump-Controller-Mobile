@@ -32,10 +32,10 @@
                         </StackLayout>
                     </Frame>
                     <StackLayout HeightRequest="5"/>
-                    <Button Text="Attendant" CornerRadius="10" Clicked="SelectAttendant"/>
-                    <StackLayout HeightRequest="5"/>
-                    <Button Text="Vehicle Type" CornerRadius="10" Clicked="ShowVehicleTypes"/>
-                    <StackLayout HeightRequest="10"/>
+                        <Button Text="Attendant" CornerRadius="10" Clicked="SelectAttendant" IsVisible="{Binding main.appSettings.EnableFuels}"/>
+                        <StackLayout HeightRequest="5"  IsVisible="{Binding main.appSettings.EnableFuels}"/>
+                        <Button Text="Vehicle Type" CornerRadius="10" Clicked="ShowVehicleTypes"  IsVisible="{Binding main.appSettings.EnableFuels}"/>
+                        <StackLayout HeightRequest="10"  IsVisible="{Binding main.appSettings.EnableFuels}"/>
                     <Label Text="Final Payment Information" TextColor="AliceBlue" FontSize="Medium" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
                     <StackLayout Orientation="Horizontal">
                         <Label Text="MOP" x:Name="LastMOPName" HorizontalOptions="FillAndExpand" TextColor="AliceBlue" FontSize="Medium" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
