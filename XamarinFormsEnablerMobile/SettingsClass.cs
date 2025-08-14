@@ -22,6 +22,7 @@ namespace XamarinFormsEnablerMobile
         private int gridSpanCount;
         private bool useIMINprinter;
         private bool enableFuels;
+        private bool DBAutoServiceCharge;
         public string enablerServer { get { return server; } set { server = value; OnPropertyChanged(); } }
         public bool useSocketPrinter { get { return useSocket; } set {  useSocket = value; OnPropertyChanged(); } }
         public bool useIminPrinter { get { return useIMINprinter; } set { useIMINprinter = value; OnPropertyChanged(); } }
@@ -36,6 +37,8 @@ namespace XamarinFormsEnablerMobile
         public int pumpGridSpanCount { get { return gridSpanCount; } set { gridSpanCount = value; OnPropertyChanged(); } }
 
         public bool EnableFuels { get { return enableFuels; } set { enableFuels = value; OnPropertyChanged(); } }
+
+        public bool DBApplyServiceCharge { get { return DBApplyServiceCharge; } set { DBAutoServiceCharge = value; OnPropertyChanged(); } }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

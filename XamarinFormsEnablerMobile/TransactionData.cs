@@ -30,6 +30,8 @@ namespace XamarinFormsEnablerMobile
         }
 
         MainPage main;
+        public bool useServiceCharge = false;
+        public int serviceChargeRate = 0;
         public bool isZeroRatedTransaction = false;
         private bool isSCPWDMoVDiscounted = false;
         private string subTotal = "0.00";

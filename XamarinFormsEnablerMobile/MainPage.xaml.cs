@@ -299,6 +299,7 @@ namespace XamarinFormsEnablerMobile
             public string savePrintedData { get; set; }
             public string apiEndpoint { get; set; }
             public string getBusinessDay { get; set; }
+            public string getServiceChargeRate { get; set; }
         }
         public apiRoutes routes = new apiRoutes();
         #endregion
@@ -474,6 +475,7 @@ namespace XamarinFormsEnablerMobile
                 routes.getDocumentNumber = APIServer + "/lookUpCtrl/getDocumentNumber";
                 routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
                 routes.getBusinessDay = APIServer + "/lookUpCtrl/getBusinessDay";
+                routes.getServiceChargeRate = APIServer + "/lookUpCtrl/GetServiceChargeRate";
             }
             else
             {
@@ -509,6 +511,7 @@ namespace XamarinFormsEnablerMobile
                 routes.getDocumentNumber = APIServer + "/lookUpCtrl/getDocumentNumber";
                 routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
                 routes.getBusinessDay = APIServer + "/lookUpCtrl/getBusinessDay";
+                routes.getServiceChargeRate = APIServer + "/lookUpCtrl/GetServiceChargeRate";
             }
 
         }

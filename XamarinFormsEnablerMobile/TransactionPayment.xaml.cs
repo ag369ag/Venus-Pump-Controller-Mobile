@@ -310,7 +310,6 @@ namespace XamarinFormsEnablerMobile
 
             }
 
-           
         }
         void UpdatePaymentValue(object sender, TextChangedEventArgs e)
         {

@@ -34,10 +34,7 @@ namespace XamarinFormsEnablerMobile
         private TransactionPayment trans;
         public MainPage main { get; set; } = null;
         public int selectedPumpID;
-
         
-        
-
         private bool isLoggedOut = false;
 
         private bool fromNoInternet = false;
@@ -1285,6 +1282,7 @@ namespace XamarinFormsEnablerMobile
             GetTax();
             GetVehicles();
             GetAttendants();
+            GetServiceCharge();
 
             /*await Task.Run(() => GetPump());
             await Task.Run(() => template.GetReceiptTemplate());
@@ -1872,6 +1870,37 @@ namespace XamarinFormsEnablerMobile
             catch (Exception)
             {
                 // Console.WriteLine($"{ex.Message}");
+            }
+        }
+
+        async void GetServiceCharge()
+        {
+            try
+            {
+                HttpClient http = new HttpClient();
+                HttpResponseMessage httpget = await http.GetAsync(new Uri(main.routes.getServiceChargeRate).ToString());
+                string responseMessage = await httpget.Content.ReadAsStringAsync();
+                Console.WriteLine(responseMessage);
+                Dictionary<string, object> responseValues = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseMessage);
+                Console.WriteLine(responseValues["statusCode"]);
+                Console.WriteLine(responseValues["statusDescription"]);
+                Console.WriteLine(responseValues["data"]);
+
+                int statusCode = int.Parse(responseValues["statusCode"].ToString());
+                if(statusCode == 0)
+                {
+                    return;
+                } 
+
+                string data = responseValues["data"].ToString();
+                List<Dictionary<string, object>> dataValues = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(data);
+                Console.WriteLine(dataValues[0]["Automatic_Applied"]);
+                Console.WriteLine(dataValues[0]["Service_Charge_Rate"]);
+
+            }
+            catch
+            {
+
             }
         }
 
