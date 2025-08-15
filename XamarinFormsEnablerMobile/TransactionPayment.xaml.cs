@@ -169,15 +169,16 @@ namespace XamarinFormsEnablerMobile
 
         private void TransactionItemListener(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(e.Action == NotifyCollectionChangedAction.Reset)
+            if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 Navigation.PopModalAsync();
             }
 
-            if(e.Action == NotifyCollectionChangedAction.Remove && main.td.GetTransactionItems.Count < 1 || (main.td.GetTransactionItems.Count == 1 && main.td.GetTransactionItems[0].GetItemType() == 99))
+            if (e.Action == NotifyCollectionChangedAction.Remove && main.td.GetTransactionItems.Count < 1 )
             {
                 Navigation.PopModalAsync();
             }
+
         }
 
         private void recomputeSubtotal()
@@ -583,7 +584,9 @@ namespace XamarinFormsEnablerMobile
                 }
 
                 selectedTransaction.SetQuantity(quantity);
+                main.td.RemoveServiceCharge(true);
                 main.td.UpdateSubtotal();
+
 
                 PaymentValue.Text = "";
                 HidePerItemTapped();

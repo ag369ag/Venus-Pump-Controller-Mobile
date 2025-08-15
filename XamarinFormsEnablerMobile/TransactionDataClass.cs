@@ -167,6 +167,8 @@ namespace XamarinFormsEnablerMobile
             itemTotal = newTotal;
             ForPaymentFormattedTotal = ToMoneyString(Math.Abs(newTotal));
             Console.WriteLine($"New total price is {newTotal}");
+
+            
         }
 
         public void RemoveTax()

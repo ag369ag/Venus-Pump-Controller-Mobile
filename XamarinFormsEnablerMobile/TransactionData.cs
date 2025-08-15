@@ -316,6 +316,14 @@ namespace XamarinFormsEnablerMobile
             }
 
             transactionsItem.Remove(transItem);
+            if (main.td.GetTransactionItems.Count == 1 && main.td.GetTransactionItems[0].GetItemType() == 99)
+            {
+                main.td.RemoveServiceCharge(false);
+            }
+            else
+            {
+                RemoveServiceCharge(true);
+            }
             NewSubtotal = ComputeSubtotal().ToString("#,##0.00");
             OnPropertyChanged();
         }
