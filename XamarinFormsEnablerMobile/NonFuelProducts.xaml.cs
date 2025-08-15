@@ -40,6 +40,16 @@ namespace XamarinFormsEnablerMobile
             {
                 fuelProductsButton.Text = "Menu";
             }
+            Console.WriteLine($"SERVICE CHARGE RATE IS {main.td.serviceChargeRate}");
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (main.td.GetTransactionItems.Count() == 1 && main.td.GetTransactionItems[0].GetItemType() == 99)
+            {
+                main.td.RemoveServiceCharge(false);
+            }
         }
 
         void OnSearchItem(object sender, TextChangedEventArgs e)

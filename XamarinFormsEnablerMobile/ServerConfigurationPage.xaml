@@ -20,17 +20,24 @@
                             <Label Text="API Server"/>
                             <Entry MinimumWidthRequest="200" Placeholder="..." x:Name="ServerField" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand" />
                         </StackLayout>
-                        <StackLayout  HorizontalOptions="FillAndExpand"> 
+                        <StackLayout  HorizontalOptions="FillAndExpand">
                             <Label Text="API Port"/>
                             <Entry  x:Name="ConfigurationPort" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Placeholder="..."  />
                         </StackLayout>
                     </StackLayout>
                 </Frame>
 
-                <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+                <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand" >
                     <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
                         <Label Text="Use Fuel Products" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
                         <Switch IsToggled="{Binding  main.appSettings.EnableFuels}" x:Name="EnableFuelsSwitch" Toggled="SetTempUseFuels" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand" IsVisible="{Binding main.appSettings.showServiceChargeDB}">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                        <Label Text="Use DB Auto Service Charge" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                        <Switch IsToggled="{Binding  main.appSettings.DBApplyServiceCharge}" x:Name="AutoServiceChargeSwitch" Toggled="SetTempUseDBServiceCharge" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
                     </StackLayout>
                 </Frame>
 

@@ -228,6 +228,13 @@
                                         CornerRadius="10"
                                         Clicked="GetClientInfo"
                                         x:Name="ClientInfoButton" />
+                                <Button Text="Service Charge"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="FillAndExpand"
+                                        CornerRadius="10"
+                                        Clicked="ServiceChargeButtonOnClicked"
+                                        x:Name="ServiceChargeButton"
+                                        IsVisible="{Binding main.appSettings.showServiceChargeDB}"/>
                                 <Button Text="Back"
                                         Clicked="BackButtonOnClicked"
                                         VerticalOptions="FillAndExpand"

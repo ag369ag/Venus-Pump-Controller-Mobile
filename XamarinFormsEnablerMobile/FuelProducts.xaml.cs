@@ -103,7 +103,6 @@ namespace XamarinFormsEnablerMobile
             transactions = new TransactionData(main);
 
             main.appSettings.pumpGridSpanCount = Preferences.Get("GridSpanCount", 6);
-            main.appSettings.EnableFuels = Preferences.Get("enableFuels", true);
             myPumpController.GridItemSpan = main.appSettings.pumpGridSpanCount;
 
             Console.WriteLine($"Enable fuels is {main.appSettings.EnableFuels}");
@@ -112,6 +111,7 @@ namespace XamarinFormsEnablerMobile
 
             if (main.appSettings.EnableFuels)
             {
+                Console.WriteLine("GETTING PUMPS");
                 myPumpController.GetPump();
             }
             //myPumpController.GetTransactionStacks();
@@ -173,7 +173,10 @@ namespace XamarinFormsEnablerMobile
                     myPumpController.UpdatePumpValues();
                 }
             }).ConfigureAwait(false);
-
+            if (main.td.GetTransactionItems.Count() == 1 && main.td.GetTransactionItems[0].GetItemType() == 99)
+            {
+                main.td.RemoveServiceCharge(false);
+            }
         }
 
         private void GetLockedTransaction()
@@ -1896,7 +1899,11 @@ namespace XamarinFormsEnablerMobile
                 List<Dictionary<string, object>> dataValues = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(data);
                 Console.WriteLine(dataValues[0]["Automatic_Applied"]);
                 Console.WriteLine(dataValues[0]["Service_Charge_Rate"]);
-
+                if (main.appSettings.DBApplyServiceCharge)
+                {
+                    main.td.useServiceCharge = dataValues[0]["Automatic_Applied"].ToString() == "1";
+                }
+                main.td.serviceChargeRate = int.Parse(dataValues[0]["Service_Charge_Rate"].ToString());
             }
             catch
             {

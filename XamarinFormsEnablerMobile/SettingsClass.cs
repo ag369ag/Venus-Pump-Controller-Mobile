@@ -36,9 +36,10 @@ namespace XamarinFormsEnablerMobile
 
         public int pumpGridSpanCount { get { return gridSpanCount; } set { gridSpanCount = value; OnPropertyChanged(); } }
 
-        public bool EnableFuels { get { return enableFuels; } set { enableFuels = value; OnPropertyChanged(); } }
+        public bool EnableFuels { get { return enableFuels; } set { enableFuels = value; showServiceChargeDB = !value; OnPropertyChanged(); } }
 
-        public bool DBApplyServiceCharge { get { return DBApplyServiceCharge; } set { DBAutoServiceCharge = value; OnPropertyChanged(); } }
+        public bool DBApplyServiceCharge { get { return DBAutoServiceCharge; } set { DBAutoServiceCharge = value; OnPropertyChanged(); } }
+        public bool showServiceChargeDB { get { return !enableFuels; } set { OnPropertyChanged(); } }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

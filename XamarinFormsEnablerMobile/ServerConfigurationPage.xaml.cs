@@ -22,6 +22,7 @@ namespace XamarinFormsEnablerMobile
         string temporaryAPIServer = "";
 
         public bool tempEnableFuels = false;
+        public bool tempUseServiceCharge = false;
         public bool saved = false;
         protected override bool OnBackButtonPressed()
         {
@@ -29,10 +30,12 @@ namespace XamarinFormsEnablerMobile
         }
         public ServerConfigurationPage(MainPage mainPage)
         {
+            Console.WriteLine("Entered Server configuration page");
             InitializeComponent();
             main = mainPage;
-            Serial.Text = "Device ID: " + main.deviceID ;
-            tempEnableFuels = main.appSettings.EnableFuels ;
+            Serial.Text = "Device ID: " + main.deviceID;
+            tempEnableFuels = main.appSettings.EnableFuels;
+            tempUseServiceCharge = main.appSettings.DBApplyServiceCharge;
             if (main.useLaravelAPI)
             {
                 APISwitch.IsToggled = true;
@@ -71,6 +74,11 @@ namespace XamarinFormsEnablerMobile
         public void SetTempUseFuels(object sender, ToggledEventArgs e)
         {
             main.appSettings.EnableFuels = EnableFuelsSwitch.IsToggled;
+        }
+
+        public void SetTempUseDBServiceCharge(object sender, ToggledEventArgs e)
+        {
+            main.appSettings.DBApplyServiceCharge = AutoServiceChargeSwitch.IsToggled;
         }
 
         void SetAPIType(object sender, EventArgs e)
@@ -154,6 +162,7 @@ namespace XamarinFormsEnablerMobile
             main.pumpStart = int.Parse(PumpStartField.Text);
             main.pumpEnd = int.Parse(PumpEndField.Text);
             main.appSettings.EnableFuels = EnableFuelsSwitch.IsToggled;
+            main.appSettings.DBApplyServiceCharge = AutoServiceChargeSwitch.IsToggled;
             Preferences.Set("pumpStart", main.pumpStart);
             Preferences.Set("pumpEnd", main.pumpEnd);
             Preferences.Set("EnablerServer", main.terminalServer);
@@ -162,6 +171,7 @@ namespace XamarinFormsEnablerMobile
             Preferences.Set("EnablerPassword", main.terminalPassword);
             Preferences.Set("APIServer", main.APIServer);
             Preferences.Set("enableFuels", main.appSettings.EnableFuels);
+            Preferences.Set("applyDBServiceCharge", main.appSettings.DBApplyServiceCharge);
             main.progressUI.CloseProgressBar();
             saved = true;
             await DisplayAlert(null, "Settings saved", "Close");
@@ -172,6 +182,7 @@ namespace XamarinFormsEnablerMobile
             if (!saved)
             {
                 main.appSettings.EnableFuels = tempEnableFuels;
+                main.appSettings.DBApplyServiceCharge = tempUseServiceCharge;
             }
             Device.BeginInvokeOnMainThread(()=>Navigation.PopModalAsync(false));
         }

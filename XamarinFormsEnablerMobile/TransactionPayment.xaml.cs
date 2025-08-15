@@ -123,6 +123,12 @@ namespace XamarinFormsEnablerMobile
             main.td.ClearSCPWD();
             main.td.ClearSoloParent();
 
+            Console.WriteLine($"SERVICE CHARGE RATE IS {main.td.serviceChargeRate}");
+            if (main.td.useServiceCharge)
+            {
+                main.td.RemoveServiceCharge(true);
+            }
+            setServiceChargeButtonColor();
             main.td.GetTransactionItems.CollectionChanged += TransactionItemListener;
         }
 
@@ -168,7 +174,7 @@ namespace XamarinFormsEnablerMobile
                 Navigation.PopModalAsync();
             }
 
-            if(e.Action == NotifyCollectionChangedAction.Remove && main.td.GetTransactionItems.Count < 1)
+            if(e.Action == NotifyCollectionChangedAction.Remove && main.td.GetTransactionItems.Count < 1 || (main.td.GetTransactionItems.Count == 1 && main.td.GetTransactionItems[0].GetItemType() == 99))
             {
                 Navigation.PopModalAsync();
             }
@@ -554,7 +560,6 @@ namespace XamarinFormsEnablerMobile
                 }
             }
             ContinueToVoidAll();
-
         }
 
         private void SetQuantityButtonOnClicked(object sender, EventArgs e)
@@ -562,6 +567,7 @@ namespace XamarinFormsEnablerMobile
             if (selectedTransaction.GetItemType() == 14 && !selectedTransaction.GetIsDiscounted)
             {
                 string quantityString = PaymentValue.Text;
+
                 if (quantityString.Contains("."))
                 {
                     DisplayAlert("Quantity should not contain decimal value", null, "Close");
@@ -672,6 +678,11 @@ namespace XamarinFormsEnablerMobile
                 return;
             }*/
 
+            if(selectedTransaction.GetItemType() == 99)
+            {
+                return;
+            }
+
             if (selectedTransaction.GetQuantity() > 1 && selectedTransaction.GetItemType() == 14)
             {
                 return;
@@ -733,6 +744,25 @@ namespace XamarinFormsEnablerMobile
                 CustomerField.IsVisible = true;
                 Transactions.IsVisible = false;
             });
+        }
+        void ServiceChargeButtonOnClicked(object sender, EventArgs e)
+        {
+            main.td.useServiceCharge = !main.td.useServiceCharge;
+            setServiceChargeButtonColor();
+            main.td.RemoveServiceCharge(main.td.useServiceCharge);
+            main.td.UpdateSubtotal();
+
+        }
+        void setServiceChargeButtonColor()
+        {
+            if (main.td.useServiceCharge)
+            {
+                ServiceChargeButton.BackgroundColor = Color.SeaGreen;
+            }
+            else
+            {
+                ServiceChargeButton.BackgroundColor = Color.LightGray;
+            }
         }
         void BackButtonOnClicked(object sender, EventArgs e)
         {

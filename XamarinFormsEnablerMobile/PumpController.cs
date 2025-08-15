@@ -72,19 +72,27 @@ namespace XamarinFormsEnablerMobile
             {
                 try
                 {
+                    Console.WriteLine($"pump count is {forecourt.Pumps.Count}");
+                    Console.WriteLine($"pump start is {main.pumpStart}");
+                    Console.WriteLine($"pump end is {main.pumpEnd}");
                     foreach (Pump pump in forecourt.Pumps)
                     {
+                        Console.WriteLine(pump.Number);
+                        Console.WriteLine(pump.CurrentTransaction == null);
                         if (!(pump.Number >= main.pumpStart && pump.Number <= main.pumpEnd))
+                        {
+                            Console.WriteLine("PUMP IS NOT IN RANGE");
                             continue;
+                        }
                         List<string> currentTransactionData = GetCurrentTransactionValues(pump);
                         Color stackColor = (pump.TransactionStack.Count > 0 || pump.CurrentTransaction != null) ? Color.Green : Color.AliceBlue;
                         pumpObservableCollection.Add(new PumpDataClass(pump.Id, pump.Name, $"P{pump.Id}", "nozzle.png", pump.TransactionStack.Count, currentTransactionData[0], currentTransactionData[1], currentTransactionData[2], currentTransactionData[3], stackColor));
-
+                        
                     }
                 }
                 catch (Exception ex)
                 {
-
+                    Console.WriteLine(ex);
                 }
                 finally
                 {
@@ -168,19 +176,30 @@ namespace XamarinFormsEnablerMobile
             double price = 0;
             double total = 0;
 
-            if (currentPump.CurrentTransaction != null && !currentPump.CurrentTransaction.IsLocked)
+            
+
+            if (currentPump.CurrentTransaction != null)
             {
-                DeliveryData currTransDel = currentPump.CurrentTransaction.DeliveryData;
-                volume = double.Parse(currTransDel.Quantity.ToString());
-                price = double.Parse(currTransDel.UnitPrice.ToString());
-                total = double.Parse(currTransDel.Money.ToString());
+                Console.WriteLine($"Pump id is {currentPump.Id} and number is {currentPump.Number}");
+                Console.WriteLine($"Pump current transaction is locked {currentPump.CurrentTransaction.IsLocked}");
+                Console.WriteLine($"Pump state is {currentPump.State}");
+                if (!currentPump.CurrentTransaction.IsLocked)
+                {
+                    DeliveryData currTransDel = currentPump.CurrentTransaction.DeliveryData;
+                    volume = double.Parse(currTransDel.Quantity.ToString());
+                    price = double.Parse(currTransDel.UnitPrice.ToString());
+                    total = double.Parse(currTransDel.Money.ToString());
 
-                currentType = currTransDel.Grade.ToString();
-                currentVolume = FormatVolume(volume);
-                currentPrice = FormatMoney(price);
-                currentTotal = FormatMoney(total);
+                    Console.WriteLine($"{volume} {price} {total} {currTransDel.Grade}");
 
-                InsertStack(currentPump.Id, currTransDel.DeliveryID, currentType, volume, price, total, currentVolume, currentPrice, currentTotal, true);
+                    currentType = currTransDel.Grade.ToString();
+                    currentVolume = FormatVolume(volume);
+                    currentPrice = FormatMoney(price);
+                    currentTotal = FormatMoney(total);
+
+                    InsertStack(currentPump.Id, currTransDel.DeliveryID, currentType, volume, price, total, currentVolume, currentPrice, currentTotal, true);
+                    
+                }
             }
 
             return new List<string> { currentType, currentVolume, currentPrice, currentTotal };

@@ -311,15 +311,13 @@ namespace XamarinFormsEnablerMobile
             appSettings = new SettingsClass();
 
             appSettings.EnableFuels = Preferences.Get("enableFuels", true);
+            appSettings.DBApplyServiceCharge = Preferences.Get("applyDBServiceCharge", true);
 
             APIservice = new API_Service(this);
             td = new TransactionData(this);
             
             forecourt = Variables.forecourt;
-            if (appSettings.EnableFuels)
-            {
-                forecourt.OnConnectAsyncResult += new EventHandler<ConnectCompletedEventArgs>(ConnectionResult);
-            }
+            
             
             //forecourt.ON += new EventHandler<MessageReceivedEventArgs>(ConnectionStatusChecker);
         }
@@ -355,6 +353,10 @@ namespace XamarinFormsEnablerMobile
                     });
                 }
             }).ConfigureAwait(false);
+            if (appSettings.EnableFuels)
+            {
+                forecourt.OnConnectAsyncResult += new EventHandler<ConnectCompletedEventArgs>(ConnectionResult);
+            }
         }
         protected override bool OnBackButtonPressed()
         {
@@ -900,9 +902,11 @@ namespace XamarinFormsEnablerMobile
             APIServer = Preferences.Get("APIServer", string.Empty) ?? null;
             pumpStart = Preferences.Get("pumpStart", 1);
             pumpEnd = Preferences.Get("pumpEnd", 8);
+
             
-         //   UserIDField.Text = Preferences.ContainsKey("UserID") ? Preferences.Get("UserID", string.Empty) : "";
-          //  UserPasswordField.Text = Preferences.ContainsKey("UserPassword", string.Empty) ? Preferences.Get("UserPassword", string.Empty) : "";
+
+            //   UserIDField.Text = Preferences.ContainsKey("UserID") ? Preferences.Get("UserID", string.Empty) : "";
+            //  UserPasswordField.Text = Preferences.ContainsKey("UserPassword", string.Empty) ? Preferences.Get("UserPassword", string.Empty) : "";
             useLaravelAPI = Preferences.Get("useLaravelAPI", false);
             Console.WriteLine("Enter conditions");
             Console.WriteLine(terminalId);

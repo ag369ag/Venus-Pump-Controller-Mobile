@@ -31,10 +31,11 @@ namespace XamarinFormsEnablerMobile
 
         MainPage main;
         public bool useServiceCharge = false;
-        public int serviceChargeRate = 0;
+        public double serviceChargeRate = 0;
         public bool isZeroRatedTransaction = false;
         private bool isSCPWDMoVDiscounted = false;
         private string subTotal = "0.00";
+        double serviceChargeAmt = 0;
         public bool zeroRatedTransactionIdentifier
         {
             get { return isZeroRatedTransaction; }
@@ -130,6 +131,36 @@ namespace XamarinFormsEnablerMobile
         public void AddCustomerDetail(string name, string address, string TIN, string businessStyle, bool isZeroRatedInfo)
         {
             customerDetails.Add(new CustomerDetailsClass(name, address, TIN, businessStyle, isZeroRatedInfo));
+        }
+
+        public void RemoveServiceCharge(bool returnServiceCharge)
+        {
+            serviceChargeAmt = 0;
+            
+            if(GetTransactionItems.Where(a=>a.GetItemType() == 99).Count() > 0)
+            {
+                int serviceChargeIndex = GetTransactionItems.IndexOf(a => a.GetItemType() == 99);
+                GetTransactionItems.RemoveAt(serviceChargeIndex);
+                OnPropertyChanged();
+            }
+
+            if (!useServiceCharge)
+            {
+                return;
+            }
+
+            if (!returnServiceCharge)
+            {
+                return;
+            }
+
+            Console.WriteLine($"TOTAL AMOUNT IS {GetTransItemsWithoutMOP().Sum(a => a.GetTotal())}");
+            Console.WriteLine($"SERVICE CHARGE RATE IS {serviceChargeRate}");
+            Console.WriteLine($"SERVICE CHARGE RATE IS {serviceChargeRate/100}");
+            serviceChargeAmt = GetTransItemsWithoutMOP().Sum(a => a.GetTotal()) * (serviceChargeRate / 100);
+            Console.WriteLine($"VALUE OF SERVICE CHARGE IS {serviceChargeAmt}");
+            AddTransactionItem(99, 1, 2, "Service Charge", serviceChargeAmt, 1, serviceChargeAmt, FormatDisplayMoney(serviceChargeAmt), FormatDisplayMoney(1), FormatDisplayMoney(serviceChargeAmt), false, false, 0, 0, 0, 0, "");
+            OnPropertyChanged();
         }
 
         public void RemoveCustomerDetails()
@@ -253,6 +284,11 @@ namespace XamarinFormsEnablerMobile
         public void VoidItem(TransactionDataClass transItem)
         {
             int discountIndex = transactionsItem.IndexOf(transItem);
+
+            if(transItem.GetItemType() == 99)
+            {
+                return;
+            }
 
             if (transItem.GetItemType() == 2)
             {
@@ -448,6 +484,10 @@ namespace XamarinFormsEnablerMobile
             //=======================
                 AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
             Console.WriteLine("After adding discount item");
+            if (useServiceCharge)
+            {
+                RemoveServiceCharge(true);
+            }
             //}    
             OnPropertyChanged();
         }
@@ -462,9 +502,15 @@ namespace XamarinFormsEnablerMobile
 
         public double ComputeSubtotal()
         {
+           // double serviceChargeValue = transactionsItem.Where(a => a.GetItemType() == 99).Sum(a => a.GetTotal());
             double totalItemValue = transactionsItem.Where(a => a.GetItemType() != 7 && a.GetItemType() != 8 && a.GetItemType() != 10).Sum(a => a.GetTotal());
             double totalMOPValue = transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Sum(a => a.GetTotal());
             // double withoutNAACTax1 = transactionsItem.Where(a => a.GetItemType() != 7 && a.GetItemType() != 8 && a.GetItemType() != 10).Sum(a => a.GetTotal()) - transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Sum(a => a.GetTotal());
+
+            /*if (useServiceCharge)
+            {
+                totalItemValue += serviceChargeValue;
+            }*/
 
             double unpaidValue = totalItemValue - totalMOPValue;
             return unpaidValue;
@@ -580,6 +626,8 @@ namespace XamarinFormsEnablerMobile
             customerAdd = normalCustomerDetail.GetCustomerAddess() ?? zeroRatedCustomerDetail.GetCustomerAddess();
             Console.WriteLine("Before creating payment data");
             Console.WriteLine($"POS ID is {main.posIDNumber}");
+
+            
             var PaymentData = new
             {
                 cashierID = main.CashierData.CashierID,
@@ -622,7 +670,7 @@ namespace XamarinFormsEnablerMobile
                 spData = SoloParentData,
                 naacData = NAACData,
                 movData = MoVData,
-                serviceAmount = 0
+                serviceAmount = serviceChargeAmt
             };
             Console.WriteLine("After creating object");
 
@@ -886,6 +934,10 @@ namespace XamarinFormsEnablerMobile
                         {
                             forPrintString.Add($"0{transItem.GetPumpID()}-{transItem.GetItemDescription()}");
                         }
+                        else if (transItem.GetItemType().Equals(99))
+                        {
+
+                        }
                         else
                         {
                             forPrintString.Add(transItem.GetItemDescription());
@@ -1032,6 +1084,14 @@ namespace XamarinFormsEnablerMobile
 
             Console.WriteLine("After taxes");
 
+            if (useServiceCharge)
+            {
+                AddSideString("Service Charge", FormatReceiptMoneyValue(serviceChargeAmt));
+                AddCenterString("");
+
+            }
+
+
             string signLine = $"Sign      : {new string('_', 27)}";
             double totalDiscountAmount = transactionsItem.Where(a => a.GetItemType() == 52 || a.GetItemType() == 54).Sum(a => a.GetTotal());
 
@@ -1139,6 +1199,8 @@ namespace XamarinFormsEnablerMobile
 
                 AddCenterString("");
             }
+
+           
 
             Console.WriteLine("after inhouse");
 
@@ -1565,7 +1627,7 @@ namespace XamarinFormsEnablerMobile
             ));
             double withBIRFiveDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID && (a.GetPresetID() == 2 || a.GetPresetID() == 4)).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
             // double withBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
-            double witouthBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
+            double withoutBIRDisc = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && !a.IsBIRDiscount() && a.GetTaxID() == taxID).Sum(a => (a.GetTotal()));
             //double amount = transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - Math.Abs(a.GetDiscountedValue())));
             //return transactionsItem.Where(a => (a.GetItemType() == 2 || a.GetItemType() == 14) && a.GetTaxID() == taxID).Sum(a => (a.GetTotal() - a.GetDiscountedValue()));
 
@@ -1582,10 +1644,15 @@ namespace XamarinFormsEnablerMobile
             }
             // double withNAACVatEx = transactionsItem.Where(a => a.GetItemType() == 14 && a.GetPresetID() == 6).Sum(a => a.GetTotal());
 
+            if (useServiceCharge && taxID == 2)
+            {
+                withoutBIRDisc += serviceChargeAmt;
+            }
+            
 
 
 
-            return withBIRDisc + withBIRFiveDisc + witouthBIRDisc + withNAACVat;
+            return withBIRDisc + withBIRFiveDisc + withoutBIRDisc + withNAACVat;
             //return amount;
         }
 
