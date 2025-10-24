@@ -678,7 +678,8 @@ namespace XamarinFormsEnablerMobile
                 spData = SoloParentData,
                 naacData = NAACData,
                 movData = MoVData,
-                serviceAmount = serviceChargeAmt
+                serviceAmount = serviceChargeAmt,
+                useTransItemHistory = false
             };
             Console.WriteLine("After creating object");
 
@@ -1077,6 +1078,12 @@ namespace XamarinFormsEnablerMobile
 
             AddCenterString("");
 
+            string lineCut = new string('-', main.appSettings.paperWidth);
+
+            if (!main.appSettings.useSPMmode)
+            {
+
+
             double totalVatableAmount = GetTotalValueByTaxID(1);
             double vatableSaleValue = totalVatableAmount / 1.12;
             double VATAmountValue = totalVatableAmount - vatableSaleValue;
@@ -1285,7 +1292,7 @@ namespace XamarinFormsEnablerMobile
 
                 toLogReceipt.Add(line);
             }*/
-            string lineCut = new string('-', main.appSettings.paperWidth);
+            
             if (hasBIRDIsc)
             {
 
@@ -1314,6 +1321,8 @@ namespace XamarinFormsEnablerMobile
 
                 forPrintString = newForPrintString;
             }
+            }
+
 
             string FORPRINTINGTEXT = "";
 

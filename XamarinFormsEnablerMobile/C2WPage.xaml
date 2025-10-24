@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinFormsEnablerMobile.C2WPage" BackgroundColor="AliceBlue">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <StackLayout
+                Padding="10"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                AbsoluteLayout.LayoutBounds="1,1,1,1"
+                AbsoluteLayout.LayoutFlags="All"
+                Orientation="Vertical">
+
+                <Button Clicked="RecurringButtonClicked" Text="Recurring" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" CornerRadius="10"/>
+                <Button Clicked="OrderSlipButtonClicked" Text="Orderslip" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" CornerRadius="10"/>
+                <Button Clicked="BackToMainPage" Text="Close"  CornerRadius="10"/>
+
+
+            </StackLayout>
+
+            <StackLayout 
+                x:Name="RecurringDisplay"
+                IsVisible="{Binding c2wService.showRecurringPage}"
+                AbsoluteLayout.LayoutBounds="1,1,1,1"
+                AbsoluteLayout.LayoutFlags="All"
+                BackgroundColor="AliceBlue"
+                Padding="10">
+                
+                <Frame 
+                    CornerRadius="10"
+                    Padding="5"
+                    BackgroundColor="White"
+                    >           
+                    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
+                        <Label Text="Customer name"/>
+                        <Entry x:Name="C2WCustomerNameField" HorizontalOptions="FillAndExpand" TextChanged="Searching"/>
+                    </StackLayout>
+                    
+                </Frame>
+
+                <ListView HasUnevenRows="True"
+                          x:Name="RecurringCustomers"
+                          ItemTapped="OnRecurringTapped"
+                          ItemsSource = "{Binding c2wService.customers}"
+                          >
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Frame Padding="10"
+                                                   CornerRadius="10"
+                                                   Margin="1">
+                                        <StackLayout Orientation="Horizontal"
+                                                                HorizontalOptions="FillAndExpand">
+                                            <Label Text="{Binding Name}"
+                                                           VerticalOptions="FillAndExpand"
+                                                           HorizontalOptions="StartAndExpand" />
+
+                                        </StackLayout>
+                                    </Frame>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>    
+
+                </ListView>
+
+                <Button Clicked="SelectCustomerButtonClicked" Text="Select" HorizontalOptions="FillAndExpand" CornerRadius="10"/>
+                <Button Clicked="CloseRecurringPage" Text="Close" HorizontalOptions="FillAndExpand" CornerRadius="10"/>
+
+            </StackLayout>
+
+            <StackLayout 
+                        
+                        IsVisible="{Binding c2wService.hasSelectedCustomer}"
+                        AbsoluteLayout.LayoutBounds="1,1,1,1"
+                        AbsoluteLayout.LayoutFlags="All"
+                        BackgroundColor="AliceBlue"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="FillAndExpand"
+                        Padding="10">
+
+                <Label Text="{Binding c2wService.selectedCustomerForRecurring.Name}" FontAttributes="Bold" FontSize="Title" TextColor="Black" />
+
+                <ListView HasUnevenRows="True"
+                          x:Name="RecurringCustomersUnpaidTransList"
+                          ItemTapped="OnUnpaidTransTapped"
+                          ItemsSource = "{Binding c2wService.unpaidCustomerTransactions}">
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Frame Padding="10"
+                                       CornerRadius="10"
+                                       Margin="1">
+                                    <StackLayout Orientation="Vertical">
+
+                                        <StackLayout Orientation="Horizontal"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    >
+                                            <Label Text="Transaction number:"/>
+                                            <Label Text="{Binding TransID}"
+                                                    VerticalOptions="FillAndExpand"
+                                                    />
+
+                                        </StackLayout>
+
+                                        <StackLayout HorizontalOptions="FillAndExpand"
+                                                     Orientation="Horizontal">
+
+                                            <Label Text="{Binding Desc}"
+                                                   MaxLines="1"
+                                                   VerticalOptions="FillAndExpand"
+                                                   HorizontalOptions="StartAndExpand" />
+
+                                        </StackLayout>
+                                        
+                                        <StackLayout Orientation="Horizontal"
+                                                     HorizontalOptions="FillAndExpand">
+
+                                            <Label Text="Invoice amount: " />
+                                            <StackLayout HorizontalOptions="FillAndExpand"/>
+                                            <Label Text="{Binding In_Amt}" />
+
+                                        </StackLayout>
+
+                                        <StackLayout Orientation="Horizontal"
+                                            HorizontalOptions="FillAndExpand">
+
+                                            <Label Text="Invoice paid: "/>
+                                            <StackLayout HorizontalOptions="FillAndExpand"/>
+                                            <Label Text="{Binding Inv_Paid}" />
+
+                                        </StackLayout>
+
+                                        <StackLayout Orientation="Horizontal"
+                                            HorizontalOptions="FillAndExpand">
+
+                                            <Label Text="Balance: "/>
+                                            <StackLayout HorizontalOptions="FillAndExpand"/>
+                                            <Label Text="{Binding Balance}" />
+
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                </ListView>
+
+                <Button Text="Transact" CornerRadius="10" BackgroundColor="White" Clicked="AddSelectedToTransaction"/>
+                <Button Text="Payment" CornerRadius="10" BackgroundColor="White" Clicked="StartPayment"/>
+                <Button Text="Close" CornerRadius="10" BackgroundColor="White" Clicked="CloseCustomerTransactionList"/>
+            </StackLayout>
+
+
+
+
+        </AbsoluteLayout>
+        <!-- <ActivityIndicator HeightRequest="50" WidthRequest="50" IsRunning="True"/> -->
+
+    </ContentPage.Content>
+</ContentPage>

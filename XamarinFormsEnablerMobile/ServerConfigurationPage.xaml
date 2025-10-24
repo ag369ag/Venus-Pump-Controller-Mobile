@@ -41,6 +41,24 @@
                     </StackLayout>
                 </Frame>
 
+                <Frame CornerRadius="10" Padding="10" VerticalOptions="Start" HorizontalOptions="FillAndExpand" IsVisible="{Binding main.appSettings.showServiceChargeDB}">
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+                        <Label Text="Use SPM mode" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center"/>
+                        <Switch IsToggled="{Binding  main.appSettings.useSPMmode}" x:Name="UseSPMModeSwitch" Toggled="SetTempUseSPMMode" OnColor="SeaGreen" ThumbColor="DarkGray" HorizontalOptions="End"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Padding="7" CornerRadius="10" IsVisible="{Binding  main.appSettings.showServiceChargeDB}">
+                    <StackLayout>
+                        <Label Text="ClientName"/>
+                        <Entry WidthRequest="270"
+                               Placeholder="..."
+                               x:Name="ClientNameField"
+                               HorizontalTextAlignment="Center"
+                               Text="{Binding main.appSettings.client}"/>   
+                    </StackLayout>
+                </Frame>
+
                 <Frame Padding="7" CornerRadius="10" IsVisible="{Binding  main.appSettings.EnableFuels}">
                     <StackLayout>
                         <Label Text="Enabler Server"/>
@@ -64,7 +82,7 @@
                                     />
                         </StackLayout>
                     </Frame>
-                    
+
                     <Frame Padding="7"
                            CornerRadius="10"
                            HorizontalOptions="FillAndExpand">
@@ -113,7 +131,7 @@
                         </StackLayout>
                     </Frame>
                 </StackLayout>
-                
+
                 <Frame Padding="7" CornerRadius="10">
                     <StackLayout>
                         <Label Text="Admin ID"/>

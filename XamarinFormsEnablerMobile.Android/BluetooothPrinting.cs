@@ -48,6 +48,9 @@ namespace XamarinFormsEnablerMobile.Droid
                 BluetoothDevice currentDevice = null;
                 foreach (BluetoothDevice device in pairedDevices)
                 {
+                    System.Console.WriteLine(device.Name);
+                    Toast.MakeText(Android.App.Application.Context, device.Name, ToastLength.Long).Show();
+                  
                     if (device.Name.ToLower().Contains("inner"))
                     {
                         currentDevice = device;
@@ -95,7 +98,6 @@ namespace XamarinFormsEnablerMobile.Droid
                         }
                         else
                         {
-
                         }
                         break;
                     }

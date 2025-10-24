@@ -22,6 +22,7 @@ namespace XamarinFormsEnablerMobile
         public HttpClient http = new HttpClient();
         public API_Service APIservice;
         public SettingsClass appSettings { get; set; } = null;
+        public ServiceC2W c2wService { get; set; } = null;
         private bool loginResult { get; set; }
         //private FuelProducts fuels;
         #endregion
@@ -300,6 +301,10 @@ namespace XamarinFormsEnablerMobile
             public string apiEndpoint { get; set; }
             public string getBusinessDay { get; set; }
             public string getServiceChargeRate { get; set; }
+            public string getc2wCustomers { get; set; }
+            public string getc2wCustomerByName { get; set; }
+            public string c2wSaveRecurringData { get; set; }
+            public string c2wLoadUnpaidTrans { get; set; }
         }
         public apiRoutes routes = new apiRoutes();
         #endregion
@@ -312,10 +317,12 @@ namespace XamarinFormsEnablerMobile
 
             appSettings.EnableFuels = Preferences.Get("enableFuels", true);
             appSettings.DBApplyServiceCharge = Preferences.Get("applyDBServiceCharge", true);
+            appSettings.useSPMmode = Preferences.Get("spmMode", false);
+            appSettings.client = Preferences.Get("clientName", "");
 
             APIservice = new API_Service(this);
             td = new TransactionData(this);
-            
+            c2wService = new ServiceC2W(this);
             forecourt = Variables.forecourt;
             
             
@@ -478,6 +485,10 @@ namespace XamarinFormsEnablerMobile
                 routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
                 routes.getBusinessDay = APIServer + "/lookUpCtrl/getBusinessDay";
                 routes.getServiceChargeRate = APIServer + "/lookUpCtrl/GetServiceChargeRate";
+                routes.getc2wCustomers = APIServer + "/C2WCtrl/GetAllCustomers";
+                routes.getc2wCustomerByName = APIServer + "/C2WCtrl/GetCustomersByName";
+                routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
+                routes.c2wLoadUnpaidTrans = APIServer + "/C2WCtrl/GetUnpaidTransactionsByCustomerID";
             }
             else
             {
@@ -514,6 +525,10 @@ namespace XamarinFormsEnablerMobile
                 routes.savePrintedData = APIServer + "/VJournalCtrl/savePrintedFromPOS";
                 routes.getBusinessDay = APIServer + "/lookUpCtrl/getBusinessDay";
                 routes.getServiceChargeRate = APIServer + "/lookUpCtrl/GetServiceChargeRate";
+                routes.getc2wCustomers = APIServer + "/C2WCtrl/GetAllCustomers";
+                routes.getc2wCustomerByName = APIServer + "/C2WCtrl/GetCustomersByName";
+                routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
+                routes.c2wLoadUnpaidTrans = APIServer + "/C2WCtrl/GetUnpaidTransactionsByCustomerID";
             }
 
         }
@@ -801,8 +816,6 @@ namespace XamarinFormsEnablerMobile
         {
             void ShowProgressIndicator();
             void CloseProgressBar();
-            
-
         }
 
         public void PrintToImin(string message, int fontSize)
@@ -834,7 +847,7 @@ namespace XamarinFormsEnablerMobile
             catch (Exception ex) 
             {
                 loginResult = false;
-                DisplayAlert("", ex.Message, "Close");
+                Device.BeginInvokeOnMainThread(() => { DisplayAlert("", ex.Message, "Close"); });
             }
             Console.WriteLine($"Login result are {loginResult}");
             Console.WriteLine($"Login result are {apiRequestResult.message}");

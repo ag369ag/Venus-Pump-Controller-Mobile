@@ -156,6 +156,15 @@
                                 CornerRadius="10"
                                 VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand" />
+
+                        <Button Text="C2W"
+                                Clicked="OpenC2WPage"
+                                Padding="0"
+                                CornerRadius="10"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                IsVisible="{Binding main.appSettings.isClientC2W}"/>
+
                         <Button Text="Payment"
                                 Clicked="ContinueToPaymentOnClick"
                                 Padding="0"

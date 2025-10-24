@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Org.Apache.Http.Client.Params;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using XamarinFormsEnablerMobile.Functions;
-using Xamarin.Essentials;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace XamarinFormsEnablerMobile
@@ -23,6 +23,7 @@ namespace XamarinFormsEnablerMobile
 
         public bool tempEnableFuels = false;
         public bool tempUseServiceCharge = false;
+        public bool tempUseSPM = false;
         public bool saved = false;
         protected override bool OnBackButtonPressed()
         {
@@ -36,6 +37,7 @@ namespace XamarinFormsEnablerMobile
             Serial.Text = "Device ID: " + main.deviceID;
             tempEnableFuels = main.appSettings.EnableFuels;
             tempUseServiceCharge = main.appSettings.DBApplyServiceCharge;
+            tempUseSPM = main.appSettings.useSPMmode;
             if (main.useLaravelAPI)
             {
                 APISwitch.IsToggled = true;
@@ -74,11 +76,22 @@ namespace XamarinFormsEnablerMobile
         public void SetTempUseFuels(object sender, ToggledEventArgs e)
         {
             main.appSettings.EnableFuels = EnableFuelsSwitch.IsToggled;
+            if (EnableFuelsSwitch.IsToggled)
+            {
+                AutoServiceChargeSwitch.IsToggled = false;
+                UseSPMModeSwitch.IsToggled = false;
+                ClientNameField.Text = "";
+            }
         }
 
         public void SetTempUseDBServiceCharge(object sender, ToggledEventArgs e)
         {
             main.appSettings.DBApplyServiceCharge = AutoServiceChargeSwitch.IsToggled;
+        }
+
+        public void SetTempUseSPMMode(object sender, ToggledEventArgs e)
+        {
+            main.appSettings.useSPMmode = UseSPMModeSwitch.IsToggled;
         }
 
         void SetAPIType(object sender, EventArgs e)
@@ -163,6 +176,8 @@ namespace XamarinFormsEnablerMobile
             main.pumpEnd = int.Parse(PumpEndField.Text);
             main.appSettings.EnableFuels = EnableFuelsSwitch.IsToggled;
             main.appSettings.DBApplyServiceCharge = AutoServiceChargeSwitch.IsToggled;
+            main.appSettings.useSPMmode = UseSPMModeSwitch.IsToggled;
+            main.appSettings.client = ClientNameField.Text;
             Preferences.Set("pumpStart", main.pumpStart);
             Preferences.Set("pumpEnd", main.pumpEnd);
             Preferences.Set("EnablerServer", main.terminalServer);
@@ -172,6 +187,8 @@ namespace XamarinFormsEnablerMobile
             Preferences.Set("APIServer", main.APIServer);
             Preferences.Set("enableFuels", main.appSettings.EnableFuels);
             Preferences.Set("applyDBServiceCharge", main.appSettings.DBApplyServiceCharge);
+            Preferences.Set("spmMode", main.appSettings.useSPMmode);
+            Preferences.Set("clientName", main.appSettings.client);
             main.progressUI.CloseProgressBar();
             saved = true;
             await DisplayAlert(null, "Settings saved", "Close");
@@ -183,6 +200,7 @@ namespace XamarinFormsEnablerMobile
             {
                 main.appSettings.EnableFuels = tempEnableFuels;
                 main.appSettings.DBApplyServiceCharge = tempUseServiceCharge;
+                main.appSettings.useSPMmode = tempUseSPM;
             }
             Device.BeginInvokeOnMainThread(()=>Navigation.PopModalAsync(false));
         }

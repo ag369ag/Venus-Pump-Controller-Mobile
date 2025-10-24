@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -746,6 +746,11 @@ namespace XamarinFormsEnablerMobile
         {
             Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new NonFuelProducts(main, this, forecourt), false));
         }
+
+        void OpenC2WPage(object sender, EventArgs e)
+        {
+            Device.BeginInvokeOnMainThread(() => Navigation.PushModalAsync(new C2WPage(main, this), false));
+        }
         async void SafedropButtononClicked(object sender, EventArgs e)
         {
             List<string> FORPRINTINGARRAY = new List<string>();
@@ -1283,9 +1288,13 @@ namespace XamarinFormsEnablerMobile
             GetGradeInfo();
             GetModeOfPayment();
             GetTax();
-            GetVehicles();
-            GetAttendants();
+            if (main.appSettings.EnableFuels)
+            {
+                GetVehicles();
+                GetAttendants();
+            }
             GetServiceCharge();
+            main.progressUI.CloseProgressBar();
 
             /*await Task.Run(() => GetPump());
             await Task.Run(() => template.GetReceiptTemplate());
@@ -1938,7 +1947,6 @@ namespace XamarinFormsEnablerMobile
                 }
             }
             catch (Exception) { }
-            main.progressUI.CloseProgressBar();
         }
         async void GetEventTypes()
         {

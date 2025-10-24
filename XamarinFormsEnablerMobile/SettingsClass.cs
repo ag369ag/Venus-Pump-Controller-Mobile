@@ -23,15 +23,18 @@ namespace XamarinFormsEnablerMobile
         private bool useIMINprinter;
         private bool enableFuels;
         private bool DBAutoServiceCharge;
+        private bool spmMode;
+        private string clientName;
+        public bool isClientC2W { get; set; }
         public string enablerServer { get { return server; } set { server = value; OnPropertyChanged(); } }
-        public bool useSocketPrinter { get { return useSocket; } set {  useSocket = value; OnPropertyChanged(); } }
+        public bool useSocketPrinter { get { return useSocket; } set { useSocket = value; OnPropertyChanged(); } }
         public bool useIminPrinter { get { return useIMINprinter; } set { useIMINprinter = value; OnPropertyChanged(); } }
         public int paperWidth { get { return width; } set { width = value; OnPropertyChanged(); } }
         public bool requireVehicle { get { return vehicle; } set { vehicle = value; OnPropertyChanged(); } }
-        public bool requireAttendant { get { return attendant; } set {  attendant = value; OnPropertyChanged(); } }
-        public bool requireTapping { get { return tapping; } set {  tapping = value; OnPropertyChanged(); } }
-        public bool isQuickTransaction { get { return quickTransaction; } set {  quickTransaction = value; OnPropertyChanged(); } }
-        public int printerPortValue { get { return printerPort; } set {  printerPort = value; OnPropertyChanged(); } }
+        public bool requireAttendant { get { return attendant; } set { attendant = value; OnPropertyChanged(); } }
+        public bool requireTapping { get { return tapping; } set { tapping = value; OnPropertyChanged(); } }
+        public bool isQuickTransaction { get { return quickTransaction; } set { quickTransaction = value; OnPropertyChanged(); } }
+        public int printerPortValue { get { return printerPort; } set { printerPort = value; OnPropertyChanged(); } }
         public string printerIPValue { get { return printerIP; } set { printerIP = value; OnPropertyChanged(); } }
 
         public int pumpGridSpanCount { get { return gridSpanCount; } set { gridSpanCount = value; OnPropertyChanged(); } }
@@ -41,6 +44,18 @@ namespace XamarinFormsEnablerMobile
         public bool DBApplyServiceCharge { get { return DBAutoServiceCharge; } set { DBAutoServiceCharge = value; OnPropertyChanged(); } }
         public bool showServiceChargeDB { get { return !enableFuels; } set { OnPropertyChanged(); } }
 
+        public bool useSPMmode { get { return spmMode; } set { spmMode = value; OnPropertyChanged(); } }
+
+        public string client
+        {
+            get { return clientName; }
+            set
+            {
+                clientName = value;
+                isClientC2W = value.ToLower() == "c2w";
+                OnPropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -49,7 +64,7 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine("DATA SHOULD UPDATE");
         }
 
-        
+
 
 
 
