@@ -569,7 +569,7 @@ namespace XamarinFormsEnablerMobile
 
         private void SetQuantityButtonOnClicked(object sender, EventArgs e)
         {
-            if (main.appSettings.isClientC2W)
+            if (main.appSettings.isClientC2W && main.appSettings.useSPMmode)
                 return;
 
             if (selectedTransaction.GetItemType() == 14 && !selectedTransaction.GetIsDiscounted)
@@ -688,7 +688,7 @@ namespace XamarinFormsEnablerMobile
                 return;
             }*/
 
-            if (main.appSettings.isClientC2W)
+            if (main.appSettings.isClientC2W && main.appSettings.useSPMmode)
                 return;
 
             if(selectedTransaction.GetItemType() == 99)
@@ -706,7 +706,7 @@ namespace XamarinFormsEnablerMobile
         }
         void TaxTypeButtonOnClick(object sender, EventArgs e)
         {
-            if (main.appSettings.isClientC2W)
+            if (main.appSettings.isClientC2W && main.appSettings.useSPMmode)
                 return;
             StartTaxButtonClickFunction();
         }

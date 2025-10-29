@@ -157,7 +157,7 @@
                                 CornerRadius="10"
                                 VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand"
-                                IsVisible="{Binding main.appSettings.disableNonSPMButton}"/>
+                                IsVisible="{Binding main.appSettings.useSPMmode}"/>
 
                         <Button Text="C2W"
                                 Clicked="OpenC2WPage"

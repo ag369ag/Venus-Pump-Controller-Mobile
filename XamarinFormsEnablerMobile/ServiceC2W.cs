@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static Android.Renderscripts.Sampler;
 
 namespace XamarinFormsEnablerMobile
 {
@@ -34,13 +35,13 @@ namespace XamarinFormsEnablerMobile
         public C2WCustomers focusedCustomerForRecurring { get { return c2wFocusedCustomerForRecurring; } }
 
         private bool recurringPageShowing = false;
-        public bool showRecurringPage { get { return recurringPageShowing; } set { recurringPageShowing = value;  OnPropertyChanged(); } }
+        public bool showRecurringPage { get { return recurringPageShowing; } set { recurringPageShowing = value; OnPropertyChanged(); } }
 
         private bool hasExistingCustomer = false;
         public bool hasSelectedCustomer { get { return hasExistingCustomer; } set { hasExistingCustomer = value; OnPropertyChanged(); } }
 
         private bool orderSlipPageShowing = false;
-        public bool showOrderSlipPage { get { return orderSlipPageShowing; } set { orderSlipPageShowing = value;  OnPropertyChanged(); } }
+        public bool showOrderSlipPage { get { return orderSlipPageShowing; } set { orderSlipPageShowing = value; OnPropertyChanged(); } }
         public ServiceC2W(MainPage mainPage)
         {
             main = mainPage;
@@ -399,7 +400,7 @@ namespace XamarinFormsEnablerMobile
         {
             int connectedToAddedTransaction =
             addedToTransaction.Where(
-                a => a.ProductID == voidedTransaction.GetItemID() && 
+                a => a.ProductID == voidedTransaction.GetItemID() &&
                 a.Desc.ToLower().Trim() == voidedTransaction.GetItemDescription().ToLower().Trim()).Count();
 
             if (connectedToAddedTransaction == 0)
@@ -420,12 +421,120 @@ namespace XamarinFormsEnablerMobile
         public bool hasOtherCustomerTransaction()
         {
             int hasOtherCustomerCount = addedToTransaction.Where(a => a.CustomerID != focusedCustomerForRecurring.ID).Count();
-            if(hasOtherCustomerCount > 0)
+            if (hasOtherCustomerCount > 0)
             {
                 return true;
             }
 
             return false;
         }
+
+        //====================================================================================================
+        //                               FUNCTIONS FOR LOADING OF VENDOR SLIP
+        //====================================================================================================
+        private List<C2W_VendorSlipHeaderData> originalUnpaidVendorSlipList = new List<C2W_VendorSlipHeaderData>();
+
+        private List<C2W_VendorSlipHeaderData> unpaidVendorSlips = new List<C2W_VendorSlipHeaderData>();
+        public List<C2W_VendorSlipHeaderData> unpaidVendorSlipList
+        {
+            get
+            {
+                return unpaidVendorSlips;
+            }
+            set
+            {
+                unpaidVendorSlips = value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        private C2W_VendorSlipHeaderData selectedVendorSlip = new C2W_VendorSlipHeaderData();
+        private C2W_VendorSlipHeaderData temporarySelectedVendorSlip = new C2W_VendorSlipHeaderData();
+
+        public List<C2W_VendorSlip_Items> vendorSlipItems = new List<C2W_VendorSlip_Items>();
+        public async void LoadUnpaidVendorSlip()
+        {
+            string unpaidVendorSlipResponse = await apiCall(main.routes.c2wGetUnpaidVendorSlip);
+
+            if (unpaidVendorSlipResponse == null)
+                return;
+
+            unpaidVendorSlipList = JsonConvert.DeserializeObject<List<C2W_VendorSlipHeaderData>>(unpaidVendorSlipResponse);
+            originalUnpaidVendorSlipList = JsonConvert.DeserializeObject<List<C2W_VendorSlipHeaderData>>(unpaidVendorSlipResponse);
+            //List<Dictionary<string, string>> unpaidVendorSlipDictionary = new List<Dictionary<string, string>>();
+            //unpaidVendorSlipDictionary = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(unpaidVendorSlipResponse);
+
+            //List<C2W_VendorSlipHeaderData> tempVendorSlip = new List<C2W_VendorSlipHeaderData>();
+            //foreach (Dictionary<string, string> unpaidValues in unpaidVendorSlipDictionary)
+            //{
+            //    tempVendorSlip.Add(new C2W_VendorSlipHeaderData
+            //    {
+            //        ORDERSLIPHEADERCODE = unpaidValues[""],
+            //        HEADERBC = unpaidValues[""]
+            //    });
+            //}
+        }
+
+        public void setTemporaryVendorSlip(C2W_VendorSlipHeaderData tempVendorSlip)
+        {
+            temporarySelectedVendorSlip = tempVendorSlip;
+        }
+        public void UnsetTemporaryVendorSlip()
+        {
+            temporarySelectedVendorSlip = null;
+        }
+        public bool checkIfTemporaryVendorSlip(C2W_VendorSlipHeaderData tempVendorSlip)
+        {
+            return temporarySelectedVendorSlip == tempVendorSlip;
+        }
+
+        public void searchVendorSlip(string hint)
+        {
+            unpaidVendorSlipList = originalUnpaidVendorSlipList.Where(a => a.ORDERSLIPHEADERCODE == hint || a.HEADERBC == hint).ToList();
+        }
+        public bool hasTemporarySelectedVendorSlip()
+        {
+            return temporarySelectedVendorSlip != null;
+        }
+
+        public bool selectedVendorSlipIsNull()
+        {
+            return selectedVendorSlip == null;
+        }
+
+        public async Task<bool> setSelectedVendorSlip()
+        {
+
+            selectedVendorSlip = temporarySelectedVendorSlip;
+
+            object forPaymentObject = new
+            {
+                QRCode = selectedVendorSlip.HEADERBC,
+                OrderSlipHeaderCode = selectedVendorSlip.ORDERSLIPHEADERCODE
+            };
+
+            string setForPaymentResponse = await apiCall(main.routes.c2wSetVendorSlipForPayment, forPaymentObject);
+
+            if (setForPaymentResponse == null)
+            {
+                selectedVendorSlip = null;
+                return false;
+            }
+
+            vendorSlipItems = JsonConvert.DeserializeObject<List<C2W_VendorSlip_Items>>(setForPaymentResponse);
+
+            foreach (C2W_VendorSlip_Items vendorItems in vendorSlipItems)
+            {
+                main.td.AddTransactionItem(14, vendorItems.PRODUCTID, 1, vendorItems.DESCRIPTION, (double)vendorItems.UNITPRICE,
+                    (double)vendorItems.QUANTITY, (double)vendorItems.TOTALAMOUNT, vendorItems.UNITPRICE.ToString("n2"), vendorItems.QUANTITY.ToString("n2"),
+                    vendorItems.TOTALAMOUNT.ToString("n2"), false, false, 0, 0, 0, 0, "");
+            }
+
+            LoadUnpaidVendorSlip();
+            return true;
+        }
+
+        
     }
 }

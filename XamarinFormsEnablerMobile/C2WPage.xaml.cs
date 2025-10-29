@@ -221,10 +221,44 @@ namespace XamarinFormsEnablerMobile
             c2wService.setTappedTransaction(selectedTrans);
         }
 
-
-
-        void CloseOrderSlipPage(object sender, EventArgs e)
+        async void TransactVendorSlipClicked(object sender, EventArgs e)
         {
+            bool hasSelectedVendorSlip = c2wService.hasTemporarySelectedVendorSlip();
+            if (!hasSelectedVendorSlip)
+            {
+                await DisplayAlert("Select vendor slip first.", null, "Close");
+                return;
+            }
+
+
+            bool hasExistingSelectedAlready = c2wService.selectedVendorSlipIsNull();
+            if (hasExistingSelectedAlready)
+            {
+                await DisplayAlert("Transact the previous selected vendor slip first.", null, "Close");
+                return;
+            }
+
+
+
+            main.progressUI.ShowProgressIndicator();
+            bool doneSetLoading = await c2wService.setSelectedVendorSlip();
+
+            if (!doneSetLoading)
+            {
+                main.progressUI.CloseProgressBar();
+                await DisplayAlert("Failed setting vendor slip for payment", null, "Close");
+                return;
+            }
+
+
+            main.progressUI.CloseProgressBar();
+        }
+
+        void CloseVendorSlipPage(object sender, EventArgs e)
+        {
+            c2wService.UnsetTemporaryVendorSlip();
+            UnpaidVendorSlipListView.SelectedItem = null;
+            UnpaidVendorSlipListView.Unfocus();
             c2wService.showOrderSlipPage = false;
         }
 
@@ -233,7 +267,25 @@ namespace XamarinFormsEnablerMobile
             if (C2WVendorSlipField.Text.Length == 0)
                 return;
 
-
+            string searchedValue = C2WVendorSlipField.Text;
+            c2wService.searchVendorSlip(searchedValue);
         }
+
+        void OnUnpaidVendorSlipTapped(object sender, ItemTappedEventArgs e)
+        {
+            C2W_VendorSlipHeaderData clicked = e.Item as C2W_VendorSlipHeaderData;
+            bool theSameItemClicked = c2wService.checkIfTemporaryVendorSlip(clicked);
+            if (theSameItemClicked)
+            {
+                c2wService.UnsetTemporaryVendorSlip();
+                UnpaidVendorSlipListView.SelectedItem = null;
+                UnpaidVendorSlipListView.Unfocus();
+                return;
+            }
+
+            c2wService.setTemporaryVendorSlip(clicked);
+        }
+
+
     }
 }

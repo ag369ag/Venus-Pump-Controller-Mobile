@@ -51,13 +51,13 @@
                                 <DataTemplate>
                                     <ViewCell>
                                         <Frame Padding="10"
-                   CornerRadius="10"
-                   Margin="1">
+                                               CornerRadius="10"
+                                               Margin="1">
                                             <StackLayout Orientation="Horizontal"
-                                HorizontalOptions="FillAndExpand">
+                                                         HorizontalOptions="FillAndExpand">
                                                 <Label Text="{Binding Name}"
-                           VerticalOptions="FillAndExpand"
-                           HorizontalOptions="StartAndExpand" />
+                                                       VerticalOptions="FillAndExpand"
+                                                       HorizontalOptions="StartAndExpand" />
 
                                             </StackLayout>
                                         </Frame>
@@ -179,10 +179,46 @@
 
                 </Frame>
 
-                <ListView></ListView>
+                <Frame CornerRadius="10" Padding="10" BackgroundColor="White">
+                    <Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+                        <ListView HasUnevenRows="True"
+                                  x:Name="UnpaidVendorSlipListView"
+                                  ItemTapped="OnUnpaidVendorSlipTapped"
+                                  ItemsSource = "{Binding c2wService.unpaidVendorSlipList}">
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Frame Padding="10"
+                                               CornerRadius="10"
+                                               Margin="1">          
+                                            <StackLayout Orientation="Vertical"
+                                                         HorizontalOptions="FillAndExpand">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="Vendor Slip Code: "/>
+                                                    <Label Text="{Binding ORDERSLIPHEADERCODE}" />
+                                                    
+                                                </StackLayout>
+                                                
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="Barcode: "/>
+                                                    <Label Text="{Binding HEADERBC}" />
+
+                                                </StackLayout>
+                                                
+                                            </StackLayout>
+                                        </Frame>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+
+                        </ListView>
+                    </Frame>
+                </Frame>
 
 
-                <Button Text="Close" Clicked="CloseOrderSlipPage"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
+                <Button Text="Transact" Clicked="TransactVendorSlipClicked"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
+                <Button Text="Close" Clicked="CloseVendorSlipPage"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
 
             </StackLayout>
 

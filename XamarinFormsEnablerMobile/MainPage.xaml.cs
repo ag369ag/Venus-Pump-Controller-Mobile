@@ -308,6 +308,9 @@ namespace XamarinFormsEnablerMobile
             public string c2wSaveRecurringData { get; set; }
             public string c2wRefundRecurringTrans { get; set; }
             public string c2wSetRecurringAsRefund { get; set; }
+            public string c2wGetUnpaidVendorSlip { get; set; }
+            public string c2wSetVendorSlipForPayment { get; set; }
+
         }
         public apiRoutes routes = new apiRoutes();
         #endregion
@@ -456,6 +459,7 @@ namespace XamarinFormsEnablerMobile
 
         public void SetAPIRoutes()
         {
+
             if (useLaravelAPI)
             {
                 routes.login = APIServer + "/login";
@@ -498,8 +502,11 @@ namespace XamarinFormsEnablerMobile
                 routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
                 routes.c2wRefundRecurringTrans = APIServer + "/C2WCtrl/RefundPaidAmount";
                 routes.c2wSetRecurringAsRefund = APIServer + "/TransactionCtrl/SetRecurringAsRefunded";
-
+                routes.c2wGetUnpaidVendorSlip = APIServer = "/C2WCtrl/GetUnpaidVendorSlip";
+                routes.c2wSetVendorSlipForPayment = APIServer + "/C2WCtrl/SetC2WVendorSlipForPayment";
             }
+
+
             else
             {
                 routes.login = APIServer + "/cashierCtrl/login";
@@ -542,6 +549,8 @@ namespace XamarinFormsEnablerMobile
                 routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
                 routes.c2wRefundRecurringTrans = APIServer + "/C2WCtrl/RefundPaidAmount";
                 routes.c2wSetRecurringAsRefund = APIServer + "/TransactionCtrl/SetRecurringAsRefunded";
+                routes.c2wGetUnpaidVendorSlip = APIServer = "/C2WCtrl/GetUnpaidVendorSlip";
+                routes.c2wSetVendorSlipForPayment = APIServer + "/C2WCtrl/SetC2WVendorSlipForPayment";
             }
 
         }
