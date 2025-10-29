@@ -10,7 +10,8 @@
                          AbsoluteLayout.LayoutBounds="1,1,1,1"
                          AbsoluteLayout.LayoutFlags="All"
                          x:Name="MainView">
-                <Label Text="Venus Pump Controller Mobile Version 1.0" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
+                <!-- <Label Text="Venus Pump Controller Mobile Version 1.0" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" /> -->
+                <Label Text="{Binding main.appSettings.insideAppTitle}" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" />
                 <Frame Padding="3"
                        CornerRadius="3">
                     <StackLayout Orientation="Horizontal">
@@ -155,7 +156,8 @@
                                 Padding="0"
                                 CornerRadius="10"
                                 VerticalOptions="FillAndExpand"
-                                HorizontalOptions="FillAndExpand" />
+                                HorizontalOptions="FillAndExpand"
+                                IsVisible="{Binding main.appSettings.disableNonSPMButton}"/>
 
                         <Button Text="C2W"
                                 Clicked="OpenC2WPage"

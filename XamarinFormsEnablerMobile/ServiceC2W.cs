@@ -1,8 +1,6 @@
-﻿using Java.Util;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
@@ -10,7 +8,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Xamarin.Forms.Internals;
 
 namespace XamarinFormsEnablerMobile
 {
@@ -31,17 +28,19 @@ namespace XamarinFormsEnablerMobile
         public List<C2WCustomers> customers { get { return customerList; } set { customerList = value; OnPropertyChanged(); } }
 
         private C2WCustomers c2wCustomerForRecurring = null;
-        public C2WCustomers selectedCustomerForRecurring { get { return c2wCustomerForRecurring; } }
-
+        public C2WCustomers selectedCustomerForRecurring { get { return c2wCustomerForRecurring; } set { c2wCustomerForRecurring = value; OnPropertyChanged(); } }
 
         private C2WCustomers c2wFocusedCustomerForRecurring = null;
         public C2WCustomers focusedCustomerForRecurring { get { return c2wFocusedCustomerForRecurring; } }
 
         private bool recurringPageShowing = false;
-        public bool showRecurringPage { get { return recurringPageShowing; } set { recurringPageShowing = value; OnPropertyChanged(); } }
+        public bool showRecurringPage { get { return recurringPageShowing; } set { recurringPageShowing = value;  OnPropertyChanged(); } }
 
         private bool hasExistingCustomer = false;
         public bool hasSelectedCustomer { get { return hasExistingCustomer; } set { hasExistingCustomer = value; OnPropertyChanged(); } }
+
+        private bool orderSlipPageShowing = false;
+        public bool showOrderSlipPage { get { return orderSlipPageShowing; } set { orderSlipPageShowing = value;  OnPropertyChanged(); } }
         public ServiceC2W(MainPage mainPage)
         {
             main = mainPage;
@@ -55,6 +54,7 @@ namespace XamarinFormsEnablerMobile
             if (postBody != null)
             {
                 string content = Newtonsoft.Json.JsonConvert.SerializeObject(postBody);
+                Console.WriteLine(content);
                 StringContent contentString = new StringContent(content, Encoding.UTF8, "application/json");
                 HttpResponseMessage httpResponse = await http.PostAsync(new Uri(route).ToString(), contentString);
                 responseMessage = await httpResponse.Content.ReadAsStringAsync();
@@ -64,7 +64,7 @@ namespace XamarinFormsEnablerMobile
                 HttpResponseMessage httpResponse = await http.GetAsync(new Uri(route).ToString());
                 responseMessage = await httpResponse.Content.ReadAsStringAsync();
             }
-
+            Console.WriteLine(responseMessage);
             JsonDocument responseJson = JsonDocument.Parse(responseMessage);
             Dictionary<string, object> responseValues = responseJson.Deserialize<Dictionary<string, object>>();
             if (responseValues["statusCode"].ToString() == "0")
@@ -148,7 +148,8 @@ namespace XamarinFormsEnablerMobile
 
         public void setCustomerForRecurring()
         {
-            c2wCustomerForRecurring = focusedCustomerForRecurring;
+            //c2wCustomerForRecurring = focusedCustomerForRecurring;
+            selectedCustomerForRecurring = focusedCustomerForRecurring;
             hasSelectedCustomer = true;
             OnPropertyChanged();
             LoadUnpaidCustomerTrans();
@@ -166,14 +167,16 @@ namespace XamarinFormsEnablerMobile
         //                              FUNCTION FOR LOADING OF RECURRING TRANSACTION
         //========================================================================================================
 
-        private List<C2W_Trans> customerUnpaidTrans = null;
+        private List<C2W_Trans> customerUnpaidTrans { get; set; } = null;
         public List<C2W_Trans> unpaidCustomerTransactions { get { return customerUnpaidTrans; } set { customerUnpaidTrans = value; OnPropertyChanged(); } }
 
         private C2W_Trans transTapped = null;
         public C2W_Trans tappedTransaction { get { return transTapped; } set { transTapped = value; OnPropertyChanged(); } }
 
-        private List<C2W_Trans> addedToTransaction = null;
-        public List<C2W_Trans> AddedTrans { get { return addedToTransaction; } set { addedToTransaction = value; OnPropertyChanged(); } }
+        private List<C2W_Trans> addedToTransaction = new List<C2W_Trans>();
+        public List<C2W_Trans> AddedTrans { get { return addedToTransaction; } }
+
+        public List<RecurringTransData> toBeRefundedRecurringData = new List<RecurringTransData>();
 
         public async void LoadUnpaidCustomerTrans()
         {
@@ -185,10 +188,68 @@ namespace XamarinFormsEnablerMobile
             {
                 string responseData = await apiCall(main.routes.c2wLoadUnpaidTrans, obs);
                 Console.WriteLine(responseData);
-                unpaidCustomerTransactions = JsonConvert.DeserializeObject<List<C2W_Trans>>(responseData);
+                List<C2W_Trans> unFilteredCustomerTrans = JsonConvert.DeserializeObject<List<C2W_Trans>>(responseData);
+                //unpaidCustomerTransactions = unFilteredCustomerTrans;
+                if (addedToTransaction.Count() > 0)
+                {
+                    foreach (C2W_Trans trans in unFilteredCustomerTrans)
+                    {
+                        if (trans.invPd > 0)
+                        {
+                            trans.In_Amt = (trans.inAmt - trans.invPd).ToString();
+                            trans.Inv_Paid = "0";
+                        }
+
+                        if (addedToTransaction.Where(a => a.TransID == trans.TransID).Count() <= 0)
+                        {
+                            unpaidCustomerTransactions.Add(trans);
+                            continue;
+                        }
+
+
+                        int addedToTransIndex = addedToTransaction.IndexOf(addedToTransaction.Where(a => a.TransID == trans.TransID).First());
+                        //trans.Inv_Paid = (trans.invPd + addedToTransaction[addedToTransIndex].invPd).ToString();
+                        if (trans.balanceAmt == 0)
+                        {
+                            continue;
+                        }
+
+
+                        /*if (trans.balanceAmt == addedToTransaction[addedToTransIndex].invPd)
+                            continue;*/
+
+                        // if (trans.balanceAmt == addedToTransaction[addedToTransIndex].invPd + trans.invPd)
+                        if (trans.balanceAmt == addedToTransaction[addedToTransIndex].invPd)
+                            continue;
+
+
+
+
+                        // trans.Inv_Paid = (trans.invPd + addedToTransaction[addedToTransIndex].invPd).ToString();
+                        unpaidCustomerTransactions.Add(trans);
+
+                    }
+                    //unpaidCustomerTransactions = unFilteredCustomerTrans;
+                }
+                else
+                {
+                    List<C2W_Trans> newTrans = new List<C2W_Trans>();
+                    foreach (C2W_Trans trans in unFilteredCustomerTrans)
+                    {
+                        if (trans.invPd > 0)
+                        {
+                            trans.In_Amt = (trans.inAmt - trans.invPd).ToString();
+                            trans.Inv_Paid = "0";
+                        }
+
+                        newTrans.Add(trans);
+                    }
+                    unpaidCustomerTransactions = newTrans;
+                    //unpaidCustomerTransactions = unFilteredCustomerTrans;
+                }
             }
             catch (Exception e) { }
-            
+
         }
 
         public void setTappedTransaction(C2W_Trans transaction)
@@ -203,23 +264,168 @@ namespace XamarinFormsEnablerMobile
 
         public void AddedTransactionToItems(decimal itemValue)
         {
-            tappedTransaction.inAmt -= itemValue;
-            tappedTransaction.invPd += itemValue;
-            tappedTransaction.balanceAmt -= itemValue;
-            if(AddedTrans.Where(a=>a.TransID == tappedTransaction.TransID).Count() > 0)
+            Console.WriteLine($"Passed value is {itemValue}");
+            int tappedTransactionIndex = unpaidCustomerTransactions.IndexOf(tappedTransaction);
+            Console.WriteLine("After getting index of tapped transaction");
+
+            decimal originalBalance = tappedTransaction.balanceAmt;
+            //Console.WriteLine($"Before removing item value {itemValue} to invoice amount {tappedTransaction.inAmt}");
+            //unpaidCustomerTransactions[tappedTransactionIndex].In_Amt = (unpaidCustomerTransactions[tappedTransactionIndex].inAmt - itemValue).ToString();
+            Console.WriteLine($"Before adding item value {itemValue} to inv paid {tappedTransaction.Inv_Paid}");
+            //unpaidCustomerTransactions[tappedTransactionIndex].Inv_Paid = (tappedTransaction.invPd + itemValue).ToString();
+            Console.WriteLine($"Computed updated invoice paid {itemValue + tappedTransaction.invPd}");
+            tappedTransaction.Inv_Paid = (tappedTransaction.invPd + itemValue).ToString();
+            //Console.WriteLine($"Before removing item value {itemValue} to balance {tappedTransaction.balanceAmt}");
+            //unpaidCustomerTransactions[tappedTransactionIndex].Balance = (unpaidCustomerTransactions[tappedTransactionIndex].balanceAmt - itemValue).ToString();
+            if (addedToTransaction.Where(a => a.TransID == tappedTransaction.TransID).Count() > 0)
             {
-                //AddedTrans.Where(a=>a.TransID == tappedTransaction.TransID).First().
+                C2W_Trans addedC2wTrans = addedToTransaction.Where(a => a.TransID == tappedTransaction.TransID).First();
+                int addedToTransactionIndex = addedToTransaction.IndexOf(addedC2wTrans);
+                addedToTransaction[addedToTransactionIndex].Inv_Paid = (unpaidCustomerTransactions[tappedTransactionIndex].Inv_Paid).ToString();
+                Console.WriteLine($"Updated transaction info value: {addedToTransaction[addedToTransactionIndex].Inv_Paid}");
             }
             else
             {
-                AddedTrans.Add(tappedTransaction);
+                C2W_Trans toBeAddedToTrans = new C2W_Trans
+                {
+                    TransID = tappedTransaction.TransID,
+                    CustomerID = tappedTransaction.CustomerID,
+                    ProductID = tappedTransaction.ProductID,
+                    Desc = tappedTransaction.Desc,
+                    inAmt = tappedTransaction.inAmt,
+                    In_Amt = tappedTransaction.inAmt.ToString(),
+                    invPd = 0,
+                    Inv_Paid = "0",
+                    balanceAmt = originalBalance,
+                    Balance = "0",
+                    Name = tappedTransaction.Name,
+                    TENANTCODE = tappedTransaction.TENANTCODE,
+                    VAT = tappedTransaction.VAT
+                };
+                toBeAddedToTrans.Inv_Paid = (itemValue).ToString();
+                addedToTransaction.Add(toBeAddedToTrans);
+                Console.WriteLine($"Added to be paid amount {toBeAddedToTrans.Inv_Paid}");
 
             }
 
-            if(tappedTransaction.balanceAmt == 0)
+            Console.WriteLine("Before checking balance amount");
+
+            if (unpaidCustomerTransactions[tappedTransactionIndex].balanceAmt == 0)
             {
-                unpaidCustomerTransactions.RemoveAt(unpaidCustomerTransactions.IndexOf(tappedTransaction));
+
+                List<C2W_Trans> unpaidTrans = customerUnpaidTrans;
+                unpaidCustomerTransactions = new List<C2W_Trans>();
+                unpaidTrans.RemoveAt(tappedTransactionIndex);
+                unpaidCustomerTransactions = unpaidTrans;
+                OnPropertyChanged();
             }
+
+            unfocusTappedTransaction();
+
+
+
+            //LoadUnpaidCustomerTrans();
+
+        }
+
+
+        public async void UpdateUnpaidTransctionToDB(int orNumber, int resetter)
+        {
+            if (addedToTransaction.Count() <= 0)
+                return;
+
+            string serializedAddedToTransaction = JsonConvert.SerializeObject(addedToTransaction);
+
+            object postObject = new
+            {
+                unpaidTransaction = serializedAddedToTransaction
+            };
+
+            await apiCall(main.routes.c2wUpdateUnpaidTransaction, postObject);
+
+            List<RecurringTransData> recurrTransData = new List<RecurringTransData>();
+            foreach (C2W_Trans trans in addedToTransaction)
+            {
+                recurrTransData.Add(new RecurringTransData
+                {
+                    customerID = trans.CustomerID,
+                    customerName = trans.Name,
+                    desc = trans.Desc,
+                    orNum = orNumber,
+                    orResetter = resetter,
+                    transID = trans.TransID,
+                    posID = main.posIDNumber,
+                    prodID = trans.ProductID,
+                    paidAmount = trans.invPd,
+                    tenantCode = trans.TENANTCODE
+                });
+            }
+
+            string recurrDataString = JsonConvert.SerializeObject(recurrTransData);
+            object recurrObject = new
+            {
+                recurringData = recurrDataString
+            };
+
+            await apiCall(main.routes.c2wSaveRecurringData, recurrObject);
+
+        }
+
+        public void AfterTransaction()
+        {
+            addedToTransaction.Clear();
+        }
+
+        public async void RefundRecurringTrans()
+        {
+            string recurringString = JsonConvert.SerializeObject(toBeRefundedRecurringData);
+            object recurringData = new
+            {
+                recurringData = recurringString
+            };
+
+            await apiCall(main.routes.c2wSetRecurringAsRefund, recurringData);
+
+            object recurringRefund = new
+            {
+                refundTrans = recurringString
+            };
+            await apiCall(main.routes.c2wRefundRecurringTrans, recurringRefund);
+
+            toBeRefundedRecurringData.Clear();
+        }
+
+        public void VoidTransaction(TransactionDataClass voidedTransaction)
+        {
+            int connectedToAddedTransaction =
+            addedToTransaction.Where(
+                a => a.ProductID == voidedTransaction.GetItemID() && 
+                a.Desc.ToLower().Trim() == voidedTransaction.GetItemDescription().ToLower().Trim()).Count();
+
+            if (connectedToAddedTransaction == 0)
+                return;
+
+            C2W_Trans connectedTransaction = addedToTransaction.Where(
+                a => a.ProductID == voidedTransaction.GetItemID() &&
+                a.Desc.ToLower().Trim() == voidedTransaction.GetItemDescription().ToLower().Trim()).First();
+
+            addedToTransaction.Remove(connectedTransaction);
+        }
+
+        public void VoidAllTransaction()
+        {
+            addedToTransaction.Clear();
+        }
+
+        public bool hasOtherCustomerTransaction()
+        {
+            int hasOtherCustomerCount = addedToTransaction.Where(a => a.CustomerID != focusedCustomerForRecurring.ID).Count();
+            if(hasOtherCustomerCount > 0)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

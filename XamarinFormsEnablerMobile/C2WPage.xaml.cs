@@ -37,6 +37,7 @@ namespace XamarinFormsEnablerMobile
         }
         void OrderSlipButtonClicked(object sender, EventArgs e)
         {
+            c2wService.showOrderSlipPage = true;
             Console.WriteLine("OrderSlip button clicked");
         }
 
@@ -67,8 +68,9 @@ namespace XamarinFormsEnablerMobile
             c2wService.setCustomerFocusForRecurring(selectedCustomer);
         }
 
-        async void Searching(object sender, TextChangedEventArgs newEvent){
-            if (C2WCustomerNameField.Text.Length == 0) 
+        async void Searching(object sender, TextChangedEventArgs newEvent)
+        {
+            if (C2WCustomerNameField.Text.Length == 0)
             {
                 bool doneLoading = await c2wService.getAllCustomer();
             }
@@ -76,7 +78,7 @@ namespace XamarinFormsEnablerMobile
             {
                 bool doneLoading = await c2wService.searchCustomer(C2WCustomerNameField.Text);
             }
-            
+
         }
 
 
@@ -84,11 +86,20 @@ namespace XamarinFormsEnablerMobile
         void SelectCustomerButtonClicked(object sender, EventArgs e)
         {
             Console.WriteLine($"focused customer is null {c2wService.focusedCustomerForRecurring == null}");
-            if(c2wService.focusedCustomerForRecurring == null)
+            if (c2wService.focusedCustomerForRecurring == null)
             {
                 DisplayAlert("Warning!", "Select customer first.", "Close");
                 return;
             }
+
+            bool hasOtherCustomer = c2wService.hasOtherCustomerTransaction();
+
+            if (hasOtherCustomer)
+            {
+                DisplayAlert("Complete other customer's transaction first.", null, "Close");
+                return;
+            }
+
 
             c2wService.setCustomerForRecurring();
             RecurringCustomers.SelectedItem = null;
@@ -98,12 +109,15 @@ namespace XamarinFormsEnablerMobile
 
         void CloseCustomerTransactionList(object sender, EventArgs e)
         {
+            c2wService.unfocusTappedTransaction();
             c2wService.removeCustomerForRecurring();
+            RecurringCustomersUnpaidTransList.SelectedItem = null;
+            RecurringCustomersUnpaidTransList.Unfocus();
         }
 
         async void AddSelectedToTransaction(object sender, EventArgs e)
         {
-            if(c2wService.tappedTransaction == null)
+            if (c2wService.tappedTransaction == null)
             {
                 await DisplayAlert("Warning!", "Select transaction first", "Close");
                 return;
@@ -121,10 +135,10 @@ namespace XamarinFormsEnablerMobile
                 if (amount == null)
                     return;
 
-                if(amount.Length <= 0)
+                if (amount.Length <= 0)
                     return;
 
-                if(Regex.IsMatch(amount, @"[0-9]+$"))
+                if (Regex.IsMatch(amount, @"[0-9]+$"))
                 {
                     paymentAmount = double.Parse(amount);
                     Console.WriteLine("Number only");
@@ -139,13 +153,41 @@ namespace XamarinFormsEnablerMobile
 
             if (willPayAll)
             {
+                Console.WriteLine("GETTING OF TOTAL AMOUNT");
                 paymentAmount = double.Parse(tapped.balanceAmt.ToString());
+            }
+
+            if ((decimal)paymentAmount > c2wService.tappedTransaction.balanceAmt)
+            {
+                Console.WriteLine($"BALANCE {c2wService.tappedTransaction.balanceAmt}");
+                Console.WriteLine($"PAYMENT AMOUNT {paymentAmount}");
+                Console.WriteLine($"Paid amount {c2wService.tappedTransaction.invPd}");
+                Console.WriteLine($"Added paid and to be paid {(decimal)paymentAmount + c2wService.tappedTransaction.invPd}");
+
+                await DisplayAlert("Amount should not be greater than the balance.", null, "Close");
+                return;
+            }
+
+            Console.WriteLine("After getting total amount");
+            RecurringCustomersUnpaidTransList.SelectedItem = null;
+            RecurringCustomersUnpaidTransList.Unfocus();
+
+            Console.WriteLine("Adding transaction to transaction items");
+            if (main.td.GetTransactionItems.Where(a => a.GetItemDescription() == c2wService.tappedTransaction.Desc).Count() > 0)
+            {
+                TransactionDataClass toBeUpdatedTrans = main.td.GetTransactionItems.Where(a => a.GetItemDescription() == c2wService.tappedTransaction.Desc).First();
+                toBeUpdatedTrans.SetUnitPrice(paymentAmount + toBeUpdatedTrans.GetUnitPrice());
+            }
+            else
+            {
+                main.td.AddTransactionItem(14, tapped.ProductID, tapped.VAT == 1 ? 1 : 2, tapped.Desc.Trim(), paymentAmount, 1, paymentAmount, paymentAmount.ToString(), "1", paymentAmount.ToString(), false, false, 0, 0, 0, 0, "");
             }
             c2wService.AddedTransactionToItems(decimal.Parse(paymentAmount.ToString()));
 
-           
 
-            //main.td.AddTransactionItem(14, tapped.ProductID, tapped.VAT == 1 ? 1 : 2, tapped.Desc.Trim(), 10, 1, 10, "10.00", "1", "10.00", false, false, 0, 0, 0, 0, "");
+            RecurringCustomersUnpaidTransList.SelectedItem = null;
+            RecurringCustomersUnpaidTransList.Unfocus();
+
         }
 
         void StartPayment(object sender, EventArgs e)
@@ -168,7 +210,7 @@ namespace XamarinFormsEnablerMobile
         void OnUnpaidTransTapped(object sender, ItemTappedEventArgs e)
         {
             C2W_Trans selectedTrans = e.Item as C2W_Trans;
-            if(c2wService.tappedTransaction == selectedTrans)
+            if (c2wService.tappedTransaction == selectedTrans)
             {
                 c2wService.unfocusTappedTransaction();
                 RecurringCustomersUnpaidTransList.SelectedItem = null;
@@ -177,6 +219,21 @@ namespace XamarinFormsEnablerMobile
             }
 
             c2wService.setTappedTransaction(selectedTrans);
+        }
+
+
+
+        void CloseOrderSlipPage(object sender, EventArgs e)
+        {
+            c2wService.showOrderSlipPage = false;
+        }
+
+        void SearchingVendorSlip(object sender, TextChangedEventArgs e)
+        {
+            if (C2WVendorSlipField.Text.Length == 0)
+                return;
+
+
         }
     }
 }

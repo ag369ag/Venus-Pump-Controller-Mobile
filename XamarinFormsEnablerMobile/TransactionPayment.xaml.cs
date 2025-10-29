@@ -514,6 +514,10 @@ namespace XamarinFormsEnablerMobile
                 });
             }
 
+            if (main.appSettings.isClientC2W)
+            {
+                main.c2wService.VoidAllTransaction();
+            }
             main.td.VoidAllItem();
             await Task.Run(() =>
             VoidAllItem()
@@ -565,6 +569,9 @@ namespace XamarinFormsEnablerMobile
 
         private void SetQuantityButtonOnClicked(object sender, EventArgs e)
         {
+            if (main.appSettings.isClientC2W)
+                return;
+
             if (selectedTransaction.GetItemType() == 14 && !selectedTransaction.GetIsDiscounted)
             {
                 string quantityString = PaymentValue.Text;
@@ -681,6 +688,9 @@ namespace XamarinFormsEnablerMobile
                 return;
             }*/
 
+            if (main.appSettings.isClientC2W)
+                return;
+
             if(selectedTransaction.GetItemType() == 99)
             {
                 return;
@@ -696,6 +706,8 @@ namespace XamarinFormsEnablerMobile
         }
         void TaxTypeButtonOnClick(object sender, EventArgs e)
         {
+            if (main.appSettings.isClientC2W)
+                return;
             StartTaxButtonClickFunction();
         }
 
@@ -750,6 +762,8 @@ namespace XamarinFormsEnablerMobile
         }
         void ServiceChargeButtonOnClicked(object sender, EventArgs e)
         {
+            if (main.appSettings.isClientC2W)
+                return;
             main.td.useServiceCharge = !main.td.useServiceCharge;
             setServiceChargeButtonColor();
             main.td.RemoveServiceCharge(main.td.useServiceCharge);

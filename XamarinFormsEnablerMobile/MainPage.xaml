@@ -23,7 +23,8 @@
             <StackLayout Margin="0,50,0,0"
                  VerticalOptions="CenterAndExpand"
                  HorizontalOptions="CenterAndExpand">
-                <Label Text="Venus Pump Controller"
+               <!-- <Label Text="Venus Pump Controller" -->
+                <Label Text="{Binding appSettings.loginTitleLine1}"
                FontSize="26"
                FontAttributes="Bold"
                TextColor="DarkCyan"

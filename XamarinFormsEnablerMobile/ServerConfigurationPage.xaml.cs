@@ -189,6 +189,7 @@ namespace XamarinFormsEnablerMobile
             Preferences.Set("applyDBServiceCharge", main.appSettings.DBApplyServiceCharge);
             Preferences.Set("spmMode", main.appSettings.useSPMmode);
             Preferences.Set("clientName", main.appSettings.client);
+            Preferences.Set("loginTitleLine1", main.appSettings.loginTitleLine1);
             main.progressUI.CloseProgressBar();
             saved = true;
             await DisplayAlert(null, "Settings saved", "Close");

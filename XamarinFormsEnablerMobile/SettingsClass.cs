@@ -26,6 +26,10 @@ namespace XamarinFormsEnablerMobile
         private bool spmMode;
         private string clientName;
         public bool isClientC2W { get; set; }
+        public bool disableNonSPMButton { get; set; }
+
+        public string insideAppTitle { get; set; }
+        public string loginTitleLine1 { get; set; }
         public string enablerServer { get { return server; } set { server = value; OnPropertyChanged(); } }
         public bool useSocketPrinter { get { return useSocket; } set { useSocket = value; OnPropertyChanged(); } }
         public bool useIminPrinter { get { return useIMINprinter; } set { useIMINprinter = value; OnPropertyChanged(); } }
@@ -39,12 +43,37 @@ namespace XamarinFormsEnablerMobile
 
         public int pumpGridSpanCount { get { return gridSpanCount; } set { gridSpanCount = value; OnPropertyChanged(); } }
 
-        public bool EnableFuels { get { return enableFuels; } set { enableFuels = value; showServiceChargeDB = !value; OnPropertyChanged(); } }
+        public bool EnableFuels
+        {
+            get { return enableFuels; }
+            set
+            {
+                enableFuels = value;
+                showServiceChargeDB = !value;
+                insideAppTitle = "Venus Pump Controller Mobile Version 1.0";
+                loginTitleLine1 = "Venus Pump Controller";
+                if (!value)
+                {
+                    insideAppTitle = "Venus Retail Mobile POS Version 1.0";
+                    loginTitleLine1 = "Venus Retail";
+                }
+                OnPropertyChanged();
+            }
+        }
 
         public bool DBApplyServiceCharge { get { return DBAutoServiceCharge; } set { DBAutoServiceCharge = value; OnPropertyChanged(); } }
         public bool showServiceChargeDB { get { return !enableFuels; } set { OnPropertyChanged(); } }
 
-        public bool useSPMmode { get { return spmMode; } set { spmMode = value; OnPropertyChanged(); } }
+        public bool useSPMmode
+        {
+            get { return spmMode; }
+            set
+            {
+                spmMode = value;
+                disableNonSPMButton = !value;
+                OnPropertyChanged();
+            }
+        }
 
         public string client
         {

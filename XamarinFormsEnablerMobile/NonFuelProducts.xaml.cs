@@ -193,6 +193,9 @@ namespace XamarinFormsEnablerMobile
         }
         void AddItemToTransaction(object sender, EventArgs e)
         {
+            if (main.appSettings.isClientC2W)
+                return;
+
             if(forPaymentNonFuel == null)
             {
                 DisplayAlert("Select product first", null, "Close");

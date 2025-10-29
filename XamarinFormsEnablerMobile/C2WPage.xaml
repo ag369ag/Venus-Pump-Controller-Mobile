@@ -26,44 +26,48 @@
                 AbsoluteLayout.LayoutFlags="All"
                 BackgroundColor="AliceBlue"
                 Padding="10">
-                
+
                 <Frame 
                     CornerRadius="10"
-                    Padding="5"
+                    Padding="10"
                     BackgroundColor="White"
-                    >           
+                    >
                     <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
                         <Label Text="Customer name"/>
                         <Entry x:Name="C2WCustomerNameField" HorizontalOptions="FillAndExpand" TextChanged="Searching"/>
                     </StackLayout>
-                    
+
                 </Frame>
 
-                <ListView HasUnevenRows="True"
-                          x:Name="RecurringCustomers"
-                          ItemTapped="OnRecurringTapped"
-                          ItemsSource = "{Binding c2wService.customers}"
-                          >
+                <Frame CornerRadius="10" Padding="10" BackgroundColor="White" >
+                    <Frame CornerRadius="10" Padding="0" BackgroundColor="Transparent">
+                        <ListView HasUnevenRows="True"
+                                  x:Name="RecurringCustomers"
+                                  ItemTapped="OnRecurringTapped"
+                                  ItemsSource = "{Binding c2wService.customers}"
+                                  > 
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <ViewCell>
-                                    <Frame Padding="10"
-                                                   CornerRadius="10"
-                                                   Margin="1">
-                                        <StackLayout Orientation="Horizontal"
-                                                                HorizontalOptions="FillAndExpand">
-                                            <Label Text="{Binding Name}"
-                                                           VerticalOptions="FillAndExpand"
-                                                           HorizontalOptions="StartAndExpand" />
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Frame Padding="10"
+                   CornerRadius="10"
+                   Margin="1">
+                                            <StackLayout Orientation="Horizontal"
+                                HorizontalOptions="FillAndExpand">
+                                                <Label Text="{Binding Name}"
+                           VerticalOptions="FillAndExpand"
+                           HorizontalOptions="StartAndExpand" />
 
-                                        </StackLayout>
-                                    </Frame>
-                                </ViewCell>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>    
+                                            </StackLayout>
+                                        </Frame>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
 
-                </ListView>
+                        </ListView>
+                    </Frame>
+                </Frame>
 
                 <Button Clicked="SelectCustomerButtonClicked" Text="Select" HorizontalOptions="FillAndExpand" CornerRadius="10"/>
                 <Button Clicked="CloseRecurringPage" Text="Close" HorizontalOptions="FillAndExpand" CornerRadius="10"/>
@@ -114,7 +118,7 @@
                                                    HorizontalOptions="StartAndExpand" />
 
                                         </StackLayout>
-                                        
+
                                         <StackLayout Orientation="Horizontal"
                                                      HorizontalOptions="FillAndExpand">
 
@@ -155,6 +159,32 @@
             </StackLayout>
 
 
+
+            <StackLayout x:Name="OrderSlipDisplay"
+                         IsVisible="{Binding c2wService.showOrderSlipPage}"
+                         AbsoluteLayout.LayoutBounds="1,1,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         BackgroundColor="AliceBlue"
+                         Padding="10">
+
+                <Frame 
+                    CornerRadius="10"
+                    Padding="10"
+                    BackgroundColor="White"
+                    >
+                    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
+                        <Label Text="Vendor Slip"/>
+                        <Entry x:Name="C2WVendorSlipField" HorizontalOptions="FillAndExpand" TextChanged="SearchingVendorSlip"/>
+                    </StackLayout>
+
+                </Frame>
+
+                <ListView></ListView>
+
+
+                <Button Text="Close" Clicked="CloseOrderSlipPage"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
+
+            </StackLayout>
 
 
         </AbsoluteLayout>

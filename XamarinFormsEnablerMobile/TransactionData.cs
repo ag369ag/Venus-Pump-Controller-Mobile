@@ -136,8 +136,8 @@ namespace XamarinFormsEnablerMobile
         public void RemoveServiceCharge(bool returnServiceCharge)
         {
             serviceChargeAmt = 0;
-            
-            if(GetTransactionItems.Where(a=>a.GetItemType() == 99).Count() > 0)
+
+            if (GetTransactionItems.Where(a => a.GetItemType() == 99).Count() > 0)
             {
                 int serviceChargeIndex = GetTransactionItems.IndexOf(a => a.GetItemType() == 99);
                 GetTransactionItems.RemoveAt(serviceChargeIndex);
@@ -156,7 +156,7 @@ namespace XamarinFormsEnablerMobile
 
             Console.WriteLine($"TOTAL AMOUNT IS {GetTransItemsWithoutMOP().Sum(a => a.GetTotal())}");
             Console.WriteLine($"SERVICE CHARGE RATE IS {serviceChargeRate}");
-            Console.WriteLine($"SERVICE CHARGE RATE IS {serviceChargeRate/100}");
+            Console.WriteLine($"SERVICE CHARGE RATE IS {serviceChargeRate / 100}");
             serviceChargeAmt = GetTransItemsWithoutMOP().Sum(a => a.GetTotal()) * (serviceChargeRate / 100);
             Console.WriteLine($"VALUE OF SERVICE CHARGE IS {serviceChargeAmt}");
             AddTransactionItem(99, 1, 2, "Service Charge", serviceChargeAmt, 1, serviceChargeAmt, FormatDisplayMoney(serviceChargeAmt), FormatDisplayMoney(1), FormatDisplayMoney(serviceChargeAmt), false, false, 0, 0, 0, 0, "");
@@ -241,7 +241,7 @@ namespace XamarinFormsEnablerMobile
         public void AddTransactionItem(int itemType, int itemID, int itemTaxID, string itemDescription, double itemUnitPrice, double itemQuantity, double itemTotal, string displayUnitPrice, string displayQuantity, string displayTotal,
            bool isDiscounted, bool isBIRDiscount, int discountType, double discountValue, double discountedValue, int presetID, string gcNumber, string pumpID = "", int discountedItemIndex = 999)
         {
-            TransactionDataClass newItem = new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemTotal / itemQuantity, itemTotal/itemQuantity, gcNumber, itemTotal.ToString(), pumpID);
+            TransactionDataClass newItem = new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemTotal / itemQuantity, itemTotal / itemQuantity, gcNumber, itemTotal.ToString(), pumpID);
             if (discountedItemIndex.Equals(999))
             {
                 transactionsItem.Add(newItem);
@@ -250,7 +250,7 @@ namespace XamarinFormsEnablerMobile
             {
                 transactionsItem.Insert(discountedItemIndex, newItem);
             }
-           // transactionsItem.Add(new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemUnitPrice, itemTotal, gcNumber, itemTotal.ToString()));
+            // transactionsItem.Add(new TransactionDataClass(itemType, itemID, itemTaxID, itemDescription, itemUnitPrice, itemQuantity, itemTotal, displayUnitPrice, displayQuantity, displayTotal, isDiscounted, isBIRDiscount, discountType, discountValue, discountedValue, presetID, itemTaxID, itemUnitPrice, itemTotal, gcNumber, itemTotal.ToString()));
             NewSubtotal = ComputeSubtotal().ToString();
             OnPropertyChanged();
         }
@@ -285,9 +285,14 @@ namespace XamarinFormsEnablerMobile
         {
             int discountIndex = transactionsItem.IndexOf(transItem);
 
-            if(transItem.GetItemType() == 99)
+            if (transItem.GetItemType() == 99)
             {
                 return;
+            }
+
+            if (main.appSettings.isClientC2W)
+            {
+                main.c2wService.VoidTransaction(transItem);
             }
 
             if (transItem.GetItemType() == 2)
@@ -347,13 +352,13 @@ namespace XamarinFormsEnablerMobile
             try
             {
                 Transaction equivalentTrans = null;
-                if(main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].CurrentTransaction.DeliveryData.DeliveryID == fuelTrans.GetItemID())
+                if (main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].CurrentTransaction.DeliveryData.DeliveryID == fuelTrans.GetItemID())
                 {
                     equivalentTrans = main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].CurrentTransaction;
                 }
-                foreach(Transaction trans in main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].TransactionStack)
+                foreach (Transaction trans in main.forecourt.Pumps[int.Parse(fuelTrans.GetPumpID())].TransactionStack)
                 {
-                    if(trans.DeliveryData.DeliveryID != fuelTrans.GetItemID())
+                    if (trans.DeliveryData.DeliveryID != fuelTrans.GetItemID())
                     {
                         continue;
                     }
@@ -372,7 +377,7 @@ namespace XamarinFormsEnablerMobile
         {
             foreach (TransactionDataClass transItem in transactionsItem)
             {
-                
+
                 if (transItem.GetItemType() == 2)
                 {
                     ReleaseFuelTransaction(transItem);
@@ -405,7 +410,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case 2:
                     {
-                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
+                        discountValue = (((baseValue / 100) * discount.presetValue) * transItem.GetQuantity());
                         isSCPWDMoVDiscounted = true;
                         //discountValue = transItem.ApplySCPWD(discount);
                     }
@@ -413,13 +418,13 @@ namespace XamarinFormsEnablerMobile
                 case 3:
                     {
                         baseValue = transItem.GetUnitPrice();
-                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
+                        discountValue = (((baseValue / 100) * discount.presetValue) * transItem.GetQuantity());
                         //discountValue = transItem.ApplySoloParent(discount);
                     }
                     break;
                 case 4:
                     {
-                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
+                        discountValue = (((baseValue / 100) * discount.presetValue) * transItem.GetQuantity());
                         //discountValue = transItem.ApplyNAAC(discount);
                     }
                     break;
@@ -436,7 +441,7 @@ namespace XamarinFormsEnablerMobile
                     break;
                 case 7:
                     {
-                        discountValue = (((baseValue / 100) * discount.presetValue) *transItem.GetQuantity());
+                        discountValue = (((baseValue / 100) * discount.presetValue) * transItem.GetQuantity());
                         //discountValue = transItem.ApplyNAAC(discount);
                     }
                     break;
@@ -451,21 +456,21 @@ namespace XamarinFormsEnablerMobile
             double NegativeDiscount = discountValue * -1;
             string forDisplayDiscount = $"P{discountValue.ToString("#,##0.00")}";
             string forDisplayQuantity = transItem.GetQuantity().ToString();
-/*
-            if (discount.presetDiscountId == 5)
-            {
-                return;
-            }*/
+            /*
+                        if (discount.presetDiscountId == 5)
+                        {
+                            return;
+                        }*/
 
             if (discount.presetDiscountId == 6)
             {
                 return;
             }
-            
+
             // disc type 1
             if (!discount.isBIRDisc && (discount.presetDiscountType.Equals(1) || discount.presetDiscountType.Equals(3))) //discount.presetDiscountId == 7 || discount.presetDiscountId == 9)
             {
-                
+
                 AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
                 transItem.ApplyNonBIRDiscount(discount);
                 return;
@@ -488,9 +493,9 @@ namespace XamarinFormsEnablerMobile
                 AddTransactionItem(52, discount.presetDiscountId, 1, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
             }*/
             //else
-           // {
+            // {
             //=======================
-                AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
+            AddTransactionItem(52, discount.presetDiscountId, 2, discount.presetName, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, isBIRDisc, discount.presetDiscountType, discount.presetValue, 0, discount.presetId, "", "", itemIndex);
             Console.WriteLine("After adding discount item");
             if (useServiceCharge)
             {
@@ -510,7 +515,7 @@ namespace XamarinFormsEnablerMobile
 
         public double ComputeSubtotal()
         {
-           // double serviceChargeValue = transactionsItem.Where(a => a.GetItemType() == 99).Sum(a => a.GetTotal());
+            // double serviceChargeValue = transactionsItem.Where(a => a.GetItemType() == 99).Sum(a => a.GetTotal());
             double totalItemValue = transactionsItem.Where(a => a.GetItemType() != 7 && a.GetItemType() != 8 && a.GetItemType() != 10).Sum(a => a.GetTotal());
             double totalMOPValue = transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Sum(a => a.GetTotal());
             // double withoutNAACTax1 = transactionsItem.Where(a => a.GetItemType() != 7 && a.GetItemType() != 8 && a.GetItemType() != 10).Sum(a => a.GetTotal()) - transactionsItem.Where(a => a.GetItemType() == 7 || a.GetItemType() == 8).Sum(a => a.GetTotal());
@@ -562,7 +567,7 @@ namespace XamarinFormsEnablerMobile
                 int isZero = isZeroRatedTransaction ? 1 : 0;
                 string scpwdDiscounted = isSCPWDMoVDiscounted && (item.GetItemType() == 52) ? "2" : "";
                 int depID = item.GetItemType() == 2 ? 1 : item.GetItemType() == 14 ? 2 : 0;
-                double? itemDBPrice =  null;
+                double? itemDBPrice = null;
                 if ((item.GetItemType() == 2 || item.GetItemType() == 14))
                 {
                     itemDBPrice = item.GetOrigUnitPrice();
@@ -573,7 +578,7 @@ namespace XamarinFormsEnablerMobile
                     Console.WriteLine($"{item.GetItemDescription()} is discounted");
                     originalItemValue = item.GetOrigTotal();
                 }
-                   
+
                 transItems.Add(new TransactionItemClass(count, item.GetItemType(), item.GetItemDescription(), item.GetUnitPrice(), item.GetQuantity(), item.GetTotal(), item.GetItemID(), item.GetTaxAmount(), item.GetItemID(), item.GetTaxID(), item.GetGCNum(), item.GetGCNum() ?? item.GetGCAmount(), originalItemValue, isTaxEx, isZero, item.GetDiscountedValue(),
                     depID, scpwdDiscounted, itemDBPrice, "", item.GetOrigUnitPrice(), item.GetQuantity(), item.GetOrigTotal(), item.GetOrigTotal(), item.GetPresetID(), item.GetDiscountType()));
 
@@ -585,7 +590,7 @@ namespace XamarinFormsEnablerMobile
         public async Task<string> AddTransactionToDB(string vehicleID, string attID)
         {
             SetTransItems();
-           
+
             // SENIOR DATA
             //==================================================================================
 
@@ -616,8 +621,8 @@ namespace XamarinFormsEnablerMobile
             string newItemString = Newtonsoft.Json.JsonConvert.SerializeObject(transItems);
 
             CustomerDetailsClass normalCustomerDetail = GetCustomerDetails().Where(a => !a.IsZeroRatedCustomer()).Count() < 1 ? new CustomerDetailsClass("", "", "", "", false) : GetCustomerDetails().Where(a => !a.IsZeroRatedCustomer()).Last();
-            CustomerDetailsClass zeroRatedCustomerDetail = GetCustomerDetails().Where(a => a.IsZeroRatedCustomer()).Count() < 1? new CustomerDetailsClass("", "", "", "", true) : GetCustomerDetails().Where(a => a.IsZeroRatedCustomer()).Last();
-            CardDetailsClass lastCardDetailPayment = GetCardDetails().Count() < 1 ? new CardDetailsClass("", "", "", ""): GetCardDetails().Last();
+            CustomerDetailsClass zeroRatedCustomerDetail = GetCustomerDetails().Where(a => a.IsZeroRatedCustomer()).Count() < 1 ? new CustomerDetailsClass("", "", "", "", true) : GetCustomerDetails().Where(a => a.IsZeroRatedCustomer()).Last();
+            CardDetailsClass lastCardDetailPayment = GetCardDetails().Count() < 1 ? new CardDetailsClass("", "", "", "") : GetCardDetails().Last();
 
             //Console.WriteLine()
 
@@ -635,7 +640,7 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine("Before creating payment data");
             Console.WriteLine($"POS ID is {main.posIDNumber}");
 
-            
+
             var PaymentData = new
             {
                 cashierID = main.CashierData.CashierID,
@@ -709,6 +714,11 @@ namespace XamarinFormsEnablerMobile
             string receiptOrNumber = responseValue.GetProperty("or_num").ToString();
             string receiptResetter = responseValue.GetProperty("resetter").ToString();
             string receiptTransID = responseValue.GetProperty("transID").ToString();
+
+            if (main.appSettings.isClientC2W)
+            {
+                main.c2wService.UpdateUnpaidTransctionToDB(int.Parse(receiptOrNumber), int.Parse(receiptResetter));
+            }
 
             return await PrintTransactionReceipt(receiptResetter, receiptOrNumber, receiptTransID);
         }
@@ -802,7 +812,7 @@ namespace XamarinFormsEnablerMobile
                 netSales = netValue
             };
 
-            
+
             if (hasFivePercent || hasTwentyPercent)
             {
                 DataArray.Add(data);
@@ -820,7 +830,7 @@ namespace XamarinFormsEnablerMobile
 
             List<object> list = new List<object>();
 
-            if(GetNAACDetails().Count() < 1)
+            if (GetNAACDetails().Count() < 1)
             {
                 return Newtonsoft.Json.JsonConvert.SerializeObject(list);
             }
@@ -834,7 +844,7 @@ namespace XamarinFormsEnablerMobile
                 netSales = Net
             };
 
-           
+
 
             if (hasNAAC)
             {
@@ -856,7 +866,7 @@ namespace XamarinFormsEnablerMobile
 
             List<object> soloDataObject = new List<object>();
 
-            if(GetSoloParentDetails().Count() < 1)
+            if (GetSoloParentDetails().Count() < 1)
             {
                 return Newtonsoft.Json.JsonConvert.SerializeObject(soloDataObject);
             }
@@ -873,7 +883,7 @@ namespace XamarinFormsEnablerMobile
                 netSales = Net
             };
 
-            
+
             if (hasSoloParentDiscount)
             {
                 soloDataObject.Add(data);
@@ -970,7 +980,7 @@ namespace XamarinFormsEnablerMobile
 
                     string secondLine = $"  {transItem.GetQuantity().ToString("#,##0.00")} x {transItem.GetOrigUnitPrice().ToString("#,##0.00")} {productTaxType}";
                     string amountString = transItem.GetOrigTotal().ToString("#,##0.00");
-                    if(transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
+                    if (transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
                     {
                         //amountString = (transItem.GetTotal() - Math.Abs(transItem.GetDiscountedValue())).ToString("#,##0.00");
                         amountString = transItem.GetOrigTotal().ToString("#,##0.00");
@@ -1000,12 +1010,12 @@ namespace XamarinFormsEnablerMobile
                         case 1:
                             {
                                 leftSide = $"    {transItem.GetDiscountValue()}% x P{itemPrice.ToString("#,##0.00")}";
-                                if(transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
+                                if (transItem.GetPresetID() == 2 || transItem.GetPresetID() == 4)
                                 {
-                                    leftSide = $"    {transItem.GetDiscountValue()}% x P{(itemPrice/1.12).ToString("#,##0.00")}";
+                                    leftSide = $"    {transItem.GetDiscountValue()}% x P{(itemPrice / 1.12).ToString("#,##0.00")}";
                                 }
 
-                                if(transItem.GetPresetID() == 6)
+                                if (transItem.GetPresetID() == 6)
                                 {
                                     leftSide = $"    {transItem.GetDiscountValue()}% x P{(itemPrice / 1.12).ToString("#,##0.00")}";
                                 }
@@ -1014,7 +1024,7 @@ namespace XamarinFormsEnablerMobile
                             break;
                         case 2:
                             {
-                                leftSide = $"    {Math.Abs(transItem.GetQuantity()/transItem.GetDiscountedValue()).ToString("#,##0.00")} x P{transItem.GetDiscountValue().ToString("#,##0.00")}";
+                                leftSide = $"    {Math.Abs(transItem.GetQuantity() / transItem.GetDiscountedValue()).ToString("#,##0.00")} x P{transItem.GetDiscountValue().ToString("#,##0.00")}";
                             }
                             break;
                         case 3:
@@ -1078,249 +1088,289 @@ namespace XamarinFormsEnablerMobile
 
             AddCenterString("");
 
+            if (main.appSettings.isClientC2W && main.c2wService.AddedTrans.Count() > 0 && main.appSettings.useSPMmode)
+            {
+                string tenantCode = "";
+                
+                foreach (C2W_Trans transactedRecurring in main.c2wService.AddedTrans)
+                {
+                    if (tenantCode == transactedRecurring.TENANTCODE)
+                        continue;
+
+                    string name = transactedRecurring.Name.Trim();
+                    if (name.Length > 25)
+                        name = transactedRecurring.Name.Trim().Substring(0, 25);
+                    AddLeftString($"Vendor Name: {name}");
+                    AddLeftString($"Tenant Code: {transactedRecurring.TENANTCODE.Trim()}");
+
+                    AddCenterString(" ");
+                    tenantCode = transactedRecurring.TENANTCODE.Trim();
+
+
+                }
+            }
+
             string lineCut = new string('-', main.appSettings.paperWidth);
 
             if (!main.appSettings.useSPMmode)
             {
 
 
-            double totalVatableAmount = GetTotalValueByTaxID(1);
-            double vatableSaleValue = totalVatableAmount / 1.12;
-            double VATAmountValue = totalVatableAmount - vatableSaleValue;
-            double totalVatExAmount = GetTotalValueByTaxID(2);
-            double totalZeroRatedAmount = GetTotalValueByTaxID(3);
+                double totalVatableAmount = GetTotalValueByTaxID(1);
+                double vatableSaleValue = totalVatableAmount / 1.12;
+                double VATAmountValue = totalVatableAmount - vatableSaleValue;
+                double totalVatExAmount = GetTotalValueByTaxID(2);
+                double totalZeroRatedAmount = GetTotalValueByTaxID(3);
 
-            AddSideString("VATable Sales", FormatReceiptMoneyValue(vatableSaleValue));
-            AddSideString("VAT Amount", FormatReceiptMoneyValue(VATAmountValue));
-            AddSideString("VAT-Exempt Sales", FormatReceiptMoneyValue(totalVatExAmount));
-            AddSideString("Zero Rated Sales", FormatReceiptMoneyValue(totalZeroRatedAmount));
+                AddSideString("VATable Sales", FormatReceiptMoneyValue(vatableSaleValue));
+                AddSideString("VAT Amount", FormatReceiptMoneyValue(VATAmountValue));
+                AddSideString("VAT-Exempt Sales", FormatReceiptMoneyValue(totalVatExAmount));
+                AddSideString("Zero Rated Sales", FormatReceiptMoneyValue(totalZeroRatedAmount));
 
-            AddCenterString("");
-
-            Console.WriteLine("After taxes");
-
-            if (useServiceCharge)
-            {
-                AddSideString("Service Charge", FormatReceiptMoneyValue(serviceChargeAmt));
                 AddCenterString("");
 
-            }
+                Console.WriteLine("After taxes");
 
-
-            string signLine = $"Sign      : {new string('_', 27)}";
-            double totalDiscountAmount = transactionsItem.Where(a => a.GetItemType() == 52 || a.GetItemType() == 54).Sum(a => a.GetTotal());
-
-            if (GetSCPWDDetails().Count > 0)
-            {
-                string discType = GetSCPWDDetails().First().CheckMoV() ? "Medal of Valor" : GetSCPWDDetails().First().GetCustomerType() ? "Senior Citizen" : "PWD";
-
-                AddSideString($"Total {discType} Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
-
-                foreach (SeniorPWDMoVCustomerDetailsClass scData in GetSCPWDDetails())
+                if (useServiceCharge)
                 {
+                    AddSideString("Service Charge", FormatReceiptMoneyValue(serviceChargeAmt));
                     AddCenterString("");
-                    AddSideString(signLine, "");
-                    AddSideString($"{discType} ID No. : {scData.GetCustomerIDNumber()}", "");
-                    AddSideString($"Name      : {scData.GetCustomerName()}", "");
-                    AddSideString($"TIN       : {scData.GetCustomerTIN()}", "");
+
+                }
+
+
+                string signLine = $"Sign      : {new string('_', 27)}";
+                double totalDiscountAmount = transactionsItem.Where(a => a.GetItemType() == 52 || a.GetItemType() == 54).Sum(a => a.GetTotal());
+
+                if (GetSCPWDDetails().Count > 0)
+                {
+                    string discType = GetSCPWDDetails().First().CheckMoV() ? "Medal of Valor" : GetSCPWDDetails().First().GetCustomerType() ? "Senior Citizen" : "PWD";
+
+                    AddSideString($"Total {discType} Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
+
+                    foreach (SeniorPWDMoVCustomerDetailsClass scData in GetSCPWDDetails())
+                    {
+                        AddCenterString("");
+                        AddSideString(signLine, "");
+                        AddSideString($"{discType} ID No. : {scData.GetCustomerIDNumber()}", "");
+                        AddSideString($"Name      : {scData.GetCustomerName()}", "");
+                        AddSideString($"TIN       : {scData.GetCustomerTIN()}", "");
+
+                        AddCenterString("");
+                    }
+
+                }
+
+                Console.WriteLine("After scpwd");
+
+                if (GetSoloParentDetails().Count > 0)
+                {
+                    AddSideString("Total Solo Parent Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}-");
+
+                    AddCenterString("");
+
+                    SoloParentDetailClass lastSolo = GetSoloParentDetails().Count() < 1 ? new SoloParentDetailClass("", "", "", "", "") : GetSoloParentDetails().Last();
+                    ;
+
+                    AddSideString($"Parent name: {lastSolo.GetCustomerName()}", "");
+                    AddSideString($"ID #: {lastSolo.GetCustomerIDNumber()}", "");
+                    AddSideString($"Child name: {new string('*', lastSolo.GetChildName().Length)}", "");
+                    AddSideString($"Child DOB: {new string('*', lastSolo.GetChildDateOfBirth().Length)}", "");
+                    AddSideString($"Child age: {new string('*', lastSolo.GetChildAge().Length)}", "");
 
                     AddCenterString("");
                 }
 
-            }
+                Console.WriteLine("after solo");
 
-            Console.WriteLine("After scpwd");
-
-            if (GetSoloParentDetails().Count > 0)
-            {
-                AddSideString("Total Solo Parent Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}-");
-
-                AddCenterString("");
-
-                SoloParentDetailClass lastSolo = GetSoloParentDetails().Count() < 1 ? new SoloParentDetailClass("", "", "", "", "") : GetSoloParentDetails().Last();
-                ;
-
-                AddSideString($"Parent name: {lastSolo.GetCustomerName()}", "");
-                AddSideString($"ID #: {lastSolo.GetCustomerIDNumber()}", "");
-                AddSideString($"Child name: {new string('*', lastSolo.GetChildName().Length)}", "");
-                AddSideString($"Child DOB: {new string('*', lastSolo.GetChildDateOfBirth().Length)}", "");
-                AddSideString($"Child age: {new string('*', lastSolo.GetChildAge().Length)}", "");
-
-                AddCenterString("");
-            }
-
-            Console.WriteLine("after solo");
-
-            if (GetNAACDetails().Count > 0)
-            {
-                AddSideString("Total Athlete/Coach Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
-
-                AddCenterString("");
-
-                NAACDetailClass lastNAAC = GetNAACDetails().Count() < 1 ? new NAACDetailClass("", "") : GetNAACDetails().Last();
-
-                AddSideString($"Athlete/Coach name: {lastNAAC.GetCustomerName()}", "");
-                AddSideString($"PNSTMID: {lastNAAC.GetCustomerIDNumber()}", "");
-
-                AddCenterString("");
-
-            }
-
-            Console.WriteLine("after naac");
-
-            if(transactionsItem.Where(a=>a.GetItemType() == 52 && a.GetPresetID() > 9).Count() > 0)
-            {
-                AddSideString($"Total Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
-                AddCenterString("");
-            }
-
-
-            if (GetInhouseData() != null)
-            {
-                AddSideString("Total Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
-
-                AddCenterString("");
-                string firstPartAccountName = GetInhouseData().GetAccountName();
-                string secondPartName = "";
-                int lengthWithLeftString = main.appSettings.paperWidth;
-                Console.WriteLine($"Length of left string is {lengthWithLeftString}");
-                Console.WriteLine($"Length of name is {firstPartAccountName.Length}");
-                Console.WriteLine($"Result of if statement is {firstPartAccountName.Length + 18 > lengthWithLeftString}");
-                if (firstPartAccountName.Length + 18 > lengthWithLeftString)
+                if (GetNAACDetails().Count > 0)
                 {
-                    firstPartAccountName = "";
-                    foreach (string namePart in GetInhouseData().GetAccountName().Split(' '))
+                    AddSideString("Total Athlete/Coach Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
+
+                    AddCenterString("");
+
+                    NAACDetailClass lastNAAC = GetNAACDetails().Count() < 1 ? new NAACDetailClass("", "") : GetNAACDetails().Last();
+
+                    AddSideString($"Athlete/Coach name: {lastNAAC.GetCustomerName()}", "");
+                    AddSideString($"PNSTMID: {lastNAAC.GetCustomerIDNumber()}", "");
+
+                    AddCenterString("");
+
+                }
+
+                Console.WriteLine("after naac");
+
+                if (transactionsItem.Where(a => a.GetItemType() == 52 && a.GetPresetID() > 9).Count() > 0)
+                {
+                    AddSideString($"Total Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
+                    AddCenterString("");
+                }
+
+
+                if (GetInhouseData() != null)
+                {
+                    AddSideString("Total Discount", $"-{FormatReceiptMoneyValue(totalDiscountAmount)}");
+
+                    AddCenterString("");
+                    string firstPartAccountName = GetInhouseData().GetAccountName();
+                    string secondPartName = "";
+                    int lengthWithLeftString = main.appSettings.paperWidth;
+                    Console.WriteLine($"Length of left string is {lengthWithLeftString}");
+                    Console.WriteLine($"Length of name is {firstPartAccountName.Length}");
+                    Console.WriteLine($"Result of if statement is {firstPartAccountName.Length + 18 > lengthWithLeftString}");
+                    if (firstPartAccountName.Length + 18 > lengthWithLeftString)
                     {
-                        if ((firstPartAccountName + namePart + "").Length + 18 < lengthWithLeftString)
+                        firstPartAccountName = "";
+                        foreach (string namePart in GetInhouseData().GetAccountName().Split(' '))
                         {
-                            firstPartAccountName += (namePart + " ");
+                            if ((firstPartAccountName + namePart + "").Length + 18 < lengthWithLeftString)
+                            {
+                                firstPartAccountName += (namePart + " ");
+                            }
+                            else
+                            {
+                                secondPartName += (namePart + " ");
+                            }
                         }
-                        else
-                        {
-                            secondPartName += (namePart + " ");
-                        }
+                    }
+
+                    AddSideString($"AccNm          : {firstPartAccountName}", "");
+                    if (secondPartName.Length > 0)
+                    {
+                        AddSideString(new string(' ', 18) + secondPartName, "");
+                    }
+                    AddSideString($"Acc#           : {GetInhouseData().GetAccountNumber()}", "");
+                    AddSideString($"PO#            : {GetInhouseData().GetPONum()}", "");
+                    AddSideString($"Plate #        : {GetInhouseData().GetPlateNumber()}", "");
+                    AddSideString($"Odo            : {GetInhouseData().GetOdometer()}", "");
+
+                    AddCenterString("");
+                }
+
+
+
+                Console.WriteLine("after inhouse");
+
+                if (GetCardDetails().Count > 0)
+                {
+                    foreach (CardDetailsClass cardInfo in GetCardDetails())
+                    {
+                        string lastCardNumber = string.IsNullOrEmpty(cardInfo.GetCardNumber()) ? "" : "XXXX-XXXX-XXXX-" + cardInfo.GetCardNumber().Substring(cardInfo.GetCardNumber().Length - 4);
+                        AddSideString($"Card#         : {lastCardNumber}", "");
+                        AddSideString($"AppCode       : {cardInfo.GetApprovalCode()}", "");
+                        AddSideString($"Name          : {cardInfo.GetCustomerName()}", "");
+                        AddSideString($"Sign          : {new string('_', 26)}", "");
+
+                        AddCenterString("");
                     }
                 }
 
-                AddSideString($"AccNm          : {firstPartAccountName}", "");
-                if (secondPartName.Length > 0)
+                Console.WriteLine("after card details");
+
+                CustomerDetailsClass clientInfo = GetCustomerDetails().Count() > 0 ? GetCustomerDetails().Last() : null;
+
+                Console.WriteLine("after getting client info");
+
+                foreach (string infoField in main.footerForZeroRated)
                 {
-                    AddSideString(new string(' ', 18) + secondPartName, "");
+                    if (clientInfo == null)
+                    {
+                        Console.WriteLine("No client info");
+                        AddCenterString(infoField);
+                        continue;
+                    }
+                    string removedSpace = infoField.Replace("_", "");
+                    if (infoField.ToLower().Contains("name"))
+                    {
+                        AddLeftString($"{removedSpace}: {clientInfo.GetCustomerName()}");
+                        Console.WriteLine($"name: {clientInfo.GetCustomerName()}");
+                    }
+                    if (infoField.ToLower().Contains("address"))
+                    {
+                        Console.WriteLine($"address: {clientInfo.GetCustomerAddess()}");
+                        AddLeftString($"{removedSpace}: {clientInfo.GetCustomerAddess()}");
+                    }
+                    if (infoField.ToLower().Contains("tin"))
+                    {
+                        Console.WriteLine($"tin: {clientInfo.GetCustomerTIN()}");
+                        AddLeftString($"{removedSpace}: {clientInfo.GetCustomerTIN()}");
+                    }
+                    if (infoField.ToLower().Contains("business"))
+                    {
+                        Console.WriteLine($"business: {clientInfo.GetCustomerBusinessStyle()}");
+                        AddLeftString($"{removedSpace}: {clientInfo.GetCustomerBusinessStyle()}");
+                    }
                 }
-                AddSideString($"Acc#           : {GetInhouseData().GetAccountNumber()}", "");
-                AddSideString($"PO#            : {GetInhouseData().GetPONum()}", "");
-                AddSideString($"Plate #        : {GetInhouseData().GetPlateNumber()}", "");
-                AddSideString($"Odo            : {GetInhouseData().GetOdometer()}", "");
 
                 AddCenterString("");
-            }
 
-           
-
-            Console.WriteLine("after inhouse");
-
-            if (GetCardDetails().Count > 0)
-            {
-                foreach (CardDetailsClass cardInfo in GetCardDetails())
+                if (main.appSettings.isClientC2W && main.c2wService.AddedTrans.Count() > 0)
                 {
-                    string lastCardNumber = string.IsNullOrEmpty(cardInfo.GetCardNumber()) ? "" : "XXXX-XXXX-XXXX-" + cardInfo.GetCardNumber().Substring(cardInfo.GetCardNumber().Length - 4);
-                    AddSideString($"Card#         : {lastCardNumber}", "");
-                    AddSideString($"AppCode       : {cardInfo.GetApprovalCode()}", "");
-                    AddSideString($"Name          : {cardInfo.GetCustomerName()}", "");
-                    AddSideString($"Sign          : {new string('_', 26)}", "");
+                    string tenantCode = "";
+                    foreach (C2W_Trans transactedRecurring in main.c2wService.AddedTrans)
+                    {
+                        if (tenantCode == transactedRecurring.TENANTCODE)
+                            continue;
 
-                    AddCenterString("");
-                }
-            }
+                        AddLeftString($"Vendor Name: {transactedRecurring.Name.Trim().Substring(0, 25)}");
+                        AddLeftString($"Tenant Code: {transactedRecurring.TENANTCODE.Trim().Substring(0, 25)}");
 
-            Console.WriteLine("after card details");
+                        AddCenterString(" ");
+                        tenantCode = transactedRecurring.TENANTCODE.Trim();
 
-            CustomerDetailsClass clientInfo = GetCustomerDetails().Count() > 0 ? GetCustomerDetails().Last() : null;
 
-            Console.WriteLine("after getting client info");
-
-            foreach (string infoField in main.footerForZeroRated)
-            {
-                if (clientInfo == null)
-                {
-                    Console.WriteLine("No client info");
-                    AddCenterString(infoField);
-                    continue;
-                }
-                string removedSpace = infoField.Replace("_", "");
-                if (infoField.ToLower().Contains("name"))
-                {
-                    AddLeftString($"{removedSpace}: {clientInfo.GetCustomerName()}");
-                    Console.WriteLine($"name: {clientInfo.GetCustomerName()}");
-                }
-                if (infoField.ToLower().Contains("address"))
-                {
-                    Console.WriteLine($"address: {clientInfo.GetCustomerAddess()}");
-                    AddLeftString($"{removedSpace}: {clientInfo.GetCustomerAddess()}");
-                }
-                if (infoField.ToLower().Contains("tin"))
-                {
-                    Console.WriteLine($"tin: {clientInfo.GetCustomerTIN()}");
-                    AddLeftString($"{removedSpace}: {clientInfo.GetCustomerTIN()}");
-                }
-                if (infoField.ToLower().Contains("business"))
-                {
-                    Console.WriteLine($"business: {clientInfo.GetCustomerBusinessStyle()}");
-                    AddLeftString($"{removedSpace}: {clientInfo.GetCustomerBusinessStyle()}");
-                }
-            }
-
-            AddCenterString("");
-
-            foreach (string footer in main.footer)
-            {
-                if ((footer.ToLower().Contains("is not valid for claim of")) || (footer.ToLower().Contains("input tax")))
-                {
-                    continue;
-                }
-                AddCenterString(footer);
-            }
-
-            List<string> newForPrintString = new List<string>();
-            //firstPartReceipt = forPrintString;
-
-            /*List<string> toLogReceipt = new List<string>();
-            foreach (string line in forPrintString)
-            {
-                if (line.ToLower().Contains("customer's copy"))
-                    continue;
-
-                toLogReceipt.Add(line);
-            }*/
-            
-            if (hasBIRDIsc)
-            {
-
-                foreach (string line in forPrintString)
-                {
-                    newForPrintString.Add(line);
+                    }
                 }
 
-                
-                newForPrintString.Add(lineCut);
-                newForPrintString.Add(" ");
+                foreach (string footer in main.footer)
+                {
+                    if ((footer.ToLower().Contains("is not valid for claim of")) || (footer.ToLower().Contains("input tax")))
+                    {
+                        continue;
+                    }
+                    AddCenterString(footer);
+                }
 
+                List<string> newForPrintString = new List<string>();
+                //firstPartReceipt = forPrintString;
+
+                /*List<string> toLogReceipt = new List<string>();
                 foreach (string line in forPrintString)
                 {
                     if (line.ToLower().Contains("customer's copy"))
-                    {
-                        string storeCopyString = "*** Store's Copy ***";
-                        int sideCount = (main.appSettings.paperWidth - storeCopyString.Length) / 2;
-                        string centeredStoreCopyString = new string(' ', sideCount) + storeCopyString + new string(' ', sideCount);
-                        newForPrintString.Add(centeredStoreCopyString);
                         continue;
-                    }
-                    Console.WriteLine(line + "is added");
-                    newForPrintString.Add(line);
-                }
 
-                forPrintString = newForPrintString;
-            }
+                    toLogReceipt.Add(line);
+                }*/
+
+                if (hasBIRDIsc)
+                {
+
+                    foreach (string line in forPrintString)
+                    {
+                        newForPrintString.Add(line);
+                    }
+
+
+                    newForPrintString.Add(lineCut);
+                    newForPrintString.Add(" ");
+
+                    foreach (string line in forPrintString)
+                    {
+                        if (line.ToLower().Contains("customer's copy"))
+                        {
+                            string storeCopyString = "*** Store's Copy ***";
+                            int sideCount = (main.appSettings.paperWidth - storeCopyString.Length) / 2;
+                            string centeredStoreCopyString = new string(' ', sideCount) + storeCopyString + new string(' ', sideCount);
+                            newForPrintString.Add(centeredStoreCopyString);
+                            continue;
+                        }
+                        Console.WriteLine(line + "is added");
+                        newForPrintString.Add(line);
+                    }
+
+                    forPrintString = newForPrintString;
+                }
             }
 
 
@@ -1337,7 +1387,7 @@ namespace XamarinFormsEnablerMobile
                 }
             });
 
-            
+
 
             string toEJournalString = FORPRINTINGTEXT.Replace(' ', '=');
             var toElectronicJournal = new
@@ -1396,9 +1446,9 @@ namespace XamarinFormsEnablerMobile
                         return "No implementation provided for this platform";
                     }
                     List<string> forPrintStringFirst = new List<string>();
-                    foreach(string lineString in forPrintString)
+                    foreach (string lineString in forPrintString)
                     {
-                        if(lineString == lineCut)
+                        if (lineString == lineCut)
                         {
                             printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, forPrintStringFirst);
                             forPrintStringFirst = new List<string>();
@@ -1438,42 +1488,42 @@ namespace XamarinFormsEnablerMobile
                 }
                 else
                 {*/
-                    //if (main.currentMOP.MOPReceiptCount > 1 && main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() <= 0)
-                    if (receiptCount > 1)
+                //if (main.currentMOP.MOPReceiptCount > 1 && main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() <= 0)
+                if (receiptCount > 1)
+                {
+                    List<string> newPrintingArray = new List<string>();
+                    string reprintString = "*** REPRINT ***";
+                    int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
+                    string formattedReprintString = new string(' ', currentSpace) + reprintString + new string(' ', currentSpace);
+                    newPrintingArray.Add(formattedReprintString);
+                    foreach (string text in forPrintString)
                     {
-                        List<string> newPrintingArray = new List<string>();
-                        string reprintString = "*** REPRINT ***";
-                        int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
-                        string formattedReprintString = new string(' ', currentSpace) + reprintString + new string(' ', currentSpace);
-                        newPrintingArray.Add(formattedReprintString);
-                        foreach (string text in forPrintString)
+                        newPrintingArray.Add(text);
+                        /*string lineCut = new string('-', main.appSettings.paperWidth);
+                        if (text == lineCut)
                         {
-                            newPrintingArray.Add(text);
-                            /*string lineCut = new string('-', main.appSettings.paperWidth);
-                            if (text == lineCut)
-                            {
-                                newPrintingArray.Add(formattedReprintString);
-                            }*/
-                        }
-                        try
-                            {
-                                if (printer == null)
-                                {
-                                    return "No implementation provided for this platform";
-
-                                }
-                                printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
-                            }
-                            catch (Exception ex)
-                            {
-                                return "Failed to print";
-                            }
-                        
+                            newPrintingArray.Add(formattedReprintString);
+                        }*/
+                    }
+                    try
+                    {
+                        if (printer == null)
+                        {
+                            return "No implementation provided for this platform";
 
                         }
-                   
+                        printer.PrintToSocketPrinter(main.appSettings.printerIPValue, main.appSettings.printerPortValue, newPrintingArray);
+                    }
+                    catch (Exception ex)
+                    {
+                        return "Failed to print";
+                    }
 
-               // }
+
+                }
+
+
+                // }
 
 
             }
@@ -1488,7 +1538,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     if (receiptCount > 1)
                     {
-                       
+
                         List<string> newPrintingArray = new List<string>();
                         string reprintString = "*** REPRINT ***";
                         int currentSpace = (main.appSettings.paperWidth - reprintString.Length) / 2;
@@ -1500,11 +1550,11 @@ namespace XamarinFormsEnablerMobile
                             FORPRINTINGTEXT += $"{text}\n";
                             newPrintingArray.Add(text);
                             //string lineCut = new string('-', main.appSettings.paperWidth);
-                           /* if (text == lineCut)
-                            {
-                                FORPRINTINGTEXT += $"{formattedReprintString}\n";
-                                newPrintingArray.Add(formattedReprintString);
-                            }*/
+                            /* if (text == lineCut)
+                             {
+                                 FORPRINTINGTEXT += $"{formattedReprintString}\n";
+                                 newPrintingArray.Add(formattedReprintString);
+                             }*/
                         }
                         try
                         {
@@ -1534,21 +1584,21 @@ namespace XamarinFormsEnablerMobile
                         }
                     }
                 }
-                
 
-                
 
-               // btPrintService.TestIMINPrint(FORPRINTINGTEXT);
 
-              /*  var printService = DependencyService.Get<IPrintService>();
-                printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);*/
+
+                // btPrintService.TestIMINPrint(FORPRINTINGTEXT);
+
+                /*  var printService = DependencyService.Get<IPrintService>();
+                  printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);*/
             }
             else
             {
                 var printService = DependencyService.Get<IPrintService>();
-               // printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
+                // printService.PrintReceiptOnNative(FORPRINTINGTEXT, 17);
                 //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
-                
+
                 if (main.td.GetTransactionItems.Where(a => a.IsBIRDiscount()).Count() > 0)
                 {
                     List<string> newPrintingArray = new List<string>();
@@ -1562,7 +1612,7 @@ namespace XamarinFormsEnablerMobile
                         string perText = text + "\n";
                         newPrintingText += perText;
                     }
-                    
+
                     printService.PrintReceiptOnNative(newPrintingText, 15);
                     /*for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
                     {
@@ -1595,8 +1645,8 @@ namespace XamarinFormsEnablerMobile
                         }
                         /*for (var count = 2; count <= main.currentMOP.MOPReceiptCount; count++)
                         {*/
-                            printService.PrintReceiptOnNative(newPrintingText, 15);
-                            //printService.Print(newPrintingText, main.appSettings.paperWidth);
+                        printService.PrintReceiptOnNative(newPrintingText, 15);
+                        //printService.Print(newPrintingText, main.appSettings.paperWidth);
                         //}
                     }
                     else
@@ -1605,10 +1655,10 @@ namespace XamarinFormsEnablerMobile
                     }
                 }
 
-                
+
             }
 
-            foreach(TransactionDataClass fuelItem in GetTransactionItems.Where(a=>a.GetItemType() == 2))
+            foreach (TransactionDataClass fuelItem in GetTransactionItems.Where(a => a.GetItemType() == 2))
             {
                 Transaction fuelTrans = null;
                 foreach (Transaction fuelsTransaction in main.forecourt.Pumps[int.Parse(fuelItem.GetPumpID())].TransactionStack)
@@ -1618,14 +1668,19 @@ namespace XamarinFormsEnablerMobile
                         fuelTrans = fuelsTransaction;
                     }
                 }
-                if(fuelTrans == null)
+                if (fuelTrans == null)
                 {
                     fuelTrans = main.forecourt.Pumps[int.Parse(fuelItem.GetPumpID())].CurrentTransaction;
 
                 }
                 fuelTrans.Clear(TransactionClearTypes.Normal);
             }
-            
+
+            if (main.appSettings.isClientC2W)
+            {
+                main.c2wService.AfterTransaction();
+            }
+
             return "Success";
 
         }
@@ -1650,12 +1705,12 @@ namespace XamarinFormsEnablerMobile
 
             // NAAC WITH TAX ID 1
             double withNAACVat = 0;
-            if(taxID == 1)
+            if (taxID == 1)
             {
-               withNAACVat = transactionsItem.Where(a => a.GetItemType() == 14 && a.GetPresetID() == 6).Sum(a => a.GetOrigTotal());
+                withNAACVat = transactionsItem.Where(a => a.GetItemType() == 14 && a.GetPresetID() == 6).Sum(a => a.GetOrigTotal());
             }
             // NAAC WITH TAX ID 2
-            if(taxID == 2)
+            if (taxID == 2)
             {
                 withNAACVat = transactionsItem.Where(a => a.GetItemType() == 14 && a.GetPresetID() == 9).Sum(a => a.GetTotal());
             }
@@ -1665,7 +1720,7 @@ namespace XamarinFormsEnablerMobile
             {
                 withoutBIRDisc += serviceChargeAmt;
             }
-            
+
 
 
 
@@ -1719,7 +1774,7 @@ namespace XamarinFormsEnablerMobile
             SaveInhouseData(inhouseValues.GetAccountName(), inhouseValues.GetAccountNumber(), inhouseValues.GetPONum(), inhouseValues.GetPlateNumber(), inhouseValues.GetOdometer());
             if (discount.SADItemType == 2)
             {
-                while(GetTransactionItems.Where(a=>a.GetItemDescription().ToLower().Trim().Equals(discount.SAGradeName.ToLower().Trim()) && !a.GetIsDiscounted).Count() > 0)
+                while (GetTransactionItems.Where(a => a.GetItemDescription().ToLower().Trim().Equals(discount.SAGradeName.ToLower().Trim()) && !a.GetIsDiscounted).Count() > 0)
                 {
                     discVal = GetTransactionItems.Where(a => a.GetItemDescription().ToLower().Trim().Equals(discount.SAGradeName.ToLower().Trim()) && !a.GetIsDiscounted).First().GetNonBIRDiscValue(discount);
                     AddSubAccountDiscount(discount, GetTransactionItems.Where(a => a.GetItemDescription().ToLower().Trim().Equals(discount.SAGradeName.ToLower().Trim()) && !a.GetIsDiscounted).First(), discVal);
@@ -1727,7 +1782,7 @@ namespace XamarinFormsEnablerMobile
             }
             else
             {
-                while(GetTransactionItems.Where(a=>a.GetItemType().Equals(14) && !a.GetIsDiscounted).Count() > 0)
+                while (GetTransactionItems.Where(a => a.GetItemType().Equals(14) && !a.GetIsDiscounted).Count() > 0)
                 {
                     discVal = GetTransactionItems.Where(a => a.GetItemType().Equals(14) && !a.GetIsDiscounted).First().GetNonBIRDiscValue(discount);
                     AddSubAccountDiscount(discount, GetTransactionItems.Where(a => a.GetItemType().Equals(14) && !a.GetIsDiscounted).First(), discVal);
@@ -1752,7 +1807,7 @@ namespace XamarinFormsEnablerMobile
                 case 1:
                     {
                         AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, double.Parse(subAccDisc.SADDiscountValue), 0, 0, "", "", itemIndex);
-                       // trans.ApplyNonBIRDiscount(subAccDisc);
+                        // trans.ApplyNonBIRDiscount(subAccDisc);
                     }
                     break;
                 case 2:
@@ -1766,12 +1821,13 @@ namespace XamarinFormsEnablerMobile
                         AddTransactionItem(52, subAccDisc.SAID, 1, desc, discountValue, -1, NegativeDiscount, forDisplayDiscount, forDisplayQuantity, forDisplayDiscount, false, false, subAccDisc.SADDiscountType, double.Parse(subAccDisc.SADDiscountValue), 0, 0, "", "", itemIndex);
                     }
                     break;
-                    default:
-                    { } break;
+                default:
+                    { }
+                    break;
 
             }
             trans.ApplyNonBIRDiscount(subAccDisc);
-          //  trans.SetIsDiscounted(true);
+            //  trans.SetIsDiscounted(true);
             //OnPropertyChanged();
 
             return true;

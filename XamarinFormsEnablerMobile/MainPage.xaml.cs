@@ -303,8 +303,11 @@ namespace XamarinFormsEnablerMobile
             public string getServiceChargeRate { get; set; }
             public string getc2wCustomers { get; set; }
             public string getc2wCustomerByName { get; set; }
-            public string c2wSaveRecurringData { get; set; }
             public string c2wLoadUnpaidTrans { get; set; }
+            public string c2wUpdateUnpaidTransaction { get; set; }
+            public string c2wSaveRecurringData { get; set; }
+            public string c2wRefundRecurringTrans { get; set; }
+            public string c2wSetRecurringAsRefund { get; set; }
         }
         public apiRoutes routes = new apiRoutes();
         #endregion
@@ -319,11 +322,14 @@ namespace XamarinFormsEnablerMobile
             appSettings.DBApplyServiceCharge = Preferences.Get("applyDBServiceCharge", true);
             appSettings.useSPMmode = Preferences.Get("spmMode", false);
             appSettings.client = Preferences.Get("clientName", "");
+            appSettings.loginTitleLine1 = Preferences.Get("loginTitleLine1", "Venus Pump Controller");
 
             APIservice = new API_Service(this);
             td = new TransactionData(this);
             c2wService = new ServiceC2W(this);
             forecourt = Variables.forecourt;
+
+            BindingContext = this;
             
             
             //forecourt.ON += new EventHandler<MessageReceivedEventArgs>(ConnectionStatusChecker);
@@ -487,8 +493,12 @@ namespace XamarinFormsEnablerMobile
                 routes.getServiceChargeRate = APIServer + "/lookUpCtrl/GetServiceChargeRate";
                 routes.getc2wCustomers = APIServer + "/C2WCtrl/GetAllCustomers";
                 routes.getc2wCustomerByName = APIServer + "/C2WCtrl/GetCustomersByName";
-                routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
                 routes.c2wLoadUnpaidTrans = APIServer + "/C2WCtrl/GetUnpaidTransactionsByCustomerID";
+                routes.c2wUpdateUnpaidTransaction = APIServer + "/C2WCtrl/PayVendorTransaction";
+                routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
+                routes.c2wRefundRecurringTrans = APIServer + "/C2WCtrl/RefundPaidAmount";
+                routes.c2wSetRecurringAsRefund = APIServer + "/TransactionCtrl/SetRecurringAsRefunded";
+
             }
             else
             {
@@ -527,8 +537,11 @@ namespace XamarinFormsEnablerMobile
                 routes.getServiceChargeRate = APIServer + "/lookUpCtrl/GetServiceChargeRate";
                 routes.getc2wCustomers = APIServer + "/C2WCtrl/GetAllCustomers";
                 routes.getc2wCustomerByName = APIServer + "/C2WCtrl/GetCustomersByName";
-                routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
                 routes.c2wLoadUnpaidTrans = APIServer + "/C2WCtrl/GetUnpaidTransactionsByCustomerID";
+                routes.c2wUpdateUnpaidTransaction = APIServer + "/C2WCtrl/PayVendorTransaction";
+                routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
+                routes.c2wRefundRecurringTrans = APIServer + "/C2WCtrl/RefundPaidAmount";
+                routes.c2wSetRecurringAsRefund = APIServer + "/TransactionCtrl/SetRecurringAsRefunded";
             }
 
         }
@@ -854,9 +867,9 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine($"Login result are {apiRequestResult.result}");
             if (!loginResult)
             {
-                progressUI.CloseProgressBar();
                 Device.BeginInvokeOnMainThread(async () =>
                 {
+                    progressUI.CloseProgressBar();
                     await DisplayAlert(null, apiRequestResult.message, "Close");
 
                 });

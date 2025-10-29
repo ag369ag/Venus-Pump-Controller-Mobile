@@ -908,7 +908,9 @@ namespace XamarinFormsEnablerMobile
                 pwdData = blankString,
                 spData = blankString,
                 naacData = blankString,
-                movData = blankString
+                movData = blankString,
+                serviceAmount = 0,
+                useTransItemHistory = false
             };
 
             string JsonEncodedSafedrop = Newtonsoft.Json.JsonConvert.SerializeObject(SafedropData);

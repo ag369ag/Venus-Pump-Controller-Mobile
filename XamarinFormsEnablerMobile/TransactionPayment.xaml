@@ -202,20 +202,23 @@
                                         VerticalOptions="FillAndExpand"
                                         HorizontalOptions="FillAndExpand"
                                         CornerRadius="10"
-                                        x:Name="DiscountButtonForVisibility" />
+                                        x:Name="DiscountButtonForVisibility"
+                                        />
                                 <Button Text="Set Quantity"
                                         Clicked="SetQuantityButtonOnClicked"
                                         VerticalOptions="FillAndExpand"
                                         HorizontalOptions="FillAndExpand"
                                         CornerRadius="10"
-                                        x:Name="SetQTYForVisibility" />
+                                        x:Name="SetQTYForVisibility" 
+                                        />
                                 <!-- <Button Text="Price override" Clicked="PriceOverrideButtonOnClicked" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" CornerRadius="10" x:Name="PriceOverrideForVisibility"/> -->
                                 <Button Text="Tax Type"
                                         VerticalOptions="FillAndExpand"
                                         HorizontalOptions="FillAndExpand"
                                         Clicked="TaxTypeButtonOnClick"
                                         CornerRadius="10"
-                                        x:Name="TaxTypeButtonForVisibility" />
+                                        x:Name="TaxTypeButtonForVisibility"
+                                        />
                                 <Button Text="MOP"
                                         VerticalOptions="FillAndExpand"
                                         HorizontalOptions="FillAndExpand"
@@ -234,7 +237,8 @@
                                         CornerRadius="10"
                                         Clicked="ServiceChargeButtonOnClicked"
                                         x:Name="ServiceChargeButton"
-                                        IsVisible="{Binding main.appSettings.showServiceChargeDB}"/>
+                                        IsVisible="{Binding main.appSettings.showServiceChargeDB}"
+                                        />
                                 <Button Text="Back"
                                         Clicked="BackButtonOnClicked"
                                         VerticalOptions="FillAndExpand"

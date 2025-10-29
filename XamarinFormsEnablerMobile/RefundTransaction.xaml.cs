@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -393,6 +394,13 @@ namespace XamarinFormsEnablerMobile
                 return;
             }
 
+            if(responseCode == "500")
+            {
+                await DisplayAlert("Internal server error. Check API.", null, "Close");
+                btn.IsEnabled = true;
+                return;
+            }
+
             JsonElement transaction = responseElement.GetProperty("transaction");
             JsonElement transactionDetails = responseElement.GetProperty("transactionDetails");
             JsonElement transactionItem = responseElement.GetProperty("transactionItems");
@@ -401,6 +409,7 @@ namespace XamarinFormsEnablerMobile
             JsonElement nationalAthleteData = responseElement.GetProperty("naacData");
             JsonElement soloParentData = responseElement.GetProperty("solopData");
             JsonElement moVData = responseElement.GetProperty("moVData");
+            string recurringData = responseElement.GetProperty("recurringData").GetRawText();
 
             // SENIOR DATA
             //==================================================================================
@@ -496,7 +505,19 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine("PWD: " + Newtonsoft.Json.JsonConvert.DeserializeObject(newPWDData).ToString());
             Console.WriteLine("SP: " + Newtonsoft.Json.JsonConvert.DeserializeObject(SoloParentData).ToString());
             Console.WriteLine("NAAC: " + Newtonsoft.Json.JsonConvert.DeserializeObject(NAACData).ToString());
-            
+
+            //=================================================================================
+            //  RECURRING DATA
+
+            if (main.appSettings.isClientC2W)
+            {
+                List<RecurringTransData> c2wRecurringTrans = new List<RecurringTransData>();
+                c2wRecurringTrans = JsonConvert.DeserializeObject<List<RecurringTransData>>(recurringData);
+                main.c2wService.toBeRefundedRecurringData = c2wRecurringTrans;
+            }
+            //=================================================================================
+
+
             double refundValue = 0;
             double OriginalAmountForDiscount = 0;
             
@@ -747,8 +768,8 @@ namespace XamarinFormsEnablerMobile
                 subAccID = transaction.GetProperty("Sub_Account_ID").ToString() ?? null,
                 accountID = "",
                 posID = main.posIDNumber,
-                taxTotal =  Math.Abs(double.Parse(transaction.GetProperty("Tax_Total").ToString())) * (-1),
-                saleTotal = Math.Abs(double.Parse( transaction.GetProperty("Sale_Total").ToString())),
+                taxTotal = Math.Abs(double.Parse(transaction.GetProperty("Tax_Total").ToString())) * (-1),
+                saleTotal = Math.Abs(double.Parse(transaction.GetProperty("Sale_Total").ToString())),
                 isManual = transaction.GetProperty("isManual").ToString(),
                 isZeroRated = transaction.GetProperty("isZeroRated").ToString(),
                 customerName = transactionDetails.GetProperty("CustomerName").ToString() ?? "",
@@ -782,7 +803,9 @@ namespace XamarinFormsEnablerMobile
                 pwdData = newPWDData,
                 spData = SoloParentData,
                 naacData = NAACData,
-                movData = newMoVData
+                movData = newMoVData,
+                serviceAmount = "0",
+                useTransItemHistory = "false"
             };
 
             customerName = transactionDetails.GetProperty("CustomerName").ToString() ?? "";
@@ -826,6 +849,13 @@ namespace XamarinFormsEnablerMobile
             Console.WriteLine(referenceNumber);
             Console.WriteLine(refundResponse);
             //Console.WriteLine(refundString);
+
+
+            if (main.appSettings.isClientC2W)
+            {
+                main.c2wService.RefundRecurringTrans();
+            }
+
             int TransType = int.Parse(transaction.GetProperty("Transaction_Type").ToString());
 
             ProcessPrinting(trsORString, ORString, referenceNumber, trsTransNumber, TransType, seniorCitizenData, personWithDData, soloParentData, nationalAthleteData, moVData);
