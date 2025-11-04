@@ -13,7 +13,7 @@
                 Orientation="Vertical">
 
                 <Button Clicked="RecurringButtonClicked" Text="Recurring" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" CornerRadius="10"/>
-                <Button Clicked="OrderSlipButtonClicked" Text="Orderslip" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" CornerRadius="10"/>
+                <Button Clicked="VendorSlipButtonClicked" Text="VendorSlip" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" CornerRadius="10"/>
                 <Button Clicked="BackToMainPage" Text="Close"  CornerRadius="10"/>
 
 
@@ -218,6 +218,7 @@
 
 
                 <Button Text="Transact" Clicked="TransactVendorSlipClicked"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
+                <Button Text="Payment" CornerRadius="10" BackgroundColor="White" Clicked="OpenPaymentOnVendorSlip"/>
                 <Button Text="Close" Clicked="CloseVendorSlipPage"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
 
             </StackLayout>

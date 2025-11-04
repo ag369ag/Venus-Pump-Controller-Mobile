@@ -54,6 +54,7 @@ namespace XamarinFormsEnablerMobile
         public void SetInitialValue()
         {
             Console.WriteLine("SETTING INITIAL VALUES");
+            Console.WriteLine(main.APIServer);
             foreach (string text in main.APIServer.Split('/'))
             {
             Console.WriteLine(text);
@@ -61,7 +62,7 @@ namespace XamarinFormsEnablerMobile
             }
             if(!string.IsNullOrEmpty(main.APIServer))
             {
-                string rawServer = main.APIServer.Split('/')[2];
+                string rawServer = main.APIServer.Split('/')[0];
                 Console.WriteLine(rawServer);
                 ServerField.Text = rawServer.Split(':')[0];
                 ConfigurationPort.Text = rawServer.Split(':')[1];

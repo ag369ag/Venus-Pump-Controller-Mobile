@@ -35,8 +35,9 @@ namespace XamarinFormsEnablerMobile
             c2wService.updateRecurringState(true);
             //resetListView();
         }
-        void OrderSlipButtonClicked(object sender, EventArgs e)
+        void VendorSlipButtonClicked(object sender, EventArgs e)
         {
+            return;
             c2wService.showOrderSlipPage = true;
             Console.WriteLine("OrderSlip button clicked");
         }
@@ -284,6 +285,25 @@ namespace XamarinFormsEnablerMobile
             }
 
             c2wService.setTemporaryVendorSlip(clicked);
+        }
+
+        void OpenPaymentOnVendorSlip(object sender, EventArgs e)
+        {
+            if (main.PaymentStack.Count <= 0 && c2wService.selectedVendorSlipIsNull())
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await DisplayAlert("Add transaction first!", null, "Close");
+                });
+                return;
+            }
+
+            c2wService.UnsetTemporaryVendorSlip();
+            UnpaidVendorSlipListView.SelectedItem = null;
+            UnpaidVendorSlipListView.Unfocus();
+            c2wService.showOrderSlipPage = false;
+            Navigation.PopModalAsync();
+            Navigation.PushModalAsync(new TransactionPayment(main, landingPage, main.forecourt));
         }
 
 

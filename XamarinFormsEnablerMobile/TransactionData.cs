@@ -290,9 +290,16 @@ namespace XamarinFormsEnablerMobile
                 return;
             }
 
-            if (main.appSettings.isClientC2W)
+            if (main.appSettings.isClientC2W && main.c2wService.AddedTrans.Count() > 0)
             {
                 main.c2wService.VoidTransaction(transItem);
+            }
+
+            if (main.appSettings.isClientC2W && main.c2wService.getSelectedVendorSlip != null)
+            {
+                main.c2wService.VoidVendorSlip();
+                VoidAllItem();
+                return;
             }
 
             if (transItem.GetItemType() == 2)
@@ -715,9 +722,14 @@ namespace XamarinFormsEnablerMobile
             string receiptResetter = responseValue.GetProperty("resetter").ToString();
             string receiptTransID = responseValue.GetProperty("transID").ToString();
 
-            if (main.appSettings.isClientC2W)
+            if (main.appSettings.isClientC2W && main.c2wService.AddedTrans.Count() > 0)
             {
                 main.c2wService.UpdateUnpaidTransctionToDB(int.Parse(receiptOrNumber), int.Parse(receiptResetter));
+            }
+
+            if (main.appSettings.isClientC2W && main.c2wService.getSelectedVendorSlip != null)
+            {
+                main.c2wService.UpdateVendorSlipToDB(receiptOrNumber, receiptResetter);
             }
 
             return await PrintTransactionReceipt(receiptResetter, receiptOrNumber, receiptTransID);
@@ -1091,14 +1103,14 @@ namespace XamarinFormsEnablerMobile
             if (main.appSettings.isClientC2W && main.c2wService.AddedTrans.Count() > 0 && main.appSettings.useSPMmode)
             {
                 string tenantCode = "";
-                
+                AddLeftString("Vendor Details:");
                 foreach (C2W_Trans transactedRecurring in main.c2wService.AddedTrans)
                 {
                     if (tenantCode == transactedRecurring.TENANTCODE)
                         continue;
 
                     string name = transactedRecurring.Name.Trim();
-                    if (name.Length > 25)
+                    if (name.Trim().Length > 25)
                         name = transactedRecurring.Name.Trim().Substring(0, 25);
                     AddLeftString($"Vendor Name: {name}");
                     AddLeftString($"Tenant Code: {transactedRecurring.TENANTCODE.Trim()}");

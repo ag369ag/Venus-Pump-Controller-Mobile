@@ -44,7 +44,7 @@ namespace XamarinFormsEnablerMobile
             public string transactionDate { get; set; }
             public string transactionTime { get; set; }
             public string buttonText { get; set; }
-         //   public string ReceiptData { get; set; }
+            //   public string ReceiptData { get; set; }
             //public string amount { get; set; }
         }
         List<transactions> transactionFromDB = new List<transactions>();
@@ -58,7 +58,7 @@ namespace XamarinFormsEnablerMobile
             public string itemType { get; set; }
             public string itemTaxID { get; set; }
             public string itemDesc { get; set; }
-            public string itemPrice {  get; set; }
+            public string itemPrice { get; set; }
             public string itemQTY { get; set; }
             public string itemValue { get; set; }
             public string itemID { get; set; }
@@ -69,9 +69,9 @@ namespace XamarinFormsEnablerMobile
             public string itemDBPrice { get; set; }
             public string originalAmount { get; set; }
             public string gcNumber { get; set; }
-            public string departmentID { get; set; } 
+            public string departmentID { get; set; }
             public string originalItemValuePreTaxChange { get; set; }
-            public string itemDiscCodeType {  get; set; }
+            public string itemDiscCodeType { get; set; }
             public string gcAmount { get; set; }
             public string itemGCNumber { get; set; }
             public string forDiscountUnitPrice { get; set; }
@@ -158,8 +158,8 @@ namespace XamarinFormsEnablerMobile
                 return;
             }
 
-            JsonElement jsonElement = jsonResponse.RootElement.GetProperty("data"); 
-            
+            JsonElement jsonElement = jsonResponse.RootElement.GetProperty("data");
+
             foreach (JsonElement item in jsonElement.EnumerateArray())
             {
                 DateTime transDate = DateTime.Parse(item.GetProperty("transDate").ToString());
@@ -176,7 +176,7 @@ namespace XamarinFormsEnablerMobile
                 }
 */
 
-                if(siNum.ToLower().Contains("sd"))
+                if (siNum.ToLower().Contains("sd"))
                 {
                     continue;
                 }
@@ -185,7 +185,7 @@ namespace XamarinFormsEnablerMobile
                 {
                     buttonText = buttonString,
                     orNumber = siNum,
-                 //   ReceiptData = receiptData,
+                    //   ReceiptData = receiptData,
                     transactionDate = transDate.ToString("MM/dd/yyyy hh:mm:ss tt"),
                     transactionTime = transDate.ToString("hh:mm:ss tt")
                 });
@@ -201,7 +201,7 @@ namespace XamarinFormsEnablerMobile
                 });
             }
 
-            
+
             /*Device.BeginInvokeOnMainThread(()=>{
                 TransactionListView.ItemsSource = null;
                 TransactionListView.ItemsSource = transactionFromDB;
@@ -219,15 +219,15 @@ namespace XamarinFormsEnablerMobile
             int resetterZero = 3 - resetter.Length;
             string newResetter = new string('0', resetterZero) + resetter;
             string transactionTypeString = "";
-            switch(transactionType)
+            switch (transactionType)
             {
                 //case "1": { transactionTypeString = "Invoice No. "; } break;
                 case "1": { transactionTypeString = ""; } break;
                 case "2": { transactionTypeString = "-SD#"; } break;
-               // case "3": { transactionTypeString = "Invoice No. "; } break;
+                // case "3": { transactionTypeString = "Invoice No. "; } break;
                 case "3": { transactionTypeString = ""; } break;
                 case "4": { transactionTypeString = "-TR#"; } break;
-                default:  { } break;
+                default: { } break;
             }
             int transNumZero = 9 - BIRTransNum.Length;
             string newBIRTransNum = new string('0', transNumZero) + BIRTransNum;
@@ -248,13 +248,13 @@ namespace XamarinFormsEnablerMobile
         async void GetReceiptDetail(object sender, EventArgs e)
         {
             Button button = sender as Button;
-            if(button.Text.ToLower().Contains("tr"))
+            if (button.Text.ToLower().Contains("tr"))
             {
                 DisplayAlert("Refund transaction cannot be refunded", null, "Close");
                 return;
             }
 
-            if(button.Text.ToLower().Contains("sd"))
+            if (button.Text.ToLower().Contains("sd"))
             {
                 DisplayAlert("Safedrop transaction cannot be refunded", null, "Close");
                 return;
@@ -266,13 +266,13 @@ namespace XamarinFormsEnablerMobile
                 return;
             }*/
 
-            
+
 
             string receiptNumber = transactionFromDB.Where(a => a.buttonText.ToLower().Trim() == button.Text.ToLower().Trim()).First().orNumber;
 
             bool continueToRefund = await DisplayAlert("Do you want to refund transaction " + receiptNumber + " ?", null, "Continue", "Cancel");
-            
-            
+
+
 
             Button btn = sender as Button;
             btn.IsEnabled = false;
@@ -283,7 +283,7 @@ namespace XamarinFormsEnablerMobile
                 return;
             }
 
-            
+
 
             var dividedSINum = receiptNumber.Trim().ToLower().Replace("invoice no.", "").Replace("-", ".").Split('.');
             Console.WriteLine(int.Parse(dividedSINum[0]) + 0);
@@ -292,7 +292,7 @@ namespace XamarinFormsEnablerMobile
             string resetter = (int.Parse(dividedSINum[0]) + 0).ToString();
             CheckForRefund(transNum, resetter, receiptNumber, btn);
         }
-        
+
         async void CheckForRefund(string transNum, string resetter, string referenceNumber, Button btn)
         {
             Object data = new
@@ -303,7 +303,7 @@ namespace XamarinFormsEnablerMobile
             };
             string dataString = Newtonsoft.Json.JsonConvert.SerializeObject(data);
             StringContent content = new StringContent(dataString, Encoding.UTF8, "application/json");
-            try 
+            try
             {
                 HttpResponseMessage post = await http.PostAsync(main.routes.refundChecker, content);
                 string response = await post.Content.ReadAsStringAsync();
@@ -312,14 +312,14 @@ namespace XamarinFormsEnablerMobile
                 var refundStatus = responseElement.GetProperty("statusCode").ToString();
                 Console.WriteLine(refundStatus);
 
-                if(refundStatus.ToString() != "0")
+                if (refundStatus.ToString() != "0")
                 {
                     await DisplayAlert("This transaction is already refunded", null, "Close");
                     btn.IsEnabled = true;
                     return;
                 }
             }
-            catch (Exception e) { btn.IsEnabled = true; }
+            catch (Exception e) { btn.IsEnabled = true; return; }
             //return;
             GetTransactionData(transNum, referenceNumber, resetter, btn);
         }
@@ -367,9 +367,9 @@ namespace XamarinFormsEnablerMobile
 
         async void GetTransactionData(string transNum, string referenceNumber, string resetter, Button btn)
         {
-            if(main.DiscountPresetButtonList.Count() < 1  || main.DiscountButtonList.Count() < 1 )
+            if (main.DiscountPresetButtonList.Count() < 1 || main.DiscountButtonList.Count() < 1)
             {
-                await Task.Run(()=>GetDiscounts());
+                await Task.Run(() => GetDiscounts());
             }
             RefundItem.Clear();
             Object data = new
@@ -387,14 +387,14 @@ namespace XamarinFormsEnablerMobile
             JsonElement responseElement = responseJson.RootElement;
             string responseCode = responseElement.GetProperty("responseCode").ToString();
 
-            if(responseCode == "401")
+            if (responseCode == "401")
             {
                 await DisplayAlert("Transaction doesn't have record", null, "Close");
                 btn.IsEnabled = true;
                 return;
             }
 
-            if(responseCode == "500")
+            if (responseCode == "500")
             {
                 await DisplayAlert("Internal server error. Check API.", null, "Close");
                 btn.IsEnabled = true;
@@ -410,6 +410,7 @@ namespace XamarinFormsEnablerMobile
             JsonElement soloParentData = responseElement.GetProperty("solopData");
             JsonElement moVData = responseElement.GetProperty("moVData");
             string recurringData = responseElement.GetProperty("recurringData").GetRawText();
+            string vendorData = responseElement.GetProperty("vendorData").GetRawText();
 
             // SENIOR DATA
             //==================================================================================
@@ -417,7 +418,7 @@ namespace XamarinFormsEnablerMobile
             List<object> blankList = new List<object>();
             string blankObject = Newtonsoft.Json.JsonConvert.SerializeObject(blankList);
             string newSCData = "";
-            if(seniorCitizenData.EnumerateArray().Count() <= 0)
+            if (seniorCitizenData.EnumerateArray().Count() <= 0)
             {
                 newSCData = blankObject;
             }
@@ -451,7 +452,7 @@ namespace XamarinFormsEnablerMobile
             // PWD DATA
             //==================================================================================
             string newPWDData = "";
-            if(personWithDData.EnumerateArray().Count() <= 0)
+            if (personWithDData.EnumerateArray().Count() <= 0)
             {
                 newPWDData = blankObject;
             }
@@ -469,7 +470,7 @@ namespace XamarinFormsEnablerMobile
             // SOLO PARENT DATA
             //==================================================================================
             string SoloParentData = "";
-            if(soloParentData.EnumerateArray().Count() <= 0)
+            if (soloParentData.EnumerateArray().Count() <= 0)
             {
                 SoloParentData = blankObject;
             }
@@ -480,7 +481,7 @@ namespace XamarinFormsEnablerMobile
                 string id = spdata[0].GetProperty("SPIC_Number").ToString();
                 string cName = spdata[0].GetProperty("Child_Name").ToString();
                 string cDOB = spdata[0].GetProperty("Child_DOB").ToString();
-                string cAge= spdata[0].GetProperty("Child_Age").ToString();
+                string cAge = spdata[0].GetProperty("Child_Age").ToString();
                 SoloParentData = GetSoloParentData(name, id, cName, cDOB, cAge);
             }
             //=================================================================================
@@ -488,7 +489,7 @@ namespace XamarinFormsEnablerMobile
             // NAAC
             //=================================================================================
             string NAACData = "";
-            if(nationalAthleteData.EnumerateArray().Count() <= 0)
+            if (nationalAthleteData.EnumerateArray().Count() <= 0)
             {
                 NAACData = blankObject;
             }
@@ -500,7 +501,7 @@ namespace XamarinFormsEnablerMobile
                 NAACData = GetNAACDiscountData(name, id);
             }
             //=================================================================================
-            
+
             Console.WriteLine("SC: " + Newtonsoft.Json.JsonConvert.DeserializeObject(newSCData).ToString());
             Console.WriteLine("PWD: " + Newtonsoft.Json.JsonConvert.DeserializeObject(newPWDData).ToString());
             Console.WriteLine("SP: " + Newtonsoft.Json.JsonConvert.DeserializeObject(SoloParentData).ToString());
@@ -514,14 +515,21 @@ namespace XamarinFormsEnablerMobile
                 List<RecurringTransData> c2wRecurringTrans = new List<RecurringTransData>();
                 c2wRecurringTrans = JsonConvert.DeserializeObject<List<RecurringTransData>>(recurringData);
                 main.c2wService.toBeRefundedRecurringData = c2wRecurringTrans;
+
+                List<object> parsingVendorData = JsonConvert.DeserializeObject<List<object>>(vendorData);
+                main.c2wService.getSelectedVendorSlip = new C2W_VendorSlipHeaderData
+                {
+                    ORDERSLIPHEADERCODE = "",
+                    HEADERBC = parsingVendorData[0].GetType().GetProperty("HeaderBC").ToString()
+                };
             }
             //=================================================================================
 
 
             double refundValue = 0;
             double OriginalAmountForDiscount = 0;
-            
-            foreach ( var item in transactionItem.EnumerateArray())
+
+            foreach (var item in transactionItem.EnumerateArray())
             {
                 int itemTypeNumber = int.Parse(item.GetProperty("Item_Type").ToString());
                 /*if (itemTypeNumber == 52 || itemTypeNumber == 54)
@@ -530,7 +538,7 @@ namespace XamarinFormsEnablerMobile
                     return;
                 }*/
                 Console.WriteLine("before conversion");
-                Console.WriteLine(item.GetProperty("Item_Type").ToString() );
+                Console.WriteLine(item.GetProperty("Item_Type").ToString());
                 Console.WriteLine("after conversion");
 
                 string discTotal = "0";
@@ -553,7 +561,7 @@ namespace XamarinFormsEnablerMobile
                     Console.WriteLine($"{(Math.Abs(double.Parse(item.GetProperty("Item_Quantity").ToString())))}");
                     Console.WriteLine($"{(Math.Abs(double.Parse(item.GetProperty("Item_Value").ToString())))}");
                     Console.WriteLine($"{(Math.Abs(double.Parse(item.GetProperty("Item_Tax_Amount").ToString())))}");
-                    
+
                     RefundItem.Add(new Item
                     {
                         deliveryID = item.GetProperty("Item_ID").ToString(),
@@ -563,7 +571,7 @@ namespace XamarinFormsEnablerMobile
                         itemDesc = item.GetProperty("Item_Description").ToString().Trim(),
                         itemPrice = (Math.Abs(double.Parse(item.GetProperty("Item_Price").ToString()))).ToString(),
                         itemQTY = (Math.Abs(double.Parse(item.GetProperty("Item_Quantity").ToString())) * (-1)).ToString(),
-                        itemValue = ( Math.Abs(double.Parse(item.GetProperty("Item_Value").ToString())) * (-1)).ToString(),
+                        itemValue = (Math.Abs(double.Parse(item.GetProperty("Item_Value").ToString())) * (-1)).ToString(),
                         itemID = item.GetProperty("Item_ID").ToString(),
                         itemTaxAmount = (Math.Abs(double.Parse(item.GetProperty("Item_Tax_Amount").ToString())) * (-1)).ToString(),
                         itemDiscTotal = discTotal,
@@ -620,7 +628,7 @@ namespace XamarinFormsEnablerMobile
                         discountPresetID = null
                     });
                 }
-                else if(itemTypeNumber == 10)
+                else if (itemTypeNumber == 10)
                 {
                     Console.WriteLine($"Processing item type {itemTypeNumber}");
                     RefundItem.Add(new Item
@@ -654,7 +662,7 @@ namespace XamarinFormsEnablerMobile
                         discountPresetID = null
                     });
                 }
-                else if(itemTypeNumber == 52)
+                else if (itemTypeNumber == 52)
                 {
                     Console.WriteLine($"Processing item type {itemTypeNumber}");
                     refundValue += double.Parse(item.GetProperty("Item_Value").ToString());
@@ -677,7 +685,7 @@ namespace XamarinFormsEnablerMobile
                         itemQTY = (Math.Abs(double.Parse(item.GetProperty("Item_Quantity").ToString())) * (-1)).ToString(),
                         itemValue = (Math.Abs(double.Parse(item.GetProperty("Item_Value").ToString()))).ToString(),
                         itemID = item.GetProperty("Item_ID").ToString(),
-                        itemTaxAmount = (Math.Abs(double.Parse(item.GetProperty("Item_Tax_Amount").ToString())) * (-1) ).ToString(),
+                        itemTaxAmount = (Math.Abs(double.Parse(item.GetProperty("Item_Tax_Amount").ToString())) * (-1)).ToString(),
                         itemDiscTotal = discTotal,
                         isTaxExemptItem = item.GetProperty("is_tax_exempt_item").ToString(),
                         isZeroRatedTaxItem = item.GetProperty("is_zero_rated_tax_item").ToString(),
@@ -735,7 +743,7 @@ namespace XamarinFormsEnablerMobile
                 }
             }
             Console.WriteLine("After foreach");
-            
+
             if (RefundItem.Where(a => a.itemType == "2").Count() > 0)
             {
                 foreach (var item in RefundItem.Where(a => a.itemType == "2"))
@@ -748,7 +756,7 @@ namespace XamarinFormsEnablerMobile
                     Console.WriteLine(main.forecourt.GetTransactionById(int.Parse(item.itemID)).State.ToString());
                     try
                     {
-                    main.forecourt.GetTransactionById(int.Parse(item.deliveryID.ToString())).Reinstate();
+                        main.forecourt.GetTransactionById(int.Parse(item.deliveryID.ToString())).Reinstate();
 
                     }
                     catch (Exception ex)
@@ -822,14 +830,14 @@ namespace XamarinFormsEnablerMobile
 
             string refundString = Newtonsoft.Json.JsonConvert.SerializeObject(RefundContent);
             Console.WriteLine(RefundContent);
-            
+
             StringContent refundContent = new StringContent(refundString, Encoding.UTF8, "application/json");
             HttpResponseMessage refundPost = await http.PostAsync(main.routes.addNewTransaction, refundContent);
             string refundResponse = await refundPost.Content.ReadAsStringAsync();
             Console.WriteLine(refundResponse);
             JsonDocument refundResponseJson = JsonDocument.Parse(refundResponse);
             JsonElement refundResponseElement;
-            if(main.useLaravelAPI)
+            if (main.useLaravelAPI)
             {
                 refundResponseElement = refundResponseJson.RootElement;
             }
@@ -853,14 +861,18 @@ namespace XamarinFormsEnablerMobile
 
             if (main.appSettings.isClientC2W)
             {
-                main.c2wService.RefundRecurringTrans();
+                if(main.c2wService.toBeRefundedRecurringData.Count() > 0)
+                    main.c2wService.RefundRecurringTrans();
+
+                if (main.c2wService.getSelectedVendorSlip != null)
+                    main.c2wService.RefundVendorSlip(trsOrNumber, trsResetter);
             }
 
             int TransType = int.Parse(transaction.GetProperty("Transaction_Type").ToString());
 
             ProcessPrinting(trsORString, ORString, referenceNumber, trsTransNumber, TransType, seniorCitizenData, personWithDData, soloParentData, nationalAthleteData, moVData);
 
-           
+
         }
 
         private string GetSCPWDDiscountData(bool isSC, string name, string id, string tin = null)
@@ -877,7 +889,7 @@ namespace XamarinFormsEnablerMobile
             double VatExValue = RefundItem.Where(a => a.itemTaxID == "2" && (a.itemType == "2" || a.itemType == "14")).Sum(a => double.Parse(a.itemValue));
             double VatValue = RefundItem.Where(a => a.itemTaxID == "1" && (a.itemType == "2" || a.itemType == "14")).Sum(a => double.Parse(a.itemValue));
 
-            if(main.Items.Where(a => a.itemDesc.ToLower().Contains(discountDescriptionFive)).Count() > 0)
+            if (main.Items.Where(a => a.itemDesc.ToLower().Contains(discountDescriptionFive)).Count() > 0)
             {
                 VatValue = RefundItem.Where(a => a.itemTaxID == "1").Sum(a => double.Parse(a.itemValue));
             }
@@ -916,7 +928,7 @@ namespace XamarinFormsEnablerMobile
         private string GetMoVDiscountData(string name, string id, string tin = null)
         {
             string discountIdentifier = "MEDAL OF VALOR 20%";
-           
+
 
             //string discountDescriptionFive = discountIdentifier + " disc 5";
             //string discountDescriptionTwenty = discountIdentifier + " disc 20";
@@ -932,7 +944,7 @@ namespace XamarinFormsEnablerMobile
             double fivePercentValue = 0;
             double twentyPercentValue = RefundItem.Where(a => a.itemDesc.ToLower().Contains(discountIdentifier)).Sum(a => System.Math.Abs(double.Parse(a.itemValue)));
 
-           
+
             bool hasTwentyPercent = RefundItem.Where(a => a.itemDesc.ToLower().Contains(discountIdentifier)).Count() > 0;
 
             double saleTotal = RefundItem.Where(a => a.itemType != "7" || a.itemType != "8" || a.itemType != "10").Sum(a => double.Parse(a.itemValue));
@@ -968,7 +980,7 @@ namespace XamarinFormsEnablerMobile
 
             double saleTotal = RefundItem.Where(a => a.itemType != "7" || a.itemType != "8" || a.itemType != "10").Sum(a => double.Parse(a.itemValue));
 
-            double grossTotal = RefundItem.Where(a => a.itemType != "7" || a.itemType != "8" || a.itemType != "10").Sum(a=> double.Parse(a.originalItemValuePreTaxChange ?? a.itemValue));
+            double grossTotal = RefundItem.Where(a => a.itemType != "7" || a.itemType != "8" || a.itemType != "10").Sum(a => double.Parse(a.originalItemValuePreTaxChange ?? a.itemValue));
 
             object data = new
             {
@@ -1023,7 +1035,7 @@ namespace XamarinFormsEnablerMobile
 
         async void ProcessPrinting(string trsORNumber, string trsORNumWithoutTRS, string referenceNumber, string trsTransID, int transactionType, JsonElement sc, JsonElement pwd, JsonElement solo, JsonElement naac, JsonElement mov)
         {
-            foreach(string item in main.header)
+            foreach (string item in main.header)
             {
                 FORPRINTINGARRAY.Add(item);
             }
@@ -1037,7 +1049,7 @@ namespace XamarinFormsEnablerMobile
             string formattedSpace = new string(' ', space) + referenceText + referenceNumber;
             FORPRINTINGARRAY.Add(formattedSpace);
             Console.WriteLine("after reference #");
-            if(RefundItem.Where(a=>a.isZeroRatedTaxItem == "1").Count() > 0)
+            if (RefundItem.Where(a => a.isZeroRatedTaxItem == "1").Count() > 0)
             {
                 FORPRINTINGARRAY.Add(" ");
                 AddCenterText("*** ZERO RATED ***");
@@ -1057,7 +1069,7 @@ namespace XamarinFormsEnablerMobile
             double toBeDiscountedTotal = 0;
             double toBeDiscountedUnitPrice = 0;
             var refundItemForReceipt = RefundItem.Where(a => a.itemType == "2" || a.itemType == "14" || a.itemType == "52" || a.itemType == "54");
-            foreach(var item in refundItemForReceipt)
+            foreach (var item in refundItemForReceipt)
             {
                 double refundItemValue = Math.Abs(double.Parse(item.itemValue));
                 VATTotal += refundItemValue;
@@ -1072,8 +1084,8 @@ namespace XamarinFormsEnablerMobile
                 //=============================================================================================
                 // FOR NAAC VATABLE
                 if (item.itemDesc.ToLower().Contains("naac"))
-               {
-                   VATTotal -= refundItemValue;
+                {
+                    VATTotal -= refundItemValue;
                     foreach (var discountTypes in main.DiscountPresetButtonList)
                     {
                         if (discountTypes.presetName != item.itemDesc)
@@ -1092,18 +1104,18 @@ namespace XamarinFormsEnablerMobile
                 }
                 //=============================================================================================
 
-                
+
 
                 if (item.itemType == "52" || item.itemType == "54")
                 {
-                    
+
                     totalSale -= refundItemValue;
-                    if(!(item.itemDesc.ToLower().Contains("naac")))
+                    if (!(item.itemDesc.ToLower().Contains("naac")))
                     {
-                        VATTotal -= (refundItemValue*2);
+                        VATTotal -= (refundItemValue * 2);
                     }
 
-                    if ( NVATTotal > 0 && !(item.itemDesc.ToLower().Contains("naac")) )
+                    if (NVATTotal > 0 && !(item.itemDesc.ToLower().Contains("naac")))
                     {
                         VATTotal += (refundItemValue * 2);
                         VATTotal -= refundItemValue;
@@ -1123,8 +1135,8 @@ namespace XamarinFormsEnablerMobile
                     toBeDiscountedUnitPrice = (0 - double.Parse(item.itemQTY));
                     //taxType = item.isTaxExemptItem == "1" ? "NVAT" : item.isZeroRatedTaxItem == "1" ? "Zero Rated" : "VAT";
                     taxType = item.isTaxExemptItem == "1" ? "NVAT" : "VAT";
-                    string amount = double.Parse(item.originalAmount) == 0 ? (double.Parse(item.itemValue)*-1).ToString() : item.originalAmount;
-                    if(item.isTaxExemptItem == "1" || item.isZeroRatedTaxItem == "1")
+                    string amount = double.Parse(item.originalAmount) == 0 ? (double.Parse(item.itemValue) * -1).ToString() : item.originalAmount;
+                    if (item.isTaxExemptItem == "1" || item.isZeroRatedTaxItem == "1")
                     {
                         amount = (Math.Abs(double.Parse(item.itemValue)) * 1.12).ToString();
                     }
@@ -1149,23 +1161,23 @@ namespace XamarinFormsEnablerMobile
                         AddSideStrings(lessVat, newDiscountVal);
                     }
                 }
-                if(item.itemType == "52")
+                if (item.itemType == "52")
                 {
                     FORPRINTINGARRAY.Add(item.itemDesc);
                     DiscountPresetsClass refundDiscount = new DiscountPresetsClass();
                     refundDiscount = main.DiscountPresetButtonList.Where(a => a.presetName.ToLower().Trim() == item.itemDesc.ToLower().Trim()).First();
-                    switch(refundDiscount.presetDiscountType)
+                    switch (refundDiscount.presetDiscountType)
                     {
                         case 1:
-                            { 
-                                if(refundDiscount.presetId == 8)
+                            {
+                                if (refundDiscount.presetId == 8)
                                 {
                                     string DiscountString = "   " + refundDiscount.presetValue.ToString() + "x P" + (toBeDiscountedTotal * (-1)).ToString();
                                     AddSideStrings(DiscountString, "P" + item.itemValue.ToString());
                                 }
-                                if(refundDiscount.presetId == 1 || refundDiscount.presetId == 2 || refundDiscount.presetId == 3 || refundDiscount.presetId == 4 || refundDiscount.presetId == 5 || refundDiscount.presetId == 6 || refundDiscount.presetId == 9)
+                                if (refundDiscount.presetId == 1 || refundDiscount.presetId == 2 || refundDiscount.presetId == 3 || refundDiscount.presetId == 4 || refundDiscount.presetId == 5 || refundDiscount.presetId == 6 || refundDiscount.presetId == 9)
                                 {
-                                    if(refundDiscount.presetValue == 20)
+                                    if (refundDiscount.presetValue == 20)
                                     {
                                         double LessVATvalue = toBeDiscountedTotal / 1.12;
                                         double vatValue = 0 - (toBeDiscountedTotal - LessVATvalue);
@@ -1173,30 +1185,33 @@ namespace XamarinFormsEnablerMobile
                                         Console.WriteLine(vatValue);
 
                                         string lessVATstring = " Less VAT 12%";
-                                        AddSideStrings(lessVATstring, "P" + string.Format("{0:f02}",vatValue));
+                                        AddSideStrings(lessVATstring, "P" + string.Format("{0:f02}", vatValue));
                                         if (refundDiscount.presetName.ToLower().Contains("naac"))
                                         {
-                                            toBeDiscountedTotal = toBeDiscountedTotal/1.12;
+                                            toBeDiscountedTotal = toBeDiscountedTotal / 1.12;
                                         }
                                     }
-                                    
+
                                     string DiscountString = "   " + refundDiscount.presetValue.ToString() + "% x P" + (toBeDiscountedTotal * (-1)).ToString("#,##0.00");
                                     AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", double.Parse(item.itemValue)));
                                 }
 
-                            }; break;
+                            }
+                            ; break;
                         case 2:
                             {
                                 string DiscountString = "  " + toBeDiscountedUnitPrice.ToString() + " x P" + (Math.Abs(double.Parse(item.itemPrice))).ToString();
                                 //string DiscountString = "  " + item.itemQTY + " x P" + toBeDiscountedUnitPrice.ToString();
-                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString() );
-                            }; break;
+                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString());
+                            }
+                            ; break;
                         case 3:
                             {
                                 string DiscountString = "   -1 x P" + refundDiscount.presetValue.ToString();
                                 AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString());
-                            }; break;
-                        default:  {  }; break;
+                            }
+                            ; break;
+                        default: { }; break;
                     }
                 }
 
@@ -1210,55 +1225,58 @@ namespace XamarinFormsEnablerMobile
                             {
                                 int convertedToIntPrice = Convert.ToInt32(itemItemPrice);
                                 string DiscountString = "   " + convertedToIntPrice + "% x P" + (toBeDiscountedTotal * (-1)).ToString();
-                                AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", (double.Parse(item.itemValue))) );
-                            }; break;
+                                AddSideStrings(DiscountString, "P" + string.Format("{0:f02}", (double.Parse(item.itemValue))));
+                            }
+                            ; break;
 
                         case 2:
                             {
                                 string DiscountString = "  " + toBeDiscountedUnitPrice.ToString() + " x P" + itemItemPrice;
                                 //string DiscountString = "  " + item.itemQTY + " x P" + toBeDiscountedUnitPrice.ToString();
                                 AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString());
-                            }; break;
-                        
+                            }
+                            ; break;
+
                         case 3:
                             {
-                               // string itemItemPrice = 
+                                // string itemItemPrice = 
                                 string DiscountString = "   -1 x P" + item.itemPrice;
-                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString() );
-                            }; break;
-                        
+                                AddSideStrings(DiscountString, "P" + (double.Parse(item.itemValue)).ToString());
+                            }
+                            ; break;
+
                         default: { }; break;
                     }
                 }
-                
+
             }
-            
+
             double saleTotal = totalSale;
             Console.WriteLine("after products");
             FORPRINTINGARRAY.Add(" ");
-            AddSideStrings("Sales Total", "-P" + string.Format("{0:f02}", saleTotal) );
-            if(RefundItem.Where(a=>a.itemType == "7" || a.itemType == "8").Count()>0)
+            AddSideStrings("Sales Total", "-P" + string.Format("{0:f02}", saleTotal));
+            if (RefundItem.Where(a => a.itemType == "7" || a.itemType == "8").Count() > 0)
             {
-                foreach(var item in RefundItem.Where(a=>a.itemType == "7" || a.itemType == "8"))
+                foreach (var item in RefundItem.Where(a => a.itemType == "7" || a.itemType == "8"))
                 {
-                    string itemValue = "-P" + string.Format("{0:f02}", (0 - double.Parse(item.itemValue))) ;
+                    string itemValue = "-P" + string.Format("{0:f02}", (0 - double.Parse(item.itemValue)));
                     AddSideStrings(item.itemDesc, itemValue);
                 }
             }
             Console.WriteLine("after mop");
-            if(RefundItem.Where(a=>a.itemType == "10").Count()>0)
+            if (RefundItem.Where(a => a.itemType == "10").Count() > 0)
             {
                 Item change = RefundItem.Where(a => a.itemType == "10").First();
-                AddSideStrings(change.itemDesc, "P" + (0 - double.Parse(change.itemValue)).ToString() );
+                AddSideStrings(change.itemDesc, "P" + (0 - double.Parse(change.itemValue)).ToString());
             }
-            
+
             FORPRINTINGARRAY.Add(" ");
-            AddSideStrings("TOTAL INVOICE", "-P" + string.Format("{0:f02}", saleTotal) );
+            AddSideStrings("TOTAL INVOICE", "-P" + string.Format("{0:f02}", saleTotal));
             FORPRINTINGARRAY.Add(" ");
             Console.WriteLine("before vats");
             double vatableValue = Math.Round(VATTotal / 1.12, 2, MidpointRounding.AwayFromZero);
             double vatAmountValue = Math.Round(VATTotal - (VATTotal / 1.12), 2, MidpointRounding.AwayFromZero);
-            
+
             string VatSaleValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatableValue).ToString("#,##0.00")}";
             string VatAmountValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatAmountValue).ToString("#,##0.00")}";
             string VatExValue = taxType == "Zero Rated" ? "P0.00" : Math.Abs(NVATTotal) > 0 ? $"-P{Math.Abs(NVATTotal).ToString("#,##0.00")}" : "P0.00";
@@ -1275,7 +1293,7 @@ namespace XamarinFormsEnablerMobile
                 a.itemDesc.ToLower().Contains("card") ||
                 a.itemDesc.ToLower().Contains("qr")
             )).Count() > 0;
-                string cardString = "XXXX-XXXX-XXXX-" + cardNumber;
+            string cardString = "XXXX-XXXX-XXXX-" + cardNumber;
 
             Console.WriteLine("After checking if e money");
 
@@ -1307,7 +1325,7 @@ namespace XamarinFormsEnablerMobile
                 FORPRINTINGARRAY.Add(" ");
             }
             Console.WriteLine($"Before sc + {sc.EnumerateArray().ToArray().Count()}");
-            if(sc.EnumerateArray().ToArray().Count() > 0)
+            if (sc.EnumerateArray().ToArray().Count() > 0)
             {
                 var scdata = sc.EnumerateArray().ToArray();
                 string name = scdata[0].GetProperty("Senior_Name").ToString();
@@ -1319,11 +1337,11 @@ namespace XamarinFormsEnablerMobile
 
                 string SeniorIDNumberString = "SC ID No. : ";
                 AddCustomerInfo(SeniorIDNumberString, id);
-                
+
 
                 string nameString = "Name      : ";
-                AddCustomerInfo (nameString, name);
-                
+                AddCustomerInfo(nameString, name);
+
 
                 string addressString = "TIN       : ";
                 AddCustomerInfo(addressString, tin);
@@ -1343,15 +1361,15 @@ namespace XamarinFormsEnablerMobile
 
                 string SeniorIDNumberString = "PWD ID No. : ";
                 AddCustomerInfo(SeniorIDNumberString, id);
-                
+
 
                 string nameString = "Name      : ";
                 AddCustomerInfo(nameString, name);
-                
+
 
                 string addressString = "TIN       : ";
                 AddCustomerInfo(addressString, tin);
-               
+
                 FORPRINTINGARRAY.Add(" ");
             }
 
@@ -1396,19 +1414,19 @@ namespace XamarinFormsEnablerMobile
                 FORPRINTINGARRAY.Add(" ");
                 string ParentNameString = "Parent name: ";
                 AddCustomerInfo(ParentNameString, name);
-                
+
                 string parentIDString = "ID #: ";
                 AddCustomerInfo(parentIDString, id);
-                
+
                 string parentChildString = "Child name: ";
                 AddCustomerInfo(parentChildString, cName);
-                
+
                 string parentChildDOBString = "Child DOB: ";
                 AddCustomerInfo(parentChildDOBString, cDOB);
-               
+
                 string parentChildAgeString = "Child Age: ";
                 AddCustomerInfo(parentChildAgeString, cAge);
-                
+
                 FORPRINTINGARRAY.Add(" ");
             }
 
@@ -1432,7 +1450,7 @@ namespace XamarinFormsEnablerMobile
 
 
             string csNameString = " CUSTOMER NAME: ";
-            AddCustomerInfo(csNameString,isEMoney ? "" : isEMoney ? "" : customerName);
+            AddCustomerInfo(csNameString, isEMoney ? "" : isEMoney ? "" : customerName);
             string csAddressString = " ADDRESS: ";
             AddCustomerInfo(csAddressString, customerAddress);
             string csTINString = " TIN: ";
@@ -1446,11 +1464,11 @@ namespace XamarinFormsEnablerMobile
                 Console.WriteLine($"Refund footer: {item}");
                 FORPRINTINGARRAY.Add(item);
             }
-           
+
             string receiptCut = new string('=', main.appSettings.paperWidth);
             FORPRINTINGARRAY.Add(receiptCut);
 
-           
+
             //============================================================================================
 
             /*foreach (string item in main.header)
@@ -1733,7 +1751,7 @@ namespace XamarinFormsEnablerMobile
                 FORPRINTINGARRAY.Add(item);
             }*/
 
-            foreach(var item in FORPRINTINGARRAY)
+            foreach (var item in FORPRINTINGARRAY)
             {
                 Console.WriteLine(item);
                 if (item.ToLower().Contains("copy"))
@@ -1752,7 +1770,7 @@ namespace XamarinFormsEnablerMobile
                 data = forEJournalText
             };
             string EJournalObjectString = Newtonsoft.Json.JsonConvert.SerializeObject(EjournalPost);
-            StringContent EjournalStringContent = new StringContent(EJournalObjectString,Encoding.UTF8, "application/json");
+            StringContent EjournalStringContent = new StringContent(EJournalObjectString, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await http.PostAsync(main.routes.saveToEJournal, EjournalStringContent);
             FORPRINTINGARRAY.Add(receiptCut);
 
@@ -1771,20 +1789,20 @@ namespace XamarinFormsEnablerMobile
             if (main.appSettings.useSocketPrinter)
             {
                 List<string> cuttedForPrinting = new List<string>();
-                foreach(string item in FORPRINTINGARRAY)
+                foreach (string item in FORPRINTINGARRAY)
                 {
-                    if(!item.Contains("="))
+                    if (!item.Contains("="))
                     {
                         cuttedForPrinting.Add(item);
                         continue;
                     }
                     else
                     {
-                        await Task.Run(()=>PrintToSocketPrinter(cuttedForPrinting));
+                        await Task.Run(() => PrintToSocketPrinter(cuttedForPrinting));
                     }
                     cuttedForPrinting.Clear();
                 }
-                
+
             }
             else if (main.appSettings.useIminPrinter)
             {
@@ -1802,7 +1820,7 @@ namespace XamarinFormsEnablerMobile
                 //printService.Print(FORPRINTINGTEXT, main.appSettings.paperWidth);
             }
             Search();
-            
+
         }
 
         async Task<string> AddStoreCopy()
@@ -1831,7 +1849,7 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY = new List<string>();
 
             string printString = "";
-            foreach(string line in newPrintingArray)
+            foreach (string line in newPrintingArray)
             {
                 FORPRINTINGARRAY.Add(line);
                 printString += (line + "\n");
@@ -1862,7 +1880,7 @@ namespace XamarinFormsEnablerMobile
 
         void AddCenterText(string text)
         {
-            int space = (main.appSettings.paperWidth - text.Length)/2;
+            int space = (main.appSettings.paperWidth - text.Length) / 2;
             string formattedString = new string(' ', space) + text + new string(' ', space);
             FORPRINTINGARRAY.Add(formattedString);
         }

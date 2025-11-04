@@ -8,7 +8,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static Android.Renderscripts.Sampler;
 
 namespace XamarinFormsEnablerMobile
 {
@@ -452,6 +451,7 @@ namespace XamarinFormsEnablerMobile
         private C2W_VendorSlipHeaderData selectedVendorSlip = new C2W_VendorSlipHeaderData();
         private C2W_VendorSlipHeaderData temporarySelectedVendorSlip = new C2W_VendorSlipHeaderData();
 
+        public C2W_VendorSlipHeaderData getSelectedVendorSlip { get { return selectedVendorSlip; } set { selectedVendorSlip = value; } }
         public List<C2W_VendorSlip_Items> vendorSlipItems = new List<C2W_VendorSlip_Items>();
         public async void LoadUnpaidVendorSlip()
         {
@@ -535,6 +535,56 @@ namespace XamarinFormsEnablerMobile
             return true;
         }
 
+        public async Task VoidVendorSlip()
+        {
+            object voidVendorSlipObject = new
+            {
+                QRCode = selectedVendorSlip.HEADERBC
+            };
+
+            await apiCall(main.routes.c2wVoidVendorSlip, voidVendorSlipObject);
+            
+            selectedVendorSlip = null;
+            UnsetTemporaryVendorSlip();
+            vendorSlipItems.Clear();
+        }
+
+        public async void UpdateVendorSlipToDB(string orNumber, string resetter)
+        {
+            object setVendorPaidObject = new
+            {
+                QRCode = selectedVendorSlip.HEADERBC
+            };
+
+            await apiCall(main.routes.c2wSetVendorSlipPaid, setVendorPaidObject);
+
+            object saveVendorSlipInfoObject = new
+            {
+                orNum = orNumber,
+                orResetter = resetter,
+                headerBC = selectedVendorSlip.HEADERBC,
+                posID = main.posIDNumber
+            };
+
+            await apiCall(main.routes.c2wSaveVendorTransactionInfo, saveVendorSlipInfoObject);
+        }
+
+        public async void RefundVendorSlip(string orNumber, string resetter)
+        {
+            object refundVendorTransObject = new
+            {
+                orNum = orNumber,
+                orResetter = resetter,
+                posID = main.posIDNumber,
+                headerBC = selectedVendorSlip.HEADERBC
+            };
+
+            await apiCall(main.routes.c2wSetVendorTransRefund, refundVendorTransObject);
+
+            await VoidVendorSlip();
+
+        }
+        
         
     }
 }

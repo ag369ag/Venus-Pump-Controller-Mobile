@@ -514,10 +514,15 @@ namespace XamarinFormsEnablerMobile
                 });
             }
 
-            if (main.appSettings.isClientC2W)
+            if (main.appSettings.isClientC2W && main.c2wService.AddedTrans.Count() > 0)
             {
                 main.c2wService.VoidAllTransaction();
             }
+            if(main.appSettings.isClientC2W && main.c2wService.getSelectedVendorSlip != null)
+            {
+                main.c2wService.VoidVendorSlip();
+            }
+
             main.td.VoidAllItem();
             await Task.Run(() =>
             VoidAllItem()
@@ -2200,6 +2205,22 @@ namespace XamarinFormsEnablerMobile
             {
                 case "0":
                     {
+                        if (SelectedPaymentType.ToLower().Contains("wtax"))
+                        {
+                            double value = 0;
+                            if (SelectedPaymentType.Contains("5%"))
+                            {
+                                value = main.td.ComputeSubtotal() * 0.05;
+                            }
+                            else
+                            {
+                                value = main.td.ComputeSubtotal() * 0.03;
+                            }
+                            PaymentValue.Text = value.ToString("#,##0.00");
+                            payment();
+                            return;
+                        }
+
                         if (SelectedPaymentType == "CASH")
                         {
                             Console.WriteLine("the payment is cash");

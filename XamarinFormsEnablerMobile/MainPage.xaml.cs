@@ -310,6 +310,10 @@ namespace XamarinFormsEnablerMobile
             public string c2wSetRecurringAsRefund { get; set; }
             public string c2wGetUnpaidVendorSlip { get; set; }
             public string c2wSetVendorSlipForPayment { get; set; }
+            public string c2wSetVendorSlipPaid { get; set; }
+            public string c2wSaveVendorTransactionInfo { get; set; }
+            public string c2wVoidVendorSlip { get; set; }
+            public string c2wSetVendorTransRefund { get; set; }
 
         }
         public apiRoutes routes = new apiRoutes();
@@ -457,6 +461,8 @@ namespace XamarinFormsEnablerMobile
             }
         }
 
+        public string c2wSetVendorSlipPaid { get; set; }
+        public string c2wSaveVendorTransactionInfo { get; set; }
         public void SetAPIRoutes()
         {
 
@@ -502,8 +508,12 @@ namespace XamarinFormsEnablerMobile
                 routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
                 routes.c2wRefundRecurringTrans = APIServer + "/C2WCtrl/RefundPaidAmount";
                 routes.c2wSetRecurringAsRefund = APIServer + "/TransactionCtrl/SetRecurringAsRefunded";
-                routes.c2wGetUnpaidVendorSlip = APIServer = "/C2WCtrl/GetUnpaidVendorSlip";
+                routes.c2wGetUnpaidVendorSlip = APIServer + "/C2WCtrl/GetUnpaidVendorSlip";
                 routes.c2wSetVendorSlipForPayment = APIServer + "/C2WCtrl/SetC2WVendorSlipForPayment";
+                routes.c2wSetVendorSlipPaid = APIServer + "/C2WCtrl/setC2WVendorSlipPaid";
+                routes.c2wSaveVendorTransactionInfo = APIServer + "/TransactionCtrl/SavingVendorTransactionInfo";
+                routes.c2wVoidVendorSlip = APIServer + "/C2WCtrl/VoidVendorSlip";
+                routes.c2wSetVendorTransRefund = APIServer + "/TransactionCtrl/SetVendorTransRefunded";
             }
 
 
@@ -549,8 +559,12 @@ namespace XamarinFormsEnablerMobile
                 routes.c2wSaveRecurringData = APIServer + "/TransactionCtrl/SaveRecurringData";
                 routes.c2wRefundRecurringTrans = APIServer + "/C2WCtrl/RefundPaidAmount";
                 routes.c2wSetRecurringAsRefund = APIServer + "/TransactionCtrl/SetRecurringAsRefunded";
-                routes.c2wGetUnpaidVendorSlip = APIServer = "/C2WCtrl/GetUnpaidVendorSlip";
+                routes.c2wGetUnpaidVendorSlip = APIServer + "/C2WCtrl/GetUnpaidVendorSlip";
                 routes.c2wSetVendorSlipForPayment = APIServer + "/C2WCtrl/SetC2WVendorSlipForPayment";
+                routes.c2wSetVendorSlipPaid = APIServer + "/C2WCtrl/setC2WVendorSlipPaid";
+                routes.c2wSaveVendorTransactionInfo = APIServer + "/TransactionCtrl/SavingVendorTransactionInfo";
+                routes.c2wVoidVendorSlip = APIServer + "/C2WCtrl/VoidVendorSlip";
+                routes.c2wSetVendorTransRefund = APIServer + "/TransactionCtrl/SetVendorTransRefunded";
             }
 
         }
