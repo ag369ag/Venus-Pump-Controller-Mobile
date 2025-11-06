@@ -511,9 +511,9 @@ namespace XamarinFormsEnablerMobile
                 routes.c2wGetUnpaidVendorSlip = APIServer + "/C2WCtrl/GetUnpaidVendorSlip";
                 routes.c2wSetVendorSlipForPayment = APIServer + "/C2WCtrl/SetC2WVendorSlipForPayment";
                 routes.c2wSetVendorSlipPaid = APIServer + "/C2WCtrl/setC2WVendorSlipPaid";
-                routes.c2wSaveVendorTransactionInfo = APIServer + "/TransactionCtrl/SavingVendorTransactionInfo";
+                routes.c2wSaveVendorTransactionInfo = APIServer + "/TransactionCtrl/SavingVendorSlipInfo";
                 routes.c2wVoidVendorSlip = APIServer + "/C2WCtrl/VoidVendorSlip";
-                routes.c2wSetVendorTransRefund = APIServer + "/TransactionCtrl/SetVendorTransRefunded";
+                routes.c2wSetVendorTransRefund = APIServer + "/TransactionCtrl/SetVendorSlipRefunded";
             }
 
 
@@ -562,9 +562,9 @@ namespace XamarinFormsEnablerMobile
                 routes.c2wGetUnpaidVendorSlip = APIServer + "/C2WCtrl/GetUnpaidVendorSlip";
                 routes.c2wSetVendorSlipForPayment = APIServer + "/C2WCtrl/SetC2WVendorSlipForPayment";
                 routes.c2wSetVendorSlipPaid = APIServer + "/C2WCtrl/setC2WVendorSlipPaid";
-                routes.c2wSaveVendorTransactionInfo = APIServer + "/TransactionCtrl/SavingVendorTransactionInfo";
+                routes.c2wSaveVendorTransactionInfo = APIServer + "/TransactionCtrl/SavingVendorSlipInfo";
                 routes.c2wVoidVendorSlip = APIServer + "/C2WCtrl/VoidVendorSlip";
-                routes.c2wSetVendorTransRefund = APIServer + "/TransactionCtrl/SetVendorTransRefunded";
+                routes.c2wSetVendorTransRefund = APIServer + "/TransactionCtrl/SetVendorSlipRefunded";
             }
 
         }

@@ -62,7 +62,7 @@ namespace XamarinFormsEnablerMobile
             }
             if(!string.IsNullOrEmpty(main.APIServer))
             {
-                string rawServer = main.APIServer.Split('/')[0];
+                string rawServer = main.APIServer.Replace("http://", "").Split('/')[0];
                 Console.WriteLine(rawServer);
                 ServerField.Text = rawServer.Split(':')[0];
                 ConfigurationPort.Text = rawServer.Split(':')[1];

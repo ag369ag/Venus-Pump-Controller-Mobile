@@ -512,16 +512,23 @@ namespace XamarinFormsEnablerMobile
 
             if (main.appSettings.isClientC2W)
             {
+                Console.WriteLine("Getting of recurring transaction");
                 List<RecurringTransData> c2wRecurringTrans = new List<RecurringTransData>();
                 c2wRecurringTrans = JsonConvert.DeserializeObject<List<RecurringTransData>>(recurringData);
                 main.c2wService.toBeRefundedRecurringData = c2wRecurringTrans;
 
+                Console.WriteLine("Getting of vendor data");
                 List<object> parsingVendorData = JsonConvert.DeserializeObject<List<object>>(vendorData);
-                main.c2wService.getSelectedVendorSlip = new C2W_VendorSlipHeaderData
+                if (parsingVendorData.Count() > 0)
                 {
-                    ORDERSLIPHEADERCODE = "",
-                    HEADERBC = parsingVendorData[0].GetType().GetProperty("HeaderBC").ToString()
-                };
+                    Dictionary<string, string> withHeaderBC = JsonConvert.DeserializeObject<Dictionary<string, string>>(parsingVendorData[0].ToString());
+                    Console.WriteLine(withHeaderBC["HeaderBC"]);
+                    main.c2wService.getSelectedVendorSlip = new C2W_VendorSlipHeaderData
+                    {
+                        ORDERSLIPHEADERCODE = "",
+                        HEADERBC = withHeaderBC["HeaderBC"]
+                    };
+                }
             }
             //=================================================================================
 
@@ -861,11 +868,11 @@ namespace XamarinFormsEnablerMobile
 
             if (main.appSettings.isClientC2W)
             {
-                if(main.c2wService.toBeRefundedRecurringData.Count() > 0)
+                if (main.c2wService.toBeRefundedRecurringData.Count() > 0)
                     main.c2wService.RefundRecurringTrans();
 
                 if (main.c2wService.getSelectedVendorSlip != null)
-                    main.c2wService.RefundVendorSlip(trsOrNumber, trsResetter);
+                    main.c2wService.RefundVendorSlip(transNum, resetter);
             }
 
             int TransType = int.Parse(transaction.GetProperty("Transaction_Type").ToString());
@@ -1273,191 +1280,240 @@ namespace XamarinFormsEnablerMobile
             FORPRINTINGARRAY.Add(" ");
             AddSideStrings("TOTAL INVOICE", "-P" + string.Format("{0:f02}", saleTotal));
             FORPRINTINGARRAY.Add(" ");
-            Console.WriteLine("before vats");
-            double vatableValue = Math.Round(VATTotal / 1.12, 2, MidpointRounding.AwayFromZero);
-            double vatAmountValue = Math.Round(VATTotal - (VATTotal / 1.12), 2, MidpointRounding.AwayFromZero);
 
-            string VatSaleValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatableValue).ToString("#,##0.00")}";
-            string VatAmountValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatAmountValue).ToString("#,##0.00")}";
-            string VatExValue = taxType == "Zero Rated" ? "P0.00" : Math.Abs(NVATTotal) > 0 ? $"-P{Math.Abs(NVATTotal).ToString("#,##0.00")}" : "P0.00";
-            string ZeroRatedValue = taxType == "Zero Rated" ? "-P" + saleTotal.ToString("#,##0.00") : "P0.00";
-            Console.WriteLine("after vats");
-            AddSideStrings("VATable Sales", VatSaleValue);
-            AddSideStrings("VAT Amount", VatAmountValue);
-            AddSideStrings("VAT-Exempt Sales", VatExValue);
-            AddSideStrings("Zero Rated Sales", ZeroRatedValue);
-            FORPRINTINGARRAY.Add(" ");
-
-            bool isEMoney = RefundItem.Where(a => (a.itemType == "7" || a.itemType == "8") &&
-            (
-                a.itemDesc.ToLower().Contains("card") ||
-                a.itemDesc.ToLower().Contains("qr")
-            )).Count() > 0;
-            string cardString = "XXXX-XXXX-XXXX-" + cardNumber;
-
-            Console.WriteLine("After checking if e money");
-
-            if (isEMoney)
+            if (main.c2wService.toBeRefundedRecurringData.Count() > 0 && main.appSettings.isClientC2W && main.appSettings.useSPMmode)
             {
-                // Add info for e-money
-                AddCustomerInfo("Card#          : ", cardString);
-                AddCustomerInfo("AppCode        : ", approvalCode);
-                AddCustomerInfo("Name           : ", customerName);
-                AddCustomerInfo("Sign           : ", "");
-                FORPRINTINGARRAY.Add(" ");
+                string tenantCode = "";
+                AddCustomerInfo("Vendor Details:");
+                foreach (RecurringTransData transactedRecurring in main.c2wService.toBeRefundedRecurringData)
+                {
+                    if (tenantCode == transactedRecurring.tenantCode)
+                        continue;
+
+                    string name = transactedRecurring.customerName.Trim();
+                    if (name.Trim().Length > 25)
+                        name = transactedRecurring.customerName.Trim().Substring(0, 25);
+                    AddCustomerInfo($"Vendor Name: {name}");
+                    AddCustomerInfo($"Tenant Code: {transactedRecurring.tenantCode.Trim()}");
+
+                    AddCustomerInfo(" ");
+                    tenantCode = transactedRecurring.tenantCode.Trim();
+
+                }
             }
 
-            Console.WriteLine("After inserting e money info");
-
-            if (RefundItem.Where(a => (a.itemType == "7" || a.itemType == "8") && a.itemDesc.ToLower().Contains("inhouse")).Count() > 0)
+            if (!main.appSettings.useSPMmode)
             {
-                /// add inhouse info 
-                AddCustomerInfo("AccNm          : ", subAccID);
-                AddCustomerInfo("Acc#           : ", subAccID);
-                AddCustomerInfo("PO#            : ", poNum);
-                AddCustomerInfo("Plate #        : ", plateNum);
-                AddCustomerInfo("Odo            : ", odometer);
+
+                Console.WriteLine("before vats");
+                double vatableValue = Math.Round(VATTotal / 1.12, 2, MidpointRounding.AwayFromZero);
+                double vatAmountValue = Math.Round(VATTotal - (VATTotal / 1.12), 2, MidpointRounding.AwayFromZero);
+
+                string VatSaleValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatableValue).ToString("#,##0.00")}";
+                string VatAmountValue = taxType == "Zero Rated" ? "P0.00" : $"-P{Math.Abs(vatAmountValue).ToString("#,##0.00")}";
+                string VatExValue = taxType == "Zero Rated" ? "P0.00" : Math.Abs(NVATTotal) > 0 ? $"-P{Math.Abs(NVATTotal).ToString("#,##0.00")}" : "P0.00";
+                string ZeroRatedValue = taxType == "Zero Rated" ? "-P" + saleTotal.ToString("#,##0.00") : "P0.00";
+                Console.WriteLine("after vats");
+                AddSideStrings("VATable Sales", VatSaleValue);
+                AddSideStrings("VAT Amount", VatAmountValue);
+                AddSideStrings("VAT-Exempt Sales", VatExValue);
+                AddSideStrings("Zero Rated Sales", ZeroRatedValue);
                 FORPRINTINGARRAY.Add(" ");
-                string signString = "Sign : ";
-                int undelineCount = main.appSettings.paperWidth - signString.Length;
-                string formattedSignLine = signString + new string('_', undelineCount);
-                FORPRINTINGARRAY.Add(formattedSignLine);
+
+                bool isEMoney = RefundItem.Where(a => (a.itemType == "7" || a.itemType == "8") &&
+                (
+                    a.itemDesc.ToLower().Contains("card") ||
+                    a.itemDesc.ToLower().Contains("qr")
+                )).Count() > 0;
+                string cardString = "XXXX-XXXX-XXXX-" + cardNumber;
+
+                Console.WriteLine("After checking if e money");
+
+                if (isEMoney)
+                {
+                    // Add info for e-money
+                    AddCustomerInfo("Card#          : ", cardString);
+                    AddCustomerInfo("AppCode        : ", approvalCode);
+                    AddCustomerInfo("Name           : ", customerName);
+                    AddCustomerInfo("Sign           : ", "");
+                    FORPRINTINGARRAY.Add(" ");
+                }
+
+                Console.WriteLine("After inserting e money info");
+
+                if (RefundItem.Where(a => (a.itemType == "7" || a.itemType == "8") && a.itemDesc.ToLower().Contains("inhouse")).Count() > 0)
+                {
+                    /// add inhouse info 
+                    AddCustomerInfo("AccNm          : ", subAccID);
+                    AddCustomerInfo("Acc#           : ", subAccID);
+                    AddCustomerInfo("PO#            : ", poNum);
+                    AddCustomerInfo("Plate #        : ", plateNum);
+                    AddCustomerInfo("Odo            : ", odometer);
+                    FORPRINTINGARRAY.Add(" ");
+                    string signString = "Sign : ";
+                    int undelineCount = main.appSettings.paperWidth - signString.Length;
+                    string formattedSignLine = signString + new string('_', undelineCount);
+                    FORPRINTINGARRAY.Add(formattedSignLine);
+                    FORPRINTINGARRAY.Add(" ");
+                }
+                Console.WriteLine($"Before sc + {sc.EnumerateArray().ToArray().Count()}");
+                if (sc.EnumerateArray().ToArray().Count() > 0)
+                {
+                    var scdata = sc.EnumerateArray().ToArray();
+                    string name = scdata[0].GetProperty("Senior_Name").ToString();
+                    string id = scdata[0].GetProperty("OSCAID_Number").ToString();
+                    string tin = scdata[0].GetProperty("SC_TIN").ToString();
+
+                    string signString = "Sign      : " + new string('_', 27);
+                    FORPRINTINGARRAY.Add(signString);
+
+                    string SeniorIDNumberString = "SC ID No. : ";
+                    AddCustomerInfo(SeniorIDNumberString, id);
+
+
+                    string nameString = "Name      : ";
+                    AddCustomerInfo(nameString, name);
+
+
+                    string addressString = "TIN       : ";
+                    AddCustomerInfo(addressString, tin);
+                    FORPRINTINGARRAY.Add(" ");
+
+                }
+                Console.WriteLine($"Before pwd + {pwd.EnumerateArray().ToArray().Count()}");
+                if (pwd.EnumerateArray().ToArray().Count() > 0)
+                {
+                    var pwddata = pwd.EnumerateArray().ToArray();
+                    string name = pwddata[0].GetProperty("PWD_Name").ToString();
+                    string id = pwddata[0].GetProperty("PWD_ID_Number").ToString();
+                    string tin = pwddata[0].GetProperty("PWD_TIN_Number").ToString();
+
+                    string signString = "Sign      : " + new string('_', 27);
+                    FORPRINTINGARRAY.Add(signString);
+
+                    string SeniorIDNumberString = "PWD ID No. : ";
+                    AddCustomerInfo(SeniorIDNumberString, id);
+
+
+                    string nameString = "Name      : ";
+                    AddCustomerInfo(nameString, name);
+
+
+                    string addressString = "TIN       : ";
+                    AddCustomerInfo(addressString, tin);
+
+                    FORPRINTINGARRAY.Add(" ");
+                }
+
+                Console.WriteLine($"Before mov + {mov.EnumerateArray().ToArray().Count()}");
+                if (mov.EnumerateArray().ToArray().Count() > 0)
+                {
+                    var movdata = mov.EnumerateArray().ToArray();
+                    string name = movdata[0].GetProperty("MOV_Name").ToString();
+                    string id = movdata[0].GetProperty("MOVID_Number").ToString();
+                    string tin = movdata[0].GetProperty("MOV_TIN").ToString();
+
+                    string signString = "Sign      : " + new string('_', 27);
+                    FORPRINTINGARRAY.Add(signString);
+
+                    string SeniorIDNumberString = "MOV ID No. : ";
+                    AddCustomerInfo(SeniorIDNumberString, id);
+
+
+                    string nameString = "Name      : ";
+                    AddCustomerInfo(nameString, name);
+
+
+                    string addressString = "TIN       : ";
+                    AddCustomerInfo(addressString, tin);
+
+                    FORPRINTINGARRAY.Add(" ");
+                }
+
+
+
+                Console.WriteLine($"Before solo + {solo.EnumerateArray().ToArray().Count()}");
+                if (solo.EnumerateArray().ToArray().Count() > 0)
+                {
+                    var spdata = solo.EnumerateArray().ToArray();
+                    string name = spdata[0].GetProperty("Parent_Name").ToString();
+                    string id = spdata[0].GetProperty("SPIC_Number").ToString();
+                    string cName = spdata[0].GetProperty("Child_Name").ToString();
+                    string cDOB = spdata[0].GetProperty("Child_DOB").ToString();
+                    string cAge = spdata[0].GetProperty("Child_Age").ToString();
+
+
+                    FORPRINTINGARRAY.Add(" ");
+                    string ParentNameString = "Parent name: ";
+                    AddCustomerInfo(ParentNameString, name);
+
+                    string parentIDString = "ID #: ";
+                    AddCustomerInfo(parentIDString, id);
+
+                    string parentChildString = "Child name: ";
+                    AddCustomerInfo(parentChildString, cName);
+
+                    string parentChildDOBString = "Child DOB: ";
+                    AddCustomerInfo(parentChildDOBString, cDOB);
+
+                    string parentChildAgeString = "Child Age: ";
+                    AddCustomerInfo(parentChildAgeString, cAge);
+
+                    FORPRINTINGARRAY.Add(" ");
+                }
+
+                Console.WriteLine($"Before naac + {naac.EnumerateArray().ToArray().Count()}");
+                if (naac.EnumerateArray().ToArray().Count() > 0)
+                {
+                    var naacdata = naac.EnumerateArray().ToArray();
+                    string name = naacdata[0].GetProperty("AthleteCoach_Name").ToString();
+                    string id = naacdata[0].GetProperty("PNSTMID_Number").ToString();
+
+                    string signString = "Sign      : " + new string('_', 27);
+                    FORPRINTINGARRAY.Add(signString);
+
+                    AddCustomerInfo("PNMSTID No: ", id);
+                    AddCustomerInfo("Name: ", name);
+
+                    FORPRINTINGARRAY.Add(" ");
+
+                }
+
+
+
+                string csNameString = " CUSTOMER NAME: ";
+                AddCustomerInfo(csNameString, isEMoney ? "" : isEMoney ? "" : customerName);
+                string csAddressString = " ADDRESS: ";
+                AddCustomerInfo(csAddressString, customerAddress);
+                string csTINString = " TIN: ";
+                AddCustomerInfo(csTINString, customerTIN);
+                string csBSString = " BUSINESS STYLE: ";
+                AddCustomerInfo(csBSString, customerBS);
                 FORPRINTINGARRAY.Add(" ");
+
+                if (main.c2wService.toBeRefundedRecurringData.Count() > 0 && main.appSettings.isClientC2W)
+                {
+                    string tenantCode = "";
+                    AddCustomerInfo("Vendor Details:");
+                    foreach (RecurringTransData transactedRecurring in main.c2wService.toBeRefundedRecurringData)
+                    {
+                        if (tenantCode == transactedRecurring.tenantCode)
+                            continue;
+
+                        string name = transactedRecurring.customerName.Trim();
+                        if (name.Trim().Length > 25)
+                            name = transactedRecurring.customerName.Trim().Substring(0, 25);
+                        AddCustomerInfo($"Vendor Name: {name}");
+                        AddCustomerInfo($"Tenant Code: {transactedRecurring.tenantCode.Trim()}");
+
+                        AddCustomerInfo(" ");
+                        tenantCode = transactedRecurring.tenantCode.Trim();
+
+
+                    }
+                }
+
             }
-            Console.WriteLine($"Before sc + {sc.EnumerateArray().ToArray().Count()}");
-            if (sc.EnumerateArray().ToArray().Count() > 0)
-            {
-                var scdata = sc.EnumerateArray().ToArray();
-                string name = scdata[0].GetProperty("Senior_Name").ToString();
-                string id = scdata[0].GetProperty("OSCAID_Number").ToString();
-                string tin = scdata[0].GetProperty("SC_TIN").ToString();
-
-                string signString = "Sign      : " + new string('_', 27);
-                FORPRINTINGARRAY.Add(signString);
-
-                string SeniorIDNumberString = "SC ID No. : ";
-                AddCustomerInfo(SeniorIDNumberString, id);
-
-
-                string nameString = "Name      : ";
-                AddCustomerInfo(nameString, name);
-
-
-                string addressString = "TIN       : ";
-                AddCustomerInfo(addressString, tin);
-                FORPRINTINGARRAY.Add(" ");
-
-            }
-            Console.WriteLine($"Before pwd + {pwd.EnumerateArray().ToArray().Count()}");
-            if (pwd.EnumerateArray().ToArray().Count() > 0)
-            {
-                var pwddata = pwd.EnumerateArray().ToArray();
-                string name = pwddata[0].GetProperty("PWD_Name").ToString();
-                string id = pwddata[0].GetProperty("PWD_ID_Number").ToString();
-                string tin = pwddata[0].GetProperty("PWD_TIN_Number").ToString();
-
-                string signString = "Sign      : " + new string('_', 27);
-                FORPRINTINGARRAY.Add(signString);
-
-                string SeniorIDNumberString = "PWD ID No. : ";
-                AddCustomerInfo(SeniorIDNumberString, id);
-
-
-                string nameString = "Name      : ";
-                AddCustomerInfo(nameString, name);
-
-
-                string addressString = "TIN       : ";
-                AddCustomerInfo(addressString, tin);
-
-                FORPRINTINGARRAY.Add(" ");
-            }
-
-            Console.WriteLine($"Before mov + {mov.EnumerateArray().ToArray().Count()}");
-            if (mov.EnumerateArray().ToArray().Count() > 0)
-            {
-                var movdata = mov.EnumerateArray().ToArray();
-                string name = movdata[0].GetProperty("MOV_Name").ToString();
-                string id = movdata[0].GetProperty("MOVID_Number").ToString();
-                string tin = movdata[0].GetProperty("MOV_TIN").ToString();
-
-                string signString = "Sign      : " + new string('_', 27);
-                FORPRINTINGARRAY.Add(signString);
-
-                string SeniorIDNumberString = "MOV ID No. : ";
-                AddCustomerInfo(SeniorIDNumberString, id);
-
-
-                string nameString = "Name      : ";
-                AddCustomerInfo(nameString, name);
-
-
-                string addressString = "TIN       : ";
-                AddCustomerInfo(addressString, tin);
-
-                FORPRINTINGARRAY.Add(" ");
-            }
-
-
-
-            Console.WriteLine($"Before solo + {solo.EnumerateArray().ToArray().Count()}");
-            if (solo.EnumerateArray().ToArray().Count() > 0)
-            {
-                var spdata = solo.EnumerateArray().ToArray();
-                string name = spdata[0].GetProperty("Parent_Name").ToString();
-                string id = spdata[0].GetProperty("SPIC_Number").ToString();
-                string cName = spdata[0].GetProperty("Child_Name").ToString();
-                string cDOB = spdata[0].GetProperty("Child_DOB").ToString();
-                string cAge = spdata[0].GetProperty("Child_Age").ToString();
-
-
-                FORPRINTINGARRAY.Add(" ");
-                string ParentNameString = "Parent name: ";
-                AddCustomerInfo(ParentNameString, name);
-
-                string parentIDString = "ID #: ";
-                AddCustomerInfo(parentIDString, id);
-
-                string parentChildString = "Child name: ";
-                AddCustomerInfo(parentChildString, cName);
-
-                string parentChildDOBString = "Child DOB: ";
-                AddCustomerInfo(parentChildDOBString, cDOB);
-
-                string parentChildAgeString = "Child Age: ";
-                AddCustomerInfo(parentChildAgeString, cAge);
-
-                FORPRINTINGARRAY.Add(" ");
-            }
-
-            Console.WriteLine($"Before naac + {naac.EnumerateArray().ToArray().Count()}");
-            if (naac.EnumerateArray().ToArray().Count() > 0)
-            {
-                var naacdata = naac.EnumerateArray().ToArray();
-                string name = naacdata[0].GetProperty("AthleteCoach_Name").ToString();
-                string id = naacdata[0].GetProperty("PNSTMID_Number").ToString();
-
-                string signString = "Sign      : " + new string('_', 27);
-                FORPRINTINGARRAY.Add(signString);
-
-                AddCustomerInfo("PNMSTID No: ", id);
-                AddCustomerInfo("Name: ", name);
-
-                FORPRINTINGARRAY.Add(" ");
-
-            }
-
-
-
-            string csNameString = " CUSTOMER NAME: ";
-            AddCustomerInfo(csNameString, isEMoney ? "" : isEMoney ? "" : customerName);
-            string csAddressString = " ADDRESS: ";
-            AddCustomerInfo(csAddressString, customerAddress);
-            string csTINString = " TIN: ";
-            AddCustomerInfo(csTINString, customerTIN);
-            string csBSString = " BUSINESS STYLE: ";
-            AddCustomerInfo(csBSString, customerBS);
-            FORPRINTINGARRAY.Add(" ");
 
             foreach (var item in main.footer)
             {

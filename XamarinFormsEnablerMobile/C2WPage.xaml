@@ -218,7 +218,7 @@
 
 
                 <Button Text="Transact" Clicked="TransactVendorSlipClicked"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
-                <Button Text="Payment" CornerRadius="10" BackgroundColor="White" Clicked="OpenPaymentOnVendorSlip"/>
+                <Button Text="Payment" CornerRadius="10" HorizontalOptions="FillAndExpand"  Clicked="OpenPaymentOnVendorSlip"/>
                 <Button Text="Close" Clicked="CloseVendorSlipPage"  HorizontalOptions="FillAndExpand" CornerRadius="10"/>
 
             </StackLayout>

@@ -64,6 +64,7 @@ namespace XamarinFormsEnablerMobile
                 HttpResponseMessage httpResponse = await http.GetAsync(new Uri(route).ToString());
                 responseMessage = await httpResponse.Content.ReadAsStringAsync();
             }
+            Console.WriteLine("API CALL RESPONSE");
             Console.WriteLine(responseMessage);
             JsonDocument responseJson = JsonDocument.Parse(responseMessage);
             Dictionary<string, object> responseValues = responseJson.Deserialize<Dictionary<string, object>>();
@@ -431,9 +432,9 @@ namespace XamarinFormsEnablerMobile
         //====================================================================================================
         //                               FUNCTIONS FOR LOADING OF VENDOR SLIP
         //====================================================================================================
-        private List<C2W_VendorSlipHeaderData> originalUnpaidVendorSlipList = new List<C2W_VendorSlipHeaderData>();
+        private List<C2W_VendorSlipHeaderData> originalUnpaidVendorSlipList { get; set; } = null;
 
-        private List<C2W_VendorSlipHeaderData> unpaidVendorSlips = new List<C2W_VendorSlipHeaderData>();
+        private List<C2W_VendorSlipHeaderData> unpaidVendorSlips { get; set; } = null;
         public List<C2W_VendorSlipHeaderData> unpaidVendorSlipList
         {
             get
@@ -448,8 +449,8 @@ namespace XamarinFormsEnablerMobile
             }
         }
 
-        private C2W_VendorSlipHeaderData selectedVendorSlip = new C2W_VendorSlipHeaderData();
-        private C2W_VendorSlipHeaderData temporarySelectedVendorSlip = new C2W_VendorSlipHeaderData();
+        private C2W_VendorSlipHeaderData selectedVendorSlip = null;
+        private C2W_VendorSlipHeaderData temporarySelectedVendorSlip = null;
 
         public C2W_VendorSlipHeaderData getSelectedVendorSlip { get { return selectedVendorSlip; } set { selectedVendorSlip = value; } }
         public List<C2W_VendorSlip_Items> vendorSlipItems = new List<C2W_VendorSlip_Items>();
@@ -459,9 +460,11 @@ namespace XamarinFormsEnablerMobile
 
             if (unpaidVendorSlipResponse == null)
                 return;
-
+            Console.WriteLine(unpaidVendorSlipResponse);
             unpaidVendorSlipList = JsonConvert.DeserializeObject<List<C2W_VendorSlipHeaderData>>(unpaidVendorSlipResponse);
             originalUnpaidVendorSlipList = JsonConvert.DeserializeObject<List<C2W_VendorSlipHeaderData>>(unpaidVendorSlipResponse);
+
+            OnPropertyChanged();
             //List<Dictionary<string, string>> unpaidVendorSlipDictionary = new List<Dictionary<string, string>>();
             //unpaidVendorSlipDictionary = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(unpaidVendorSlipResponse);
 
@@ -565,7 +568,7 @@ namespace XamarinFormsEnablerMobile
                 headerBC = selectedVendorSlip.HEADERBC,
                 posID = main.posIDNumber
             };
-
+            Console.WriteLine("BEFORE INSERTING VENDOR INFO TO DB");
             await apiCall(main.routes.c2wSaveVendorTransactionInfo, saveVendorSlipInfoObject);
         }
 

@@ -37,8 +37,9 @@ namespace XamarinFormsEnablerMobile
         }
         void VendorSlipButtonClicked(object sender, EventArgs e)
         {
-            return;
+            //return;
             c2wService.showOrderSlipPage = true;
+            c2wService.LoadUnpaidVendorSlip();
             Console.WriteLine("OrderSlip button clicked");
         }
 
@@ -232,8 +233,8 @@ namespace XamarinFormsEnablerMobile
             }
 
 
-            bool hasExistingSelectedAlready = c2wService.selectedVendorSlipIsNull();
-            if (hasExistingSelectedAlready)
+            bool selectedVendorSlipIsNull = c2wService.selectedVendorSlipIsNull();
+            if (!selectedVendorSlipIsNull)
             {
                 await DisplayAlert("Transact the previous selected vendor slip first.", null, "Close");
                 return;
